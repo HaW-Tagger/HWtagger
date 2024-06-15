@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>783</width>
+    <height>780</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QWidget" name="widget" native="true">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="0" colspan="5">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="3" column="2">
+         <widget class="QLabel" name="label_dataset_cleaning">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Before:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="pushButton_filter_with_conditional">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>This runs the cleanup if the second tag column is also shown, so speed depends on the dataset size</string>
+          </property>
+          <property name="statusTip">
+           <string/>
+          </property>
+          <property name="text">
+           <string>Filter using Conditional</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLineEdit" name="lineEdit_filter_phrase">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;separate multiple tags with commas&lt;/p&gt;&lt;p&gt;This will filter and narow your view of the database using the conditional.&lt;/p&gt;&lt;p&gt;Click filter to reprocess the Before and After list&lt;/p&gt;&lt;p&gt;This will filter the view to imgs with matching conditional&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="whatsThis">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>Conditional phrase/tags (exact match)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QLabel" name="label_2_dataset_cleaning">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>After:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QListView" name="listView_2_dataset_cleaning">
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>234</red>
+                <green>234</green>
+                <blue>234</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>234</red>
+                <green>234</green>
+                <blue>234</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>240</red>
+                <green>240</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QListView" name="listView_dataset_cleaning">
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>234</red>
+                <green>234</green>
+                <blue>234</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>234</red>
+                <green>234</green>
+                <blue>234</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>240</red>
+                <green>240</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
+          <property name="toolTip">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="5" rowspan="5">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="7" column="0">
+           <layout class="QGridLayout" name="gridLayout_7">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item row="1" column="0">
+             <widget class="QSlider" name="slider_activation_thresh">
+              <property name="toolTip">
+               <string>Tag count threshold for activating the aggressive filter</string>
+              </property>
+              <property name="minimum">
+               <number>50</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="sliderPosition">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksBelow</enum>
+              </property>
+              <property name="tickInterval">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="checkBox_filter_special">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Filter or add some tags based on multi conditional criterions. &lt;/p&gt;&lt;p&gt;The conditions are somewhat biased for my (wasabi's) use case. &lt;/p&gt;&lt;p&gt;Some example of things that are filtered:&lt;/p&gt;&lt;p&gt;- cleaning up ganguro tags and common mistagged tags&lt;/p&gt;&lt;p&gt;- merging clothing tags when tag count is above threshold (ex: black bra+black panties -&amp;gt; black underwear)&lt;/p&gt;&lt;p&gt;- Series specific outfits and objects, ex: (arknights), (idol master), ...&lt;/p&gt;&lt;p&gt;- Cosplat tags: (cosplay)&lt;/p&gt;&lt;p&gt;- adding &amp;quot;3d&amp;quot; to images tagged with &amp;quot;realistic&amp;quot;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Filter Specific Criterions:</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="slider_activation_label">
+              <property name="toolTip">
+               <string>count threshold for tags to filter</string>
+              </property>
+              <property name="text">
+               <string>100</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QSlider" name="slider_prob_thresh">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="toolTip">
+               <string>Remove tags under this threshold in the aggresive filter,currently disabled and only uses the count threshold</string>
+              </property>
+              <property name="minimum">
+               <number>20</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="singleStep">
+               <number>1</number>
+              </property>
+              <property name="sliderPosition">
+               <number>60</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksBelow</enum>
+              </property>
+              <property name="tickInterval">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="slider_prob_label">
+              <property name="toolTip">
+               <string>percent threshold for tag filter to keep for the autotagger</string>
+              </property>
+              <property name="text">
+               <string>60%</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="9" column="0">
+           <widget class="QCheckBox" name="checkBox_solo_check">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Only applies to &amp;quot;solo&amp;quot; subject images without multicolor shenanigans.&lt;/p&gt;&lt;p&gt;Case 1.) Check the threshold value and remove tags with overlaps&lt;/p&gt;&lt;p&gt;Case 2.) Similar to Case1, but don't use threshold and prioritize rarer tags&lt;/p&gt;&lt;p&gt;Example 1: black hair [Thr: 0.9], brown hair [Thr: 0.8] --&amp;gt; black hair&lt;br/&gt;Example 2: green eyes [Thr: 0.8], light green eyes [Thr: 0.7] --&amp;gt; light green eyes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Additional tag check for solo imgs</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="0">
+           <widget class="QPushButton" name="pushButton_cleanup_tags">
+            <property name="text">
+             <string>Cleanup tags</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="0">
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="18" column="0">
+           <widget class="QListView" name="listView_searched_tags">
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>234</red>
+                  <green>234</green>
+                  <blue>234</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>234</red>
+                  <green>234</green>
+                  <blue>234</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>240</red>
+                  <green>240</green>
+                  <blue>240</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="0">
+           <widget class="QPushButton" name="pushButton_apply_change">
+            <property name="text">
+             <string>Apply Changes and Save to Database</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3_dataset_cleaning">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Clean up Tags:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="checkBox_use_tag_csv">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Planned to be decomissioned, removing once enough tags from tag csv is transfered to main tag csv.&lt;br/&gt;&lt;br/&gt;Use default logic to filter different types of bows, ribbons, and ties based on priority&lt;/p&gt;&lt;p&gt;Recommend disabling when the bow/ribbon is an important tag.&lt;/p&gt;&lt;p&gt;Priority: hair bow = necktie &amp;gt; bow &amp;gt; ribbon, other logic in place for hat bows and many others&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Prune tags with child tags (tag.csv)</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="16" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Search tags:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="19" column="0">
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="17" column="0">
+           <widget class="QLineEdit" name="lineEdit_search_tags">
+            <property name="toolTip">
+             <string>enter text to search in the database, result is sorted by frequency</string>
+            </property>
+            <property name="placeholderText">
+             <string>Enter tag or string to search</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QCheckBox" name="checkBox_filter_bow">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Replace emotions, Ex: ;) -&amp;gt; winking&lt;/p&gt;&lt;p&gt;Conversion pair in resources\emotions.csv&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Filter Bows/Bowties</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QCheckBox" name="checkBox_symbolic_tag">
+            <property name="text">
+             <string>Replace Symbolic Emotions</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="2">
+         <widget class="QComboBox" name="comboBox_filter_method">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Order of Tags&lt;/p&gt;&lt;p&gt;* Tag Grouping - some tags may appear in multiple categories&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="editable">
+           <bool>false</bool>
+          </property>
+          <property name="currentText">
+           <string>Frequency (Desc, High-low)</string>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+          </property>
+          <item>
+           <property name="text">
+            <string extracomment="sort tags by count">Frequency (Desc, High-low)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string extracomment="sort tags by count">Frequency (Asc, Low-High)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string extracomment="sort tag by alphabetical order">Alphabetical (Desc, A-Z)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string extracomment="sort tag by alphabetical order">Alphabetical (Asc, Z-A)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="*some tags in multiple groups" extracomment="*some tags in multiple groups">Tag Groups (Alphabetical)*</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string extracomment="sort tags by their token size, each tag is separated into it's tokens and the count is used for the sort">Token Length (Desc, High-Low)</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QComboBox" name="comboBox_filterGroups">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Dropdown options will show up if groups are present in the database, select &quot;main view&quot; to view all tags in the database or select any group names in the database to filter the imgs used in the count</string>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="maxVisibleItems">
+           <number>20</number>
+          </property>
+          <item>
+           <property name="text">
+            <string extracomment="this includes all &quot;groups&quot; in the database">Main View</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="lineEdit_dataset_dir">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>enter directory with the database (.json) file</string>
+        </property>
+        <property name="placeholderText">
+         <string>Enter Database Directory</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_load_dataset">
+        <property name="toolTip">
+         <string>loads database in the text field</string>
+        </property>
+        <property name="text">
+         <string>Load Database</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButton_reload_resources">
+        <property name="toolTip">
+         <string>Reload data store in .csv in the resources folder</string>
+        </property>
+        <property name="text">
+         <string>Reload Filter Resources</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

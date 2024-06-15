@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1175</width>
+    <height>705</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="2" column="0" colspan="3">
+      <widget class="QScrollArea" name="scrollArea_databases">
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>563</width>
+          <height>606</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="3">
+      <widget class="QCheckBox" name="checkBox_import_best_great">
+       <property name="toolTip">
+        <string>import only images that contains the 3 top quality tags, choose before validating choice</string>
+       </property>
+       <property name="text">
+        <string>Import only masterpiece, best, great</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="pushButton_search">
+       <property name="toolTip">
+        <string>search and load the databases in the selected folder</string>
+       </property>
+       <property name="text">
+        <string>Search</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="3">
+      <widget class="QLineEdit" name="lineEdit_global_folder_path">
+       <property name="toolTip">
+        <string>path to the global database folder thet should contains databases</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Global Folder Path</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBox_presearch_existence_of_images">
+       <property name="toolTip">
+        <string>when loading check if the images in the databases exists, more powerful than the button on the right panel</string>
+       </property>
+       <property name="text">
+        <string>Check existence of Images for all databases</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="3">
+      <widget class="QPushButton" name="pushButton_validate_choice">
+       <property name="toolTip">
+        <string>selecte the images from the databases and store the choice</string>
+       </property>
+       <property name="text">
+        <string>Validate Choice</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_images_existence">
+       <property name="toolTip">
+        <string>check if the validated images exists, simple check</string>
+       </property>
+       <property name="text">
+        <string>Check validated images existence</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_save_databases_as_groups">
+       <property name="toolTip">
+        <string>if not selected the images won't belong to any group</string>
+       </property>
+       <property name="text">
+        <string>Save databases origins as groups</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_reorganize_folder">
+       <property name="toolTip">
+        <string>destructive, move a lot of files, could fail if images don't exist or for other reasons, </string>
+       </property>
+       <property name="text">
+        <string>Reorganize the folders, (move to a backup folder) (reorganize by their groups) (rename to md5)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_merge_datasets">
+       <property name="toolTip">
+        <string>Create the database.json and saves it</string>
+       </property>
+       <property name="text">
+        <string>Merge all datasets</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_generate_quality_graph">
+       <property name="toolTip">
+        <string>not implemented</string>
+       </property>
+       <property name="text">
+        <string>Generate quality distribution graph</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_create_metacap">
+       <property name="toolTip">
+        <string>not implemented</string>
+       </property>
+       <property name="text">
+        <string>Create meta_cap.json for all images in the datasets</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

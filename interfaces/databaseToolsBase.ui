@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>448</width>
+    <height>843</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="comboBox_selection">
+     <property name="toolTip">
+      <string>Apply to most of the buttons below</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Apply to:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>428</width>
+        <height>348</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <widget class="QPushButton" name="pushButton_replace">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Using the selection combo box at the top, each lines are an independent replacement:&lt;/p&gt;&lt;p&gt;- only right tags: add tags to the selection&lt;/p&gt;&lt;p&gt;- only left tags: remove tags from the selection&lt;/p&gt;&lt;p&gt;- both tags: in images with all tags on the left, remove them and add the right tags&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="text">
+      <string>Replace</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3">
+    <widget class="QToolBox" name="toolBox">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="page">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>430</width>
+        <height>384</height>
+       </rect>
+      </property>
+      <attribute name="label">
+       <string>Output Captions/Tags:</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="8" column="0">
+        <widget class="QPushButton" name="pushButton_txt_file">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>create a txt file containing the full tags, same as the first tab</string>
+         </property>
+         <property name="text">
+          <string>Create TXT files</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="checkBox_remove_tags_in_sentence">
+         <property name="text">
+          <string>Remove tag if included in sentence</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="checkBox_use_separator">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Token Separator</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QPushButton" name="pushButton_json_tags_file">
+         <property name="text">
+          <string>Create .json tag file</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLineEdit" name="lineEdit_main_trigger_tag">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="placeholderText">
+          <string>Main Trigger Tag(s), Separate with &quot;,&quot;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="checkBox_export_aesthetic_score">
+         <property name="text">
+          <string>Aesthetic scores</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="checkBox_sentence_separator">
+         <property name="text">
+          <string>Sentence in Token Separator</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QPushButton" name="pushButton_make_sample_toml">
+         <property name="text">
+          <string>Generate sample TOML</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="checkBox_use_sentence">
+         <property name="text">
+          <string>Sentence</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QPlainTextEdit" name="plainTextEdit_secondary_trigger_tags">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+         </property>
+         <property name="backgroundVisible">
+          <bool>false</bool>
+         </property>
+         <property name="placeholderText">
+          <string>Secondary Tag(s), Separated with &quot;,&quot;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
+         <property name="text">
+          <string>Aesthetic scores in token separator</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>413</width>
+        <height>282</height>
+       </rect>
+      </property>
+      <attribute name="label">
+       <string>Batch Operations:</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="4" column="0">
+        <widget class="QPushButton" name="pushButton_only_tag_characters">
+         <property name="text">
+          <string>Only auto-tag characters</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="pushButton_reset_manual_score">
+         <property name="toolTip">
+          <string>reset all scores that were changed, and if the threshold are changed, will change the scores, without needing to restart the scorer</string>
+         </property>
+         <property name="text">
+          <string>Reset manual score</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QPushButton" name="pushButton_purge_manual">
+         <property name="toolTip">
+          <string>remove all manually edited tags and reviewed conflicts</string>
+         </property>
+         <property name="text">
+          <string>Purge Manual</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QPushButton" name="pushButton_discard_image">
+         <property name="toolTip">
+          <string>discard the selected images by moving it to the discarded folder</string>
+         </property>
+         <property name="text">
+          <string>Discard Image</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="pushButton_auto_tag">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>use an auto tagger for tagging the image using your preferred tagging method</string>
+         </property>
+         <property name="text">
+          <string>Auto-tag</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="pushButton_auto_classify">
+         <property name="text">
+          <string>Auto-classify</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QPushButton" name="pushButton_apply_filtering">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>filter the selction</string>
+         </property>
+         <property name="text">
+          <string>Apply Filtering</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pushButton_auto_score">
+         <property name="toolTip">
+          <string>use an auto scorer for scoring the image using your preferred scoring method</string>
+         </property>
+         <property name="text">
+          <string>Auto-score</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QPushButton" name="pushButton_refresh_tags_from_gelbooru_and_rule34">
+         <property name="text">
+          <string>Refresh Tags from rule34 and gelbooru</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>430</width>
+        <height>259</height>
+       </rect>
+      </property>
+      <attribute name="label">
+       <string>Favourite Tags:</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QTreeView" name="treeView_favourites">
+         <property name="toolTip">
+          <string>tags that are parts of the favourites, currently it's impossible to add tags to it in the UI</string>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="animated">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLineEdit" name="lineEdit_edit_favourites">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type tags separated by commas to the favourites:&lt;/p&gt;&lt;p&gt;- if the tag is present in the favourites it will remove the tag from the favourites&lt;/p&gt;&lt;p&gt;- if the tag is not in the favourites it will be added&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="placeholderText">
+          <string>add and remove favourite tags (separated by ,)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="12" column="0" colspan="3">
+    <widget class="QPushButton" name="pushButton_save_database">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>save the database, this is the only button on this page that saves the database</string>
+     </property>
+     <property name="text">
+      <string>Save Database</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="3">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_open_in_default_program">
+       <property name="toolTip">
+        <string>open the selected images in the default program or the specified program in the settings</string>
+       </property>
+       <property name="text">
+        <string>Open in default program</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_popup_image">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Display the selected image in a separate window</string>
+       </property>
+       <property name="text">
+        <string>Pop-up image</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

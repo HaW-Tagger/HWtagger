@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>734</width>
+    <height>763</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QWidget" name="widget" native="true">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="DirectoryText">
+          <property name="toolTip">
+           <string>enter image location, database file is not necessary to process the imgs, RECOMMENDED to process imgs here before procedding with database creation</string>
+          </property>
+          <property name="placeholderText">
+           <string>Enter Image Directory</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Images: (Before &amp; After)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QListView" name="ImageList"/>
+          </item>
+          <item row="2" column="2">
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="11" column="0" colspan="2">
+             <widget class="QCheckBox" name="checkBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Identify Texts (Super Slow rn)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QPushButton" name="checkImgSize">
+              <property name="toolTip">
+               <string>No need to load directory, only type a valid dir in the top field.  Recursively check the directories and find images not suited for XL training (total img pixels &lt; 640 x 768) </string>
+              </property>
+              <property name="text">
+               <string>Find Small Images (for XL)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="25" column="0">
+             <widget class="QPushButton" name="SaveImages">
+              <property name="text">
+               <string>Save Images/DB</string>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="0" colspan="2">
+             <widget class="QPushButton" name="pushButton_process_all">
+              <property name="toolTip">
+               <string>Process ALL images in the directory using the checked criterions, skips confirmation by user</string>
+              </property>
+              <property name="text">
+               <string>Process ALL Images (Skip check)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="0" colspan="2">
+             <widget class="QCheckBox" name="updateDB">
+              <property name="toolTip">
+               <string>This will update the md5 hashes in the database when the &quot;Save Images&quot; is clicked</string>
+              </property>
+              <property name="text">
+               <string>Update Database (if it exists)</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="0" rowspan="2" colspan="2">
+             <widget class="QCheckBox" name="OverrideOriginal">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>The new images that are saved when you click &quot;save Image&quot; at the bottom of the page will overwrite the original.  If unchecked, it will use the original name + &quot;post_edit&quot; as it's new name</string>
+              </property>
+              <property name="text">
+               <string>Override Original Image</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" colspan="2">
+             <widget class="Line" name="line_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0" colspan="2">
+             <widget class="QCheckBox" name="ConvertTransparent">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>This will make a new layer that is white and paste it below the transparent image</string>
+              </property>
+              <property name="text">
+               <string>Convert Trasparent to White</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0" colspan="2">
+             <widget class="QCheckBox" name="CropEdge">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will crop empty spaces (monocolor or weak gradient) &lt;/p&gt;&lt;p&gt;and will leave a ~2% (relative to original dim) pad around the subject&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Crop Edges to Subject</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="25" column="1">
+             <widget class="QPushButton" name="NextPage">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="toolTip">
+               <string>this button will activate if you're processing images </string>
+              </property>
+              <property name="text">
+               <string>Next Page -&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="0">
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="20" column="0" colspan="2">
+             <widget class="Line" name="line_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0" colspan="2">
+             <widget class="QCheckBox" name="CropBorder">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will identify a border by checking sides that goes from monocolor or &lt;/p&gt;&lt;p&gt;weak gradient to a sudden change in color. Then crop without a padding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Crop Borders</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="0" colspan="2">
+             <widget class="QPushButton" name="ProcessImages">
+              <property name="toolTip">
+               <string>Process images (up to max 4k pixels multiplier in settings tab) using the checked criterions, this will cache the results and ask the user for confirmation in the side window</string>
+              </property>
+              <property name="text">
+               <string>Process Images</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" colspan="2">
+             <widget class="QCheckBox" name="checkDupeHash">
+              <property name="toolTip">
+               <string>Check for duplicate hashes and moves them out (Directory needs to be loaded for this)</string>
+              </property>
+              <property name="text">
+               <string>Check Dupe Hashes</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0" colspan="2">
+             <widget class="QPushButton" name="checkImageType">
+              <property name="toolTip">
+               <string>This will convert non jpeg/jpg/png images to png and print out truncated files that are not used for training.</string>
+              </property>
+              <property name="text">
+               <string>Convert/Print/Move Bad Images</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0" colspan="2">
+             <widget class="Line" name="line_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="QPushButton" name="exportSmall">
+              <property name="toolTip">
+               <string>Run after button above, this will make a new folder in the directory and move all small images while keeping the folder structure</string>
+              </property>
+              <property name="text">
+               <string>Export Small Images (for XL)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="2">
+             <widget class="Line" name="line_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Settings:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="LoadDirectory">
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="text">
+           <string>Load Directory</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
