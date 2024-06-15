@@ -13,6 +13,4 @@ resources/favourites.txt
 /resources/config.ini
 config.ini
 *history.json
-install.bat
-run.bat
 venv_scripts.py
