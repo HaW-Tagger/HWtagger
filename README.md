@@ -26,3 +26,7 @@ The installation should be done
 ### Running the tagger
 
 You can run the tagger by using the run.bat
+
+#### How to wiki link
+
+https://github.com/HaW-Tagger/HWtagger/wiki/How-to-use-(basic-tutorial)
