@@ -13,6 +13,7 @@ from PySide6.QtGui import QPixmap, QStandardItemModel, QStandardItem, QBrush
 import PySide6.QtCore as QtCore
 from PySide6.QtCore import Slot, QStringListModel, QSize
 
+import CustomWidgets
 from classes.class_database import Database
 from classes.class_image import ImageDatabase
 
@@ -191,25 +192,30 @@ class ConflictTagsView(QtCore.QAbstractItemModel):
 		return QtCore.QModelIndex()
 
 class SortType(enum.Enum):
-	TAGS_LEN = "Tags length", lambda x: len(x.full_tags)
-	TOKEN_LEN = "Token length", lambda x: x.full_tags_token_length
-	SENTENCE_TOKEN_LEN = "Sentence token length", lambda x: x.get_sentence_token_length()
-	MANUAL_TAGS_LEN = "Manual tags length", lambda x: len(x.manual_tags)
-	CONFLICTS_LEN = "Conflicts length", lambda x: len(x.filtered_review.keys())
-	SCORE_RATING = "Aesthetic score", lambda x: x.get_score_sort_tuple() # double sort (label, score)
-	IMAGE_RATIO = "Image ratio", lambda x: x.image_ratio
-	IMAGE_PIXEL_COUNT = "Image pixel count", lambda x: x.image_width*x.image_height
-	IMAGE_WIDTH = "Image width", lambda x: x.image_width
-	IMAGE_HEIGHT = "Image height", lambda x: x.image_height
-	SIMILARITY_GROUP = "Similarity", lambda x: x.similarity_group
-	BRIGHTNESS_VALUE = "Brightness", lambda x: x.get_brightness()
-	AVERAGE_PIXEL = "Average pixel", lambda x: x.get_average_pixel()
-	CONTRAST_COMPOSITION = "Contrast", lambda x: x.get_contrast_composition()
-	UNDERLIGHTING_COMPOSITION = "Underlighting", lambda x: x.get_underlighting()
-	GRADIENT_COMPOSITION = "Gradient", lambda x: x.get_gradient()
+	# add sort name and the sort function here to add sort method to ui
 
-	CHARACTER_COUNT = "Named characters count", lambda x: x.get_character_count()
-	UNKNOWN_TAGS = "Unknown tags", lambda x: x.get_unknown_tags_count()
+	# Name, function, Tooltip description
+	TAGS_LEN = "Tags length", lambda x: len(x.full_tags), "Tags Length"
+	TOKEN_LEN = "Token length", lambda x: x.full_tags_token_length, "Other"
+	SENTENCE_TOKEN_LEN = "Sentence token length", lambda x: x.get_sentence_token_length(), "Other"
+	MANUAL_TAGS_LEN = "Manual tags length", lambda x: len(x.manual_tags), "Other"
+	FILE_NAME = "Filename", lambda x: x.get_filename(), "Other"
+	CONFLICTS_LEN = "Conflicts length", lambda x: len(x.filtered_review.keys()), "Other"
+	SCORE_RATING = "Aesthetic score", lambda x: x.get_score_sort_tuple(), "Other" # double sort (label, score)
+	IMAGE_RATIO = "Image ratio", lambda x: x.image_ratio, "Other"
+	IMAGE_PIXEL_COUNT = "Image pixel count", lambda x: x.image_width*x.image_height, "Other"
+	IMAGE_WIDTH = "Image width", lambda x: x.image_width, "Other"
+	IMAGE_HEIGHT = "Image height", lambda x: x.image_height, "Other"
+	SIMILARITY_GROUP = "Similarity", lambda x: x.similarity_group, "Other"
+	BRIGHTNESS_VALUE = "Brightness", lambda x: x.get_brightness(), "Other"
+	AVERAGE_PIXEL = "Average pixel", lambda x: x.get_average_pixel(), "Other"
+	CONTRAST_COMPOSITION = "Contrast", lambda x: x.get_contrast_composition(), "Other"
+	UNDERLIGHTING_COMPOSITION = "Underlighting", lambda x: x.get_underlighting(), "Other"
+	GRADIENT_COMPOSITION = "Gradient", lambda x: x.get_gradient(), "Other"
+
+ 
+	CHARACTER_COUNT = "Named characters count", lambda x: x.get_character_count(), "Other"
+	UNKNOWN_TAGS = "Unknown tags", lambda x: x.get_unknown_tags_count(), "Other"
 
 	def sort_function(self, image):
 		return self.value[1](image)
@@ -472,8 +478,11 @@ class DatabaseViewBase(QWidget):
 		self.image_view.comboBox_group_name.currentIndexChanged.connect(self.selected_group_changed)
 
 		# sort type
+		k=0
 		for x in SortType:
 			self.image_view.comboBox_sort_type.addItem(x.value[0])
+			self.image_view.comboBox_sort_type.setItemData(k, x.value[2], QtCore.Qt.ItemDataRole.ToolTipRole)
+			k+=1
 		self.image_view.comboBox_sort_type.currentTextChanged.connect(self.selected_sort_changed)
 
 		# hard search and reverse search
@@ -483,7 +492,7 @@ class DatabaseViewBase(QWidget):
 		self.image_view.lineEdit_tag_search.editingFinished.connect(self.search_tags_changed)
 
 		# clear search button
-		self.image_view.pushButton_clear_search.clicked.connect(self.clear_sorting)
+		#self.image_view.pushButton_clear_search.clicked.connect(self.clear_sorting)
 
 		# create image objects and show them
 		self.create_all_images_frames()
@@ -1199,7 +1208,9 @@ class DatabaseViewBase(QWidget):
 		images_index = self.get_selected_indexes_right_panel()
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
-			return
+			return False
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
 		self.db.tag_images([self.db.images[i].path for i in images_index])
 		self.init_tags_view(self.current_images)
 
@@ -1209,6 +1220,8 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
 			return
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
 		self.db.score_images([self.db.images[i].path for i in images_index])
 		self.init_tags_view(self.current_images)
 	@Slot()
@@ -1217,6 +1230,8 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
 			return
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
 		self.db.refresh_unsafe_tags(images_index)
 		self.init_tags_view(self.current_images)
 
@@ -1226,6 +1241,8 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
 			return
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
 		for i in images_index:
 			self.db.images[i].reset_score()
 		self.init_tags_view(self.current_images)
@@ -1236,6 +1253,8 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
 			return
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
 		self.db.classify_images([self.db.images[i].path for i in images_index])
 		self.init_tags_view(self.current_images)
 
@@ -1245,6 +1264,8 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
 			return
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
 		self.db.character_only_tag_images([self.db.images[i].path for i in images_index])
 		self.init_tags_view(self.current_images)
 
@@ -1254,6 +1275,8 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
 			return
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
 		self.db.purge_manual_tags(images_index)
 		self.init_tags_view(self.current_images)
 
@@ -1275,6 +1298,8 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
 			return
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
 		files.export_images([self.db.images[i].path for i in images_index if os.path.exists(self.db.images[i].path)], self.db.folder)
 		self.init_tags_view(self.current_images)
 

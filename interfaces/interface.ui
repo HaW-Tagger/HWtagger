@@ -458,7 +458,7 @@
                 <item>
                  <widget class="QPushButton" name="pushButton_print_unknown_tags">
                   <property name="toolTip">
-                   <string>useful for making the tag categories csv</string>
+                   <string>useful for making the tag categories csv, prints tags that are known by tagger, that are not listed in the tag category</string>
                   </property>
                   <property name="text">
                    <string>Print unknown tags</string>
@@ -631,8 +631,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1032</width>
-             <height>814</height>
+             <width>205</width>
+             <height>583</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">

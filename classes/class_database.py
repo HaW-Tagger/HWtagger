@@ -477,7 +477,7 @@ class VirtualDatabase:
             if response.status_code == 200:
                 data = response.json()
                 successful_retrievals += 1
-                all_tags = data['tag_string_general'].split(" ") + data['tag_string_character'].split(" ")
+                all_tags = data['tag_string_general'].split(" ") + data['tag_string_character'].split(" ")+ data['tag_string_meta'].split(" ")
                 all_tags = [x.strip() for x in all_tags if x.strip()]
                 all_tags = [x.replace('_', ' ') if len(x) > 3 or x not in tag_categories.KAOMOJI else x for x in all_tags]
                 image.add_external_tags_key("danbooru", all_tags)
@@ -515,11 +515,11 @@ class VirtualDatabase:
                 if not unsafe:
                     image.add_external_tags_key("gelbooru", all_tags)
                 else:
-                    accepted_rule34 = []
+                    accepted_gelbooru = []
                     for tag in all_tags:
                         if tag in all_accepted_tags:
-                            accepted_rule34.append(tag)
-                    image.add_external_tags_key("gelbooru", accepted_rule34)
+                            accepted_gelbooru.append(tag)
+                    image.add_external_tags_key("gelbooru", accepted_gelbooru)
                     image.add_external_tags_key("rejected_gelbooru", all_tags)
         parameters.log.info(f"Successfully retrieved gelbooru tags for {successful_retrievals} images")
 
@@ -550,7 +550,7 @@ class VirtualDatabase:
                 all_tags = html.unescape(data[0]['tags']).split(" ")
                 all_tags = [x.strip() for x in all_tags if x.strip()]
                 all_tags = [x.replace('_', ' ') if len(x) > 3 or x not in tag_categories.KAOMOJI else x for x in all_tags]
-            elif response.status_code == 200:
+            elif response.status_code == 200 and os.path.splitext(os.path.basename(image.path))[0] != image.original_md5:
                 url = f'{api_url}?page=dapi&s=post&q=index&json=1&tags=md5:{os.path.splitext(os.path.basename(image.path))[0]}'
                 response = scraper.get(url=url, headers=HTTP_HEADERS)
                 if response.status_code == 200 and response.text:
@@ -719,7 +719,7 @@ class Database(VirtualDatabase):
             parameters.log.info(f"All {len(self.images)} images exists")
 
     def add_images_to_db(self, image_paths: list[str], autotag=False, from_txt=False, grouping_from_path=False, score=False, classify=False, move_dupes=False):
-        parameters.log.info(f"{len(image_paths)} images are going to be added to the database.")
+        parameters.log.info(f"{len(image_paths)} images are going to be added to the database. (Before dupe check)")
         current_paths = set(self.get_all_paths())
         if len(image_paths) < 1:
             return False
@@ -732,7 +732,7 @@ class Database(VirtualDatabase):
                 if not is_dupe:
                     new_paths.append(image_path)
 
-        parameters.log.info(f"{len(new_paths)} images are going to be added to the database.")
+        parameters.log.info(f"{len(new_paths)} images are going to be added to the database. (ignoring duplicate copies)")
 
         if autotag:
             self.tag_images(new_paths)
@@ -772,8 +772,10 @@ class Database(VirtualDatabase):
         for image_path in image_paths:
             image_index = self.index_of_image_by_image_path(image_path)
             image_relative_path = os.path.relpath(self.images[image_index].path, self.folder)
-            if image_relative_path: # has a relative path
-                    self.add_image_to_group(image_relative_path, image_index)
+            relative_dir, _ = os.path.split(image_relative_path)
+            
+            if relative_dir: # has a relative path
+                    self.add_image_to_group(relative_dir, image_index)
 
     def create_json_file(self,add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator=parameters.PARAMETERS["keep_token_tags_separator"], use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True):
         image_dict = {}

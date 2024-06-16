@@ -81,6 +81,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         # DATABASE CREATION TAB
         self.database_creation_tab = DatabaseCreationView.DatabaseCreationView()
         self.tabWidget_2.insertTab(0, self.database_creation_tab, "Database Creation Tool")
+        self.tabWidget_2.setCurrentIndex(0)
 
         #############################
         # VIEW DATABASE TAB

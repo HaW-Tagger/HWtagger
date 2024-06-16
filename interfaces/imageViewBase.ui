@@ -21,6 +21,9 @@
      </property>
      <item>
       <widget class="QComboBox" name="comboBox_group_name">
+       <property name="toolTip">
+        <string>list of groups</string>
+       </property>
        <property name="editable">
         <bool>false</bool>
        </property>
@@ -44,7 +47,8 @@
         <string>Add Group</string>
        </property>
        <property name="icon">
-        <iconset theme="list-add"/>
+        <iconset theme="list-add">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -61,33 +65,17 @@
         <string>reverse the sort</string>
        </property>
        <property name="text">
-        <string>Reverse Search</string>
+        <string>Reverse</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="lineEdit_tag_search">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use tags to search:&lt;/p&gt;&lt;p&gt;- use * to imply any number of characters in between, before or after&lt;/p&gt;&lt;p&gt;- use &amp;quot;&amp;quot; to imply exact keyword search&lt;/p&gt;&lt;p&gt;- use - to imply that you don't want to see the tag&lt;/p&gt;&lt;p&gt;Separate searches using &amp;quot;,&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter text to search for tags:&lt;/p&gt;&lt;p&gt;By default, it search for any partial matches&lt;/p&gt;&lt;p&gt;- use the star, &amp;quot;*&amp;quot;, as a wildcard for any number of characters in that position. can be placed in between, before, or after other characters&lt;/p&gt;&lt;p&gt;- place quotation marks, &amp;quot; &amp;quot;, around the text for exact keyword search&lt;/p&gt;&lt;p&gt;- use the minus sign, &amp;quot;-&amp;quot;, in front of the text to remove images with that keyword&lt;/p&gt;&lt;p&gt;- search source_&amp;lt;source name&amp;gt; to filter where the tags came from. Ex: source_swin, source_caformer, source_danbooru, ...&lt;/p&gt;&lt;p&gt;- special seach keywords (we only have 1 tag rn): &amp;quot;2persons&amp;quot; --&amp;gt; search for images with tag combinations that implies 2 people in the image, ex: &amp;quot;1boy&amp;quot; + &amp;quot;1girl&amp;quot;, &amp;quot;2girls&amp;quot;, &amp;quot;2boys&amp;quot;, etc&lt;/p&gt;&lt;p&gt;Separate multiple tag searches using &amp;quot;,&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="placeholderText">
         <string>Enter Tag(s) to Search</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_clear_search">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>clear the search</string>
-       </property>
-       <property name="text">
-        <string>Clear</string>
        </property>
       </widget>
      </item>
@@ -141,7 +129,7 @@
         <string>show all images in the bottom group except if they belong to the top group</string>
        </property>
        <property name="text">
-        <string>ungrouped</string>
+        <string>Show grouped</string>
        </property>
        <property name="tristate">
         <bool>false</bool>
@@ -182,10 +170,10 @@
      <item>
       <widget class="QCheckBox" name="checkBox_single_selection_mode">
        <property name="toolTip">
-        <string>toggle multi-selection</string>
+        <string>toggle single or multi-selection, tick the checkbox to disable multi-selection. You can only selcted one image at a time.</string>
        </property>
        <property name="text">
-        <string>single</string>
+        <string>Disable multi-selection</string>
        </property>
       </widget>
      </item>
@@ -195,7 +183,7 @@
         <string>If checked, when selecting one image it will be shown large, wih buttons enabling you to slide right or left of the view</string>
        </property>
        <property name="text">
-        <string>zoom</string>
+        <string>Zoom</string>
        </property>
       </widget>
      </item>

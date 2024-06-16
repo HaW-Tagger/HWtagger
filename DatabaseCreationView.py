@@ -93,6 +93,9 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 		if self.checkBox_rename_to_png.isChecked():
 			self.db.rename_all_images_to_png()
 
+		if self.checkBox_filter_all_images.isChecked():
+			self.db.filter_all()
+
 		parameters.log.info("Finished Creating Database")
 
 
@@ -156,6 +159,9 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 		if self.checkBox_rename_to_png.isChecked():
 			self.db.rename_images_to_png(new_indexes)
 
+		if self.checkBox_filter_all_images.isChecked():
+			self.db.filter_all()
+
 		parameters.log.info("Finished Adding New Images")
 
 	@Slot()
@@ -211,5 +217,8 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 
 		if self.checkBox_rename_to_png.isChecked():
 			self.db.rename_all_images_to_png()
+
+		if self.checkBox_filter_all_images.isChecked():
+			self.db.filter_all()
 
 		parameters.log.info("Finished Reapplying")

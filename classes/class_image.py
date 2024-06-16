@@ -69,6 +69,7 @@ class ImageDatabase:
         self.image_width = None
         self.image_height = None
         self.similarity_group: int = 0
+        self.image_name = None
         # todo: make similarity group into a tuple of the group then the average belong to the group
         
         # pixel related, one time calc done together
@@ -749,6 +750,11 @@ class ImageDatabase:
             self.average_pixel, self.brightness_value, self.underlighting, self.contrast_comp = intensity_count(self.image_object)
             parameters.log.debug(self.path, self.underlighting, self.contrast_comp)
         return self.brightness_value
+
+    def get_filename(self):
+        if not self.image_name:
+            self.image_name = os.path.basename(self.path)
+        return self.image_name
 
     def get_gradient(self):
         #parameters.log.debug("run")

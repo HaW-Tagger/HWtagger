@@ -342,6 +342,7 @@ def loose_tags_check(search_tags, full_tags):
                     return False
 
         elif search_tag[0][0] == "2persons":
+            # todo: 1other
             two_persons = False
             if "2girls" in full_tags and not any([x in full_tags for x in ["multiple boys", "1boy", "2boys"]]):
                 two_persons=True
@@ -349,7 +350,7 @@ def loose_tags_check(search_tags, full_tags):
                 two_persons=True
             if "1boy" in full_tags and "1girl" in full_tags and not any([x in full_tags for x in ["multiple girls", "multiple boys", "2girls", "2boys"]]):
                 two_persons=True
-            None
+
             if search_tag[1] and not two_persons:  # positive
                 return False
             elif not search_tag[1] and two_persons: #negative

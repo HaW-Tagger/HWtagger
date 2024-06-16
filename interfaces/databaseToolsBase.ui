@@ -30,6 +30,9 @@
    </item>
    <item row="1" column="0" colspan="3">
     <widget class="QScrollArea" name="scrollArea">
+     <property name="toolTip">
+      <string>Add a new line to set up a tag replacement rule (not saved by the database)</string>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -38,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>428</width>
-        <height>348</height>
+        <width>434</width>
+        <height>368</height>
        </rect>
       </property>
      </widget>
@@ -58,15 +61,15 @@
    <item row="3" column="0" colspan="3">
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>430</width>
-        <height>384</height>
+        <width>436</width>
+        <height>303</height>
        </rect>
       </property>
       <attribute name="label">
@@ -97,6 +100,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBox_remove_tags_in_sentence">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable this to remove tags that are included in the sentence. This is to reduce potential duplicates in both the caption and tags.&lt;br/&gt;Example: &lt;br/&gt;caption: &amp;quot;1girl sitting on a chair thinking and contemplating life&amp;quot;&lt;br/&gt;tag: &amp;quot;1girl, solo, chair, sitting, red hair, green eyes, blue shirt&amp;quot;&lt;br/&gt;--&amp;gt; &lt;/p&gt;&lt;p&gt;caption and a shorter tag list is exported: caption + &amp;quot;solo, red hair, green eyes, blue shirt&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Remove tag if included in sentence</string>
          </property>
@@ -113,6 +119,9 @@
            <height>0</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use the token separator set in the setting. &lt;br/&gt;&lt;br/&gt;Useful for separating the trigger words (Kohya based trainers have a &amp;quot;use token separator&amp;quot; option). This allows you to have a variable length trigger word.&lt;br/&gt;&lt;br/&gt;if this is enabled, tags in the main and secondary are placed in front of the tags and the token separator is placed to separate it from the rest of the tag.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The tag order in main trigger tag(s) are unshuffled&lt;br/&gt;The tag order in secondary trigger tag(s) is shuffled&lt;br/&gt;The other tags are shuffled.&lt;br/&gt;&lt;br/&gt;Here's an example with &amp;quot;|||&amp;quot; as token separator, 1 main trigger word, and 3 secondary trigger word:  main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, |||, rest of the tags, ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Token Separator</string>
          </property>
@@ -123,6 +132,9 @@
        </item>
        <item row="9" column="0">
         <widget class="QPushButton" name="pushButton_json_tags_file">
+         <property name="toolTip">
+          <string>useful for checkpoints, makes a .json with the captions and tags. Exports like the meta_cap.json in Kohya.  You can run the meta_lat creator from Kohya directly on this exported json</string>
+         </property>
          <property name="text">
           <string>Create .json tag file</string>
          </property>
@@ -136,6 +148,12 @@
            <height>0</height>
           </size>
          </property>
+         <property name="acceptDrops">
+          <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The tag order in main trigger tag(s) are unshuffled&lt;/p&gt;&lt;p&gt;The tag order in secondary trigger tag(s) is shuffled&lt;/p&gt;&lt;p&gt;The other tags are shuffled.&lt;/p&gt;&lt;p&gt;Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="placeholderText">
           <string>Main Trigger Tag(s), Separate with &quot;,&quot;</string>
          </property>
@@ -143,6 +161,9 @@
        </item>
        <item row="4" column="0">
         <widget class="QCheckBox" name="checkBox_export_aesthetic_score">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lookup what aesthetic score values map to any quality tags, then export the aesthetic/quality tag with the other tags.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Aesthetic scores</string>
          </property>
@@ -153,6 +174,9 @@
        </item>
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBox_sentence_separator">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Place sentence (caption) infront of the token separator.&lt;/p&gt;&lt;p&gt;Useful if you want natural language in the front of the tags&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Sentence in Token Separator</string>
          </property>
@@ -163,6 +187,9 @@
        </item>
        <item row="10" column="0">
         <widget class="QPushButton" name="pushButton_make_sample_toml">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to generate a toml that can be used by the trainer to generate the samples. It does some calculations to make a distribution weighted by the &amp;quot;complexity&amp;quot; of the image, and then it samples tags from some images until it fills the sample size (default is 10)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Generate sample TOML</string>
          </property>
@@ -170,6 +197,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QCheckBox" name="checkBox_use_sentence">
+         <property name="toolTip">
+          <string>include any sentences/caption in the export.  If no captions were set, they're not added to the exported file(s)</string>
+         </property>
          <property name="text">
           <string>Sentence</string>
          </property>
@@ -192,6 +222,17 @@
            <height>50</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.
+
+
+The tag order in main trigger tag(s) are unshuffled
+The tag order in secondary trigger tag(s) is shuffled
+The other tags are shuffled.
+
+
+Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...</string>
+         </property>
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustIgnored</enum>
          </property>
@@ -205,6 +246,9 @@
        </item>
        <item row="5" column="0">
         <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
+         <property name="toolTip">
+          <string>Include the quality tags from the aesthetic scores and place them into the main trigger tag section.</string>
+         </property>
          <property name="text">
           <string>Aesthetic scores in token separator</string>
          </property>
@@ -217,22 +261,22 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>413</width>
-        <height>282</height>
+        <width>436</width>
+        <height>303</height>
        </rect>
       </property>
       <attribute name="label">
        <string>Batch Operations:</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="4" column="0">
-        <widget class="QPushButton" name="pushButton_only_tag_characters">
+       <item row="3" column="0">
+        <widget class="QPushButton" name="pushButton_auto_classify">
          <property name="text">
-          <string>Only auto-tag characters</string>
+          <string>Auto-classify</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="7" column="0">
         <widget class="QPushButton" name="pushButton_reset_manual_score">
          <property name="toolTip">
           <string>reset all scores that were changed, and if the threshold are changed, will change the scores, without needing to restart the scorer</string>
@@ -242,56 +286,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
-        <widget class="QPushButton" name="pushButton_purge_manual">
-         <property name="toolTip">
-          <string>remove all manually edited tags and reviewed conflicts</string>
-         </property>
-         <property name="text">
-          <string>Purge Manual</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QPushButton" name="pushButton_discard_image">
-         <property name="toolTip">
-          <string>discard the selected images by moving it to the discarded folder</string>
-         </property>
-         <property name="text">
-          <string>Discard Image</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
-        <widget class="QPushButton" name="pushButton_auto_tag">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>use an auto tagger for tagging the image using your preferred tagging method</string>
-         </property>
-         <property name="text">
-          <string>Auto-tag</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QPushButton" name="pushButton_auto_classify">
-         <property name="text">
-          <string>Auto-classify</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
         <widget class="QPushButton" name="pushButton_apply_filtering">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -313,7 +308,49 @@
          </property>
         </widget>
        </item>
+       <item row="12" column="0">
+        <widget class="QPushButton" name="pushButton_discard_image">
+         <property name="toolTip">
+          <string>discard the selected images by moving it to the discarded folder</string>
+         </property>
+         <property name="text">
+          <string>Discard Image</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QPushButton" name="pushButton_purge_manual">
+         <property name="toolTip">
+          <string>remove all manually edited tags and reviewed conflicts</string>
+         </property>
+         <property name="text">
+          <string>Purge Manual</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
+        <widget class="QPushButton" name="pushButton_auto_tag">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>use an auto tagger for tagging the image using your preferred tagging method</string>
+         </property>
+         <property name="text">
+          <string>Auto-tag</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
         <widget class="QPushButton" name="pushButton_auto_score">
          <property name="toolTip">
           <string>use an auto scorer for scoring the image using your preferred scoring method</string>
@@ -323,10 +360,17 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="9" column="0">
         <widget class="QPushButton" name="pushButton_refresh_tags_from_gelbooru_and_rule34">
          <property name="text">
           <string>Refresh Tags from rule34 and gelbooru</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="pushButton_only_tag_characters">
+         <property name="text">
+          <string>Only auto-tag characters</string>
          </property>
         </widget>
        </item>
@@ -337,8 +381,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>430</width>
-        <height>259</height>
+        <width>436</width>
+        <height>303</height>
        </rect>
       </property>
       <attribute name="label">

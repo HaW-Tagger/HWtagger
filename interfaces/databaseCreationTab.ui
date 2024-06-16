@@ -16,6 +16,9 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
     <widget class="QLineEdit" name="lineEdit_path">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The first step in making a database, enter a directory that contains images or contains subdirectories with images. Then select the method of tagging you want to enable (loading tags from an external file, via API, or autotagging), then create the database.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="placeholderText">
       <string>Enter Database Path</string>
      </property>
@@ -45,6 +48,9 @@
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="1" column="0">
               <widget class="QCheckBox" name="checkBox_gelbooru">
+               <property name="toolTip">
+                <string>Use API to get the tags of images with matching md5 hashes</string>
+               </property>
                <property name="text">
                 <string>Check gelbooru</string>
                </property>
@@ -52,6 +58,9 @@
              </item>
              <item row="3" column="0">
               <widget class="QCheckBox" name="checkBox_rule34">
+               <property name="toolTip">
+                <string>Use API to get the tags of images with matching md5 hashes</string>
+               </property>
                <property name="text">
                 <string>Check rule34.xxx</string>
                </property>
@@ -69,6 +78,9 @@
              </item>
              <item row="0" column="0" colspan="2">
               <widget class="QCheckBox" name="checkBox_danbooru">
+               <property name="toolTip">
+                <string>Use API to get the tags of images with matching md5 hashes</string>
+               </property>
                <property name="text">
                 <string>Check danbooru</string>
                </property>
@@ -101,6 +113,9 @@
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
               <widget class="QCheckBox" name="checkBox_offline_tags">
+               <property name="toolTip">
+                <string>Enable this to load tags from a local file in the same directory, usually a .txt file next to the images with the tags</string>
+               </property>
                <property name="text">
                 <string>Enable</string>
                </property>
@@ -108,6 +123,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="checkBox_both_names_tags">
+               <property name="toolTip">
+                <string>As an example, enable this to search both &quot;image_name.txt&quot; and &quot;image_name.png.txt&quot; for &quot;image_name.png&quot;</string>
+               </property>
                <property name="text">
                 <string>Search for files with both the image extension and without (only one will be taken)</string>
                </property>
@@ -141,6 +159,9 @@
             <layout class="QVBoxLayout" name="verticalLayout_8">
              <item>
               <widget class="QCheckBox" name="checkBox_offline_captions">
+               <property name="toolTip">
+                <string>Enable this to load captions from a local file in the same directory, usually a .txt or .caption file next to the images with the captions</string>
+               </property>
                <property name="text">
                 <string>Enable</string>
                </property>
@@ -148,6 +169,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="checkBox_both_names_captions">
+               <property name="toolTip">
+                <string>As an example, enable this to search both &quot;image_name.txt&quot; and &quot;image_name.png.txt&quot; for &quot;image_name.png&quot;</string>
+               </property>
                <property name="text">
                 <string>Search for files with both the image extension and without (only one will be taken)</string>
                </property>
@@ -155,6 +179,9 @@
              </item>
              <item>
               <widget class="QLineEdit" name="lineEdit_offline_extension_caption">
+               <property name="toolTip">
+                <string>enter the extension for the images with the caption. usually a .txt or .caption file</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -200,6 +227,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
            <widget class="QCheckBox" name="checkBox_use_taggers">
+            <property name="toolTip">
+             <string>Use the taggers configured in the setting tab to autotag the images</string>
+            </property>
             <property name="text">
              <string>Use taggers</string>
             </property>
@@ -207,6 +237,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox_use_aesthetic_scorer">
+            <property name="toolTip">
+             <string>Score the images so they can be compared via an aesthetic score.</string>
+            </property>
             <property name="text">
              <string>Use aesthetic scorer</string>
             </property>
@@ -214,6 +247,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox_use_classifier">
+            <property name="toolTip">
+             <string>Use an additional img source classifier and add medium/source tags to imgs above a threshold, useful for checkpoints</string>
+            </property>
             <property name="text">
              <string>Use classifier</string>
             </property>
@@ -225,7 +261,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -234,31 +270,50 @@
           <string>Pre&amp;Post tagging options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_rename_to_png">
-            <property name="text">
-             <string>Convert Images to PNG</string>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="0" colspan="2">
            <widget class="QCheckBox" name="checkBox_groups_from_folders">
+            <property name="toolTip">
+             <string>automatically assign images to groups, use the parent folder's name for group name</string>
+            </property>
             <property name="text">
              <string>Create groups following folder structure</string>
             </property>
            </widget>
           </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBox_rename_to_md5">
+            <property name="toolTip">
+             <string>Updates the filename to the exact md5 hash (post tagging)</string>
+            </property>
+            <property name="text">
+             <string>Rename Images to MD5</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="0" colspan="2">
            <widget class="QCheckBox" name="checkBox_move_duplicates_out_of_folder">
+            <property name="toolTip">
+             <string>move duplicate (matching md5 hash) files to duplicate folder</string>
+            </property>
             <property name="text">
              <string>Move duplicate images out of folder</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_rename_to_md5">
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBox_rename_to_png">
+            <property name="toolTip">
+             <string>convert image to png (post tagging)</string>
+            </property>
             <property name="text">
-             <string>Rename Images to MD5</string>
+             <string>Convert Images to PNG</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="checkBox_filter_all_images">
+            <property name="text">
+             <string>Apply tag filter</string>
             </property>
            </widget>
           </item>
@@ -286,6 +341,9 @@
     <layout class="QGridLayout" name="gridLayout_4">
      <item row="1" column="0" colspan="2">
       <widget class="QPushButton" name="pushButton_reapply_to_database">
+       <property name="toolTip">
+        <string>Re-applies the tagging/processes below to images currently in the database.</string>
+       </property>
        <property name="text">
         <string>Re-Apply to Database</string>
        </property>
@@ -293,6 +351,9 @@
      </item>
      <item row="0" column="1">
       <widget class="QPushButton" name="pushButton_add_new_images">
+       <property name="toolTip">
+        <string>Use this to add new images to a pre-existing database.  Load a database and select the tagging criterions and click on this.</string>
+       </property>
        <property name="text">
         <string>Add New Images</string>
        </property>
@@ -300,6 +361,9 @@
      </item>
      <item row="3" column="0" colspan="2">
       <widget class="QPushButton" name="pushButton_create_database">
+       <property name="toolTip">
+        <string>Create a database using the enabled settng below.  If nothing is enabled it'll just make a database with the images with no tag/caption assigned to them.</string>
+       </property>
        <property name="text">
         <string>Create Database</string>
        </property>
@@ -307,6 +371,9 @@
      </item>
      <item row="0" column="0">
       <widget class="QPushButton" name="pushButton_load_database">
+       <property name="toolTip">
+        <string>Enter a database directory, and this will load any database in the folder.</string>
+       </property>
        <property name="text">
         <string>Load Database</string>
        </property>
@@ -314,6 +381,9 @@
      </item>
      <item row="5" column="0" colspan="2">
       <widget class="QPushButton" name="pushButton_save_database">
+       <property name="toolTip">
+        <string>Saves the created or loaded database.</string>
+       </property>
        <property name="text">
         <string>Save Database</string>
        </property>

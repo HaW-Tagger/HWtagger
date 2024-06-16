@@ -41,7 +41,13 @@ class Ui_Form(object):
 
         self.pushButton_add_group = QPushButton(Form)
         self.pushButton_add_group.setObjectName(u"pushButton_add_group")
-        icon = QIcon(QIcon.fromTheme(u"list-add"))
+        icon = QIcon()
+        iconThemeName = u"list-add"
+        if QIcon.hasThemeIcon(iconThemeName):
+            icon = QIcon.fromTheme(iconThemeName)
+        else:
+            icon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+
         self.pushButton_add_group.setIcon(icon)
 
         self.horizontalLayout.addWidget(self.pushButton_add_group)
@@ -60,16 +66,6 @@ class Ui_Form(object):
         self.lineEdit_tag_search.setObjectName(u"lineEdit_tag_search")
 
         self.horizontalLayout.addWidget(self.lineEdit_tag_search)
-
-        self.pushButton_clear_search = QPushButton(Form)
-        self.pushButton_clear_search.setObjectName(u"pushButton_clear_search")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButton_clear_search.sizePolicy().hasHeightForWidth())
-        self.pushButton_clear_search.setSizePolicy(sizePolicy)
-
-        self.horizontalLayout.addWidget(self.pushButton_clear_search)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -149,6 +145,9 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
 #if QT_CONFIG(tooltip)
+        self.comboBox_group_name.setToolTip(QCoreApplication.translate("Form", u"list of groups", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
         self.pushButton_add_group.setToolTip(QCoreApplication.translate("Form", u"create a new group", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_add_group.setText(QCoreApplication.translate("Form", u"Add Group", None))
@@ -158,15 +157,11 @@ class Ui_Form(object):
 #if QT_CONFIG(tooltip)
         self.checkBox_reverse.setToolTip(QCoreApplication.translate("Form", u"reverse the sort", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_reverse.setText(QCoreApplication.translate("Form", u"Reverse Search", None))
+        self.checkBox_reverse.setText(QCoreApplication.translate("Form", u"Reverse", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_tag_search.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Use tags to search:</p><p>- use * to imply any number of characters in between, before or after</p><p>- use &quot;&quot; to imply exact keyword search</p><p>- use - to imply that you don't want to see the tag</p><p>Separate searches using &quot;,&quot;</p></body></html>", None))
+        self.lineEdit_tag_search.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Enter text to search for tags:</p><p>By default, it search for any partial matches</p><p>- use the star, &quot;*&quot;, as a wildcard for any number of characters in that position. can be placed in between, before, or after other characters</p><p>- place quotation marks, &quot; &quot;, around the text for exact keyword search</p><p>- use the minus sign, &quot;-&quot;, in front of the text to remove images with that keyword</p><p>- search source_&lt;source name&gt; to filter where the tags came from. Ex: source_swin, source_caformer, source_danbooru, ...</p><p>- special seach keywords (we only have 1 tag rn): &quot;2persons&quot; --&gt; search for images with tag combinations that implies 2 people in the image, ex: &quot;1boy&quot; + &quot;1girl&quot;, &quot;2girls&quot;, &quot;2boys&quot;, etc</p><p>Separate multiple tag searches using &quot;,&quot;</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_tag_search.setPlaceholderText(QCoreApplication.translate("Form", u"Enter Tag(s) to Search", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_clear_search.setToolTip(QCoreApplication.translate("Form", u"clear the search", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_clear_search.setText(QCoreApplication.translate("Form", u"Clear", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_add_selection_to_group.setToolTip(QCoreApplication.translate("Form", u"add all images selected at the bottom to the group", None))
 #endif // QT_CONFIG(tooltip)
@@ -182,18 +177,18 @@ class Ui_Form(object):
 #if QT_CONFIG(tooltip)
         self.checkBox_toggle_ungrouped_images.setToolTip(QCoreApplication.translate("Form", u"show all images in the bottom group except if they belong to the top group", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_toggle_ungrouped_images.setText(QCoreApplication.translate("Form", u"ungrouped", None))
+        self.checkBox_toggle_ungrouped_images.setText(QCoreApplication.translate("Form", u"Show grouped", None))
 #if QT_CONFIG(tooltip)
         self.horizontalSlider_thumbnail_size.setToolTip(QCoreApplication.translate("Form", u"change the viewed image size", None))
 #endif // QT_CONFIG(tooltip)
         self.label_image_view_count.setText(QCoreApplication.translate("Form", u"TextLabel", None))
 #if QT_CONFIG(tooltip)
-        self.checkBox_single_selection_mode.setToolTip(QCoreApplication.translate("Form", u"toggle multi-selection", None))
+        self.checkBox_single_selection_mode.setToolTip(QCoreApplication.translate("Form", u"toggle single or multi-selection, tick the checkbox to disable multi-selection. You can only selcted one image at a time.", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_single_selection_mode.setText(QCoreApplication.translate("Form", u"single", None))
+        self.checkBox_single_selection_mode.setText(QCoreApplication.translate("Form", u"Disable multi-selection", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_zoom_on_click.setToolTip(QCoreApplication.translate("Form", u"If checked, when selecting one image it will be shown large, wih buttons enabling you to slide right or left of the view", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_zoom_on_click.setText(QCoreApplication.translate("Form", u"zoom", None))
+        self.checkBox_zoom_on_click.setText(QCoreApplication.translate("Form", u"Zoom", None))
     # retranslateUi
 

@@ -10,7 +10,14 @@ starthere.bat
 starthere2.bat
 data.json
 resources/favourites.txt
-/resources/config.ini
+resources/config.ini
 config.ini
 *history.json
 venv_scripts.py
+resources/tag_categories.csv
+resources/filtertags.csv
+resources/recommendations.csv
+resources/tag_definition.csv
+resources/danbooru_implications.csv
+*__pycache__*
+update_interface.bat
