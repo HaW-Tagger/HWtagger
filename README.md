@@ -1,3 +1,7 @@
+# Introduction
+Most of our models, LORAs or the eclispeXL checkpoint were made using this tool.
+Here is a link to the release article on civitai: https://civitai.com/articles/5751/hw-tagger-release
+
 # Installation
 
 We don't know if it works with linux, we don't have access to a computer running Linux and an NVIDIA card directly.
