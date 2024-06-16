@@ -14,7 +14,7 @@ In the tutorial, it's also explained that to download the CUDNN installer you ne
 
 ### Installation
 
-We assume you already have python installed.
+We assume you already have python 3.10.11 installed.
 
 Clone the repository
 
