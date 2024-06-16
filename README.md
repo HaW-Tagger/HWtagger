@@ -14,9 +14,12 @@ In the tutorial, it's also explained that to download the CUDNN installer you ne
 
 ### Installation
 
-We assume you already have python 3.10.11 installed.
+We assume you already have python installed, We both use python 3.10.11, other versions may work but the used libraries may require specific versions.
 
-Clone the repository
+Clone the repository:
+`
+git clone https://github.com/HaW-Tagger/HWtagger/
+`
 
 Run the install.bat
 
