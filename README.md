@@ -10,6 +10,7 @@ You can install the CUDA toolkit and CUDNN versions 11.8 if you want to run the 
 
 You can follow this tutorial on how to install it:
 https://medium.com/geekculture/install-cuda-and-cudnn-on-windows-linux-52d1501a8805#3e72
+In the tutorial, it's also explained that to download the CUDNN installer you need an NVIDIA account.
 
 ### Installation
 
