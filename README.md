@@ -19,6 +19,8 @@ Clone the repository
 
 Run the install.bat
 
+Download the following models: https://huggingface.co/PhoenixAscencio/HWtagger and place the models folder in this repository
+
 The installation should be done
 
 ### Running the tagger
