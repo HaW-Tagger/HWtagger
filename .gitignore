@@ -4,7 +4,6 @@ venv/
 database/
 .idea/
 heatmaps/
-models/
 *.pyc
 starthere.bat
 starthere2.bat
