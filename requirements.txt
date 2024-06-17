@@ -40,7 +40,7 @@ tensorflow-io==0.31.0 #loading images
 
 opencv-python==4.7.0.68
 pillow
-xformers==0.0.24
+#xformers==0.0.24
 
 #lpips == 0.1.4
 dghs-imgutils[gpu] #dghs version 0.4.1
