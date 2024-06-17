@@ -631,8 +631,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>205</width>
-             <height>583</height>
+             <width>1032</width>
+             <height>814</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -645,6 +645,16 @@
                 </property>
                 <property name="text">
                  <string>Cancel</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_reload_default">
+                <property name="toolTip">
+                 <string>Load the default settings, but doesn't save them</string>
+                </property>
+                <property name="text">
+                 <string>Load Default Settings</string>
                 </property>
                </widget>
               </item>

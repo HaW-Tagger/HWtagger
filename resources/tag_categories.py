@@ -78,7 +78,8 @@ REJECTED_TAGS = {
     'ruffle compatible', 'russian commentary', 'procreate (medium)', 'production art', 'psd available', 'rebelle (medium)', 'redrawn',  'interactive', 'japanese audio', 
     'jav', 'low bitrate', 'machine translated','screenshot redraw', 'self-portrait', 'serbo-croatian commentary', 'skima commission', 'source mismatch', 'spanish audio', 
     'spine (medium)', 'stitched', 'swedish audio', 'swedish commentary', 'tegaki draw and tweet', 'comic panel redraw','detexted','decensored', 'deviantart sample', 'disc menu', 
-    'download link', 'downscaled', 'dutch commentary', 'making-of', 'masking tape (medium)', 'merchandise available', 'mixed-language audio', 'picrew (medium)', 'pixiv banner', 
+    'download link', 'downscaled', 'dutch commentary', 'making-of', 'masking tape (medium)', 'merchandise available', 'mixed-language audio', 'picrew (medium)', 'pixiv banner',
+    'highres', 'absurdres'
     
     
     
@@ -668,7 +669,7 @@ def tag_categories_init():
     TAG_CATEGORIES_EXCLUSIVE, _, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS = get_tag_categories_belonging()
 
     TAG_DEFINITION = get_tag_definition()
-
+    """
     for key, value in DANBOORU_TAG2HIGH.items():
 
         if key in TAG2HIGH and value not in TAG2HIGH[key]:
@@ -682,6 +683,7 @@ def tag_categories_init():
             LOW2TAGS[key].append(DANBOORU_LOW2TAGS[key])
         else:
             LOW2TAGS[key] = [DANBOORU_LOW2TAGS[key]]
+    """
 
     TAG2HIGH_KEYSET = set(TAG2HIGH.keys())
     LOW2TAGS_KEYSET = set(LOW2TAGS.keys())

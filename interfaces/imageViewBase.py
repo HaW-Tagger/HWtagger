@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(497, 844)
+        Form.resize(508, 844)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -32,6 +32,11 @@ class Ui_Form(object):
         self.horizontalLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.comboBox_group_name = QComboBox(Form)
         self.comboBox_group_name.setObjectName(u"comboBox_group_name")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBox_group_name.sizePolicy().hasHeightForWidth())
+        self.comboBox_group_name.setSizePolicy(sizePolicy)
         self.comboBox_group_name.setEditable(False)
         self.comboBox_group_name.setMinimumContentsLength(1)
         self.comboBox_group_name.setFrame(True)
@@ -41,13 +46,7 @@ class Ui_Form(object):
 
         self.pushButton_add_group = QPushButton(Form)
         self.pushButton_add_group.setObjectName(u"pushButton_add_group")
-        icon = QIcon()
-        iconThemeName = u"list-add"
-        if QIcon.hasThemeIcon(iconThemeName):
-            icon = QIcon.fromTheme(iconThemeName)
-        else:
-            icon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
-
+        icon = QIcon(QIcon.fromTheme(u"list-add"))
         self.pushButton_add_group.setIcon(icon)
 
         self.horizontalLayout.addWidget(self.pushButton_add_group)

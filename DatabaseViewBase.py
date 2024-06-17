@@ -350,9 +350,9 @@ class DatabaseViewBase(QWidget):
 		## Autocompletion
 		# TODO: custom completer that priorities the view of tag_categories over danbooru tags
 		self.wordlist = QStringListModel()
-		self.wordlist.setStringList(
-			set([tag for tag, freq in tag_categories.DESCRIPTION_TAGS_FREQUENCY.items() if int(freq) > 50] + list(
-				tag_categories.COLOR_DICT.keys())))
+		tags = set([tag for tag, freq in tag_categories.DESCRIPTION_TAGS_FREQUENCY.items() if int(freq) > 50] + list(
+				tag_categories.COLOR_DICT.keys()))
+		self.wordlist.setStringList(tags)
 		self.completer = QCompleter(self.wordlist)
 		self.completer.setModelSorting(QCompleter.ModelSorting.CaseSensitivelySortedModel)
 		self.completer.setMaxVisibleItems(5)
@@ -1304,8 +1304,9 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid for batch modification")
 			return
-		if not CustomWidgets.confirmation_dialog(self):
-			return False
+		if len(images_index)>1:
+			if not CustomWidgets.confirmation_dialog(self, f"You selected {len(images_index)} images to discard.\nAre you sure you want to discard them ?\n\nTip: This button is affected by the 'apply to:' setting at the top right of the window."):
+				return False
 		files.export_images([self.db.images[i].path for i in images_index if os.path.exists(self.db.images[i].path)], self.db.folder)
 		self.init_tags_view(self.current_images)
 

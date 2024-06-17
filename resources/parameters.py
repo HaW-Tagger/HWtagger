@@ -34,7 +34,7 @@ default_parameters['General'] = {
 }
 default_parameters['Interface'] = {
 	'font_name': "Segoe Ui",
-	'font_size': 14,
+	'font_size': 12,
 	'image_load_size': 128,
 	'database_view_tooltip': True,
 	'double_click': True,
@@ -45,11 +45,11 @@ default_parameters['Taggers'] = {
     'swinv2v3_folder': "models/SwinV2v3/",
     'swinv2_preference': "v2v3", # v2v2 or v2v3
     'swinv2_threshold': 0.35,
-    'swinv2_enable_character': False,
-    'swinv2_character_threshold': 0.6,
-    'swinv2_character_count_threshold': 500,
+    'swinv2_enable_character': True,
+    'swinv2_character_threshold': 0.5,
+    'swinv2_character_count_threshold': 250,
     'caformer_folder': "models/ML-danbooru-caformer",
-    'caformer_threshold': 0.65,
+    'caformer_threshold': 0.70,
     'max_batch_size': 8,
     'aesthetic_folder':"models/anime_aesthetic/",
     'classifier_folder':"models/anime_classifier/"
@@ -64,7 +64,7 @@ default_parameters['Database'] = {
 }
 default_parameters['Filter'] = {
 	'filter_remove_series': True,
-	'filter_remove_metadata': True,
+	'filter_remove_metadata': False,
 	'filter_remove_characters': False
 }
 

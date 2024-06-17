@@ -41,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>434</width>
-        <height>368</height>
+        <width>428</width>
+        <height>325</height>
        </rect>
       </property>
      </widget>
@@ -61,15 +61,15 @@
    <item row="3" column="0" colspan="3">
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>436</width>
-        <height>303</height>
+        <width>430</width>
+        <height>384</height>
        </rect>
       </property>
       <attribute name="label">
@@ -261,8 +261,8 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>436</width>
-        <height>303</height>
+        <width>430</width>
+        <height>282</height>
        </rect>
       </property>
       <attribute name="label">
@@ -272,7 +272,7 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
        <item row="3" column="0">
         <widget class="QPushButton" name="pushButton_auto_classify">
          <property name="text">
-          <string>Auto-classify</string>
+          <string>Auto-classifier</string>
          </property>
         </widget>
        </item>
@@ -346,7 +346,7 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
           <string>use an auto tagger for tagging the image using your preferred tagging method</string>
          </property>
          <property name="text">
-          <string>Auto-tag</string>
+          <string>Auto-tagger</string>
          </property>
         </widget>
        </item>
@@ -356,7 +356,7 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
           <string>use an auto scorer for scoring the image using your preferred scoring method</string>
          </property>
          <property name="text">
-          <string>Auto-score</string>
+          <string>Auto-aesthetic scorer</string>
          </property>
         </widget>
        </item>
@@ -381,8 +381,8 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>436</width>
-        <height>303</height>
+        <width>430</width>
+        <height>259</height>
        </rect>
       </property>
       <attribute name="label">

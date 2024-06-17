@@ -335,7 +335,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 205, 583))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1032, 814))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
         self.horizontalLayout_15 = QHBoxLayout()
@@ -344,6 +344,11 @@ class Ui_MainWindow(object):
         self.pushButton_cancel_settings.setObjectName(u"pushButton_cancel_settings")
 
         self.horizontalLayout_15.addWidget(self.pushButton_cancel_settings)
+
+        self.pushButton_reload_default = QPushButton(self.scrollAreaWidgetContents)
+        self.pushButton_reload_default.setObjectName(u"pushButton_reload_default")
+
+        self.horizontalLayout_15.addWidget(self.pushButton_reload_default)
 
         self.pushButton_save_settings = QPushButton(self.scrollAreaWidgetContents)
         self.pushButton_save_settings.setObjectName(u"pushButton_save_settings")
@@ -815,6 +820,10 @@ class Ui_MainWindow(object):
         self.pushButton_cancel_settings.setToolTip(QCoreApplication.translate("MainWindow", u"cancel the changes, doesn't restore to defaults, it only restore the previous setting, if yyou want to restore the default, delete the .ini file that acts as the config", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_cancel_settings.setText(QCoreApplication.translate("MainWindow", u"Cancel", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_reload_default.setToolTip(QCoreApplication.translate("MainWindow", u"Load the default settings, but doesn't save them", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_reload_default.setText(QCoreApplication.translate("MainWindow", u"Load Default Settings", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_save_settings.setToolTip(QCoreApplication.translate("MainWindow", u"save the settings for the changes to take effects, either relaunch the app or, in the case of the database view, reopen the database", None))
 #endif // QT_CONFIG(tooltip)

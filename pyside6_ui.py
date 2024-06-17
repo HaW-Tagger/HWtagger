@@ -640,6 +640,33 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
          
         self.pushButton_save_settings.clicked.connect(self.save_settings_button)
         self.pushButton_cancel_settings.clicked.connect(self.init_settings)
+        self.pushButton_reload_default.clicked.connect(self.init_default_settings)
+
+    @Slot()
+    def init_default_settings(self):
+        self.spin_font_size.setValue(parameters.default_parameters['Interface']["font_size"])
+        self.lineEdit_external_image_editor_path.setText(parameters.default_parameters['General']["external_image_editor_path"])
+        self.spin_image_load_size.setValue(parameters.default_parameters['Interface']["image_load_size"])
+        self.lineEdit_automatic_tagger.setText(",".join([x.name for x in parameters.default_parameters['Taggers']["automatic_tagger"]]))
+        self.spin_swinv2_thresh.setValue(parameters.default_parameters['Taggers']["swinv2_threshold"])
+        self.spin_swinv2_chara_thresh.setValue(parameters.default_parameters['Taggers']["swinv2_character_threshold"])
+        self.spin_swinv2_chara_count.setValue(parameters.default_parameters['Taggers']["swinv2_character_count_threshold"])
+        self.check_swinv2_chara.setChecked(parameters.default_parameters['Taggers']["swinv2_enable_character"])
+        self.checkBox_enable_image_tooltip.setChecked(parameters.default_parameters['Interface']["database_view_tooltip"])
+        self.spin_caformer_thresh.setValue(parameters.default_parameters['Taggers']["caformer_threshold"])
+        self.spin_max_batch_size.setValue(parameters.default_parameters['Taggers']["max_batch_size"])
+        self.lineEdit_keep_token_tag_separator.setText(parameters.default_parameters['Database']["keep_token_tags_separator"])
+        self.check_remove_transparency_from_images.setChecked(parameters.default_parameters['Database']["remove_transparency_from_images"])
+        self.spin_max_images_loader_thread.setValue(parameters.default_parameters['Database']["max_images_loader_thread"])
+        self.spin_max_4k_pixels_save_multiplier.setValue(parameters.default_parameters['Database']["max_4k_pixel_save_multiplier"])
+        self.spin_similarity_thresh.setValue(parameters.default_parameters['General']["similarity_threshold"])
+
+        #self.comboBox_click_option.addItems(["Single Click", "Double Click"])
+        self.comboBox_click_option.setCurrentText("Double Click" if parameters.default_parameters['Interface']["double_click"] else "Single Click")
+
+        self.check_filter_remove_characters.setChecked(parameters.default_parameters['Filter']["filter_remove_characters"])
+        self.check_filter_remove_metadata.setChecked(parameters.default_parameters['Filter']["filter_remove_metadata"])
+        self.check_filter_remove_series.setChecked(parameters.default_parameters['Filter']["filter_remove_series"])
 
     @Slot()
     def save_settings_button(self):

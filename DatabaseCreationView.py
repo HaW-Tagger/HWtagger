@@ -48,7 +48,7 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 			parameters.log.error(f"The extension name for offline tags should contain a '.' as it's an extension")
 			return False
 
-		if self.checkBox_offline_tags.isChecked() and '.' not in self.lineEdit_offline_extension_caption.text():
+		if self.checkBox_offline_captions.isChecked() and '.' not in self.lineEdit_offline_extension_caption.text():
 			parameters.log.error(f"The extension name for offline captions should contain a '.' as it's an extension")
 			return False
 
@@ -110,7 +110,7 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 			parameters.log.error(f"The extension name for offline tags should contain a '.' as it's an extension")
 			return False
 
-		if self.checkBox_offline_tags.isChecked() and '.' not in self.lineEdit_offline_extension_caption.text():
+		if self.checkBox_offline_captions.isChecked() and '.' not in self.lineEdit_offline_extension_caption.text():
 			parameters.log.error(f"The extension name for offline captions should contain a '.' as it's an extension")
 			return False
 
@@ -175,7 +175,7 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 			parameters.log.error(f"The extension name for offline tags should contain a '.' as it's an extension")
 			return False
 
-		if self.checkBox_offline_tags.isChecked() and '.' not in self.lineEdit_offline_extension_caption.text():
+		if self.checkBox_offline_captions.isChecked() and '.' not in self.lineEdit_offline_extension_caption.text():
 			parameters.log.error(f"The extension name for offline captions should contain a '.' as it's an extension")
 			return False
 
