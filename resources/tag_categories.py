@@ -431,7 +431,7 @@ COLOR_DICT_ORDER += [category for category in COLOR_CATEGORIES.keys() if categor
 
 def get_recommendations_from_csv():
     complexer = {}
-    with open(os.path.join(parameters.MAIN_FOLDER, "resources\\recommendations.csv"), newline='', encoding='utf-8') as f:
+    with open(os.path.join(parameters.MAIN_FOLDER, "resources/recommendations.csv"), newline='', encoding='utf-8') as f:
         complex_temp = csv.reader(f)
         skip_first = True
         for row in complex_temp:
@@ -455,7 +455,7 @@ def get_recommendations_from_csv():
 
 def get_tag_categories_from_csv():
     complexer = {}
-    with open(os.path.join(parameters.MAIN_FOLDER, "resources\\tag_categories.csv"), newline='', encoding='utf-8') as f:
+    with open(os.path.join(parameters.MAIN_FOLDER, "resources/tag_categories.csv"), newline='', encoding='utf-8') as f:
         complex_temp = csv.reader(f)
     # complex_temp = pd.read_csv(os.path.join("C:\\Users\\louis\\Documents\\46 - Training\\HecateTagger", "resources\\tag_categories.csv"), true_values=["1"], false_values=["0"])
         skip_first = True
@@ -490,7 +490,7 @@ def get_tag_categories_from_csv():
 
 def get_tag_definition():
     complexer = {}
-    with open(os.path.join(parameters.MAIN_FOLDER, "resources\\tag_definition.csv"), newline='', encoding='utf-8') as f:
+    with open(os.path.join(parameters.MAIN_FOLDER, "resources/tag_definition.csv"), newline='', encoding='utf-8') as f:
         complex_temp = csv.reader(f)
         for row in complex_temp:
             tag = row[0].strip()

@@ -350,7 +350,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             parameters.log.info(f"Images converted to png in {round(time.time() - start_time, 3)} seconds")
             return True
         if not folder:
-            folder = self.lineEdit_dataset_folder.text()
+            folder = self.lineEdit_database_folder.text()
         if not os.path.isdir(folder):
             parameters.log.info(("Invalid folder path: ",folder))
             return False
@@ -365,7 +365,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
     @Slot()
     def rename_images_md5_button(self,*, folder: str="") -> bool:
         if not folder:
-            folder = self.lineEdit_dataset_folder.text()
+            folder = self.lineEdit_database_folder.text()
         if not os.path.isdir(folder):
             parameters.log.error(("Invalid folder path: ",folder))
             return False
