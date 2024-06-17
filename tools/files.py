@@ -542,6 +542,11 @@ def find_near_duplicates(images_paths: list[str],*, threshold: float=0.9, hash_s
 def get_dict_caformer_tag_frequency():
     # get caformer (rule34) from json
     ca_model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["caformer_folder"])
+    if not os.path.exists(ca_model_folder):
+        # checl the backup location
+        ca_model_folder = os.path.join(os.path.join(parameters.MAIN_FOLDER, "HWtagger"), parameters.PARAMETERS["caformer_folder"])
+    
+    
     ca_file = "class.json"
     with open(os.path.join(ca_model_folder, ca_file), 'r') as f:
             ca_dict = json.load(f)

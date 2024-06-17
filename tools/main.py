@@ -39,6 +39,9 @@ def swin_v2v3_auto_tag(images_paths: list[str]):
     """
     from tools import swinv2_tagger_onnx
     model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["swinv2v3_folder"])
+    if not os.path.exists(model_folder):
+        # checl the backup location
+        model_folder = os.path.join(os.path.join(parameters.MAIN_FOLDER, "HWtagger"), parameters.PARAMETERS["swinv2v3_folder"])
     temp_dict = swinv2_tagger_onnx.main(images_paths, model_folder)
     return temp_dict
 
@@ -62,6 +65,11 @@ def character_only_swin_v2v3_auto_tag(image_paths: list[str]):
     """
     from tools import swinv2_tagger_onnx
     model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["swinv2v3_folder"])
+    
+    if not os.path.exists(model_folder):
+        # checl the backup location
+        model_folder = os.path.join(os.path.join(parameters.MAIN_FOLDER, "HWtagger"), parameters.PARAMETERS["swinv2v3_folder"])
+    
     temp_dict = swinv2_tagger_onnx.main(image_paths, model_folder, character_only=True)
     return temp_dict
 
@@ -70,6 +78,11 @@ def caformer_auto_tag(image_paths: list[str]):
         warnings.simplefilter("ignore")
         from tools import caformer_tagger
         model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["caformer_folder"])
+        if not os.path.exists(model_folder):
+            # checl the backup location
+            model_folder = os.path.join(os.path.join(parameters.MAIN_FOLDER, "HWtagger"), parameters.PARAMETERS["caformer_folder"])
+        
+        
         model_dir = os.path.join(model_folder, "model.ckpt")
         model_json_dir = os.path.join(model_folder, "class.json")
         bs = 1
@@ -90,12 +103,20 @@ def caformer_auto_tag(image_paths: list[str]):
 def aesthetic_scorer(image_paths: list[str]):
     from tools import image_scoring
     model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["aesthetic_folder"])
+    if not os.path.exists(model_folder):
+        # checl the backup location
+        model_folder = os.path.join(os.path.join(parameters.MAIN_FOLDER, "HWtagger"), parameters.PARAMETERS["aesthetic_folder"])
+    
     temp_dict = image_scoring.main(image_paths, model_folder)
     return temp_dict
 
 def classify_image_source(image_paths: list[str]):
     from tools import image_classification
     model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["classifier_folder"])
+    if not os.path.exists(model_folder):
+        # checl the backup location
+        model_folder = os.path.join(os.path.join(parameters.MAIN_FOLDER, "HWtagger"), parameters.PARAMETERS["classifier_folder"])
+    
     temp_dict = image_classification.main(image_paths, model_folder)
     return temp_dict
 
