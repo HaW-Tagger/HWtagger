@@ -75,7 +75,7 @@ def create_config():
 		default_config.add_section(section)
 		for option in default_parameters[section].keys():
 			if option == "discard_folder_name_from_search":
-				default_config[section][option] = ",".join(default_parameters[section][option])
+				default_config[section][option] = default_parameters[section][option]
 			elif option == "automatic_tagger":
 				default_config[section][option] = ",".join([x.name for x in default_parameters[section][option]])
 			else:
