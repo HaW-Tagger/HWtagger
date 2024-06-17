@@ -321,6 +321,9 @@ class DatabaseViewBase(QWidget):
 		self.current_images: list[int] = []
 		self.common_image: ImageDatabase = None
 
+		# popup image
+		self.popup_window = False
+
 
 		self.init_image_view()
 		self.init_tools_view()
@@ -639,6 +642,8 @@ class DatabaseViewBase(QWidget):
 		if len(selected_indexes) == 1 and self.image_view.checkBox_zoom_on_click.isChecked():
 			self.stacked_widget.setCurrentIndex(1)
 			self.update_single_image_view()
+
+		self.update_pop_up_image()
 
 
 
@@ -1064,6 +1069,7 @@ class DatabaseViewBase(QWidget):
 		self.database_tools.pushButton_apply_filtering.clicked.connect(self.batch_apply_filtering)
 		self.database_tools.pushButton_discard_image.clicked.connect(self.batch_discard_image)
 		self.database_tools.pushButton_open_in_default_program.clicked.connect(self.open_default_program)
+		self.database_tools.pushButton_popup_image.clicked.connect(self.pop_up_image)
 
 	@Slot()
 	def save_database_button(self):
@@ -1309,6 +1315,9 @@ class DatabaseViewBase(QWidget):
 		if not images_index:
 			parameters.log.warning("No images were valid to open in an external program")
 			return
+		if len(images_index)>1:
+			if not CustomWidgets.confirmation_dialog(self, f"You selected {len(images_index)} images to open.\nAre you sure you want to open them ?\n\nTip: This button is affected by the 'apply to:' setting at the top right of the window."):
+				return False
 		for index in images_index:
 			image_path = self.db.images[index].path
 			if not os.path.exists(image_path):
@@ -1328,7 +1337,29 @@ class DatabaseViewBase(QWidget):
 		else:
 			super().keyPressEvent(event)
 
-
+	@Slot()
 	def pop_up_image(self):
-		parameters.log.warning("Image popup is not yet implemented.")
+		if not self.current_images:
+			parameters.log.info("No images are selected.")
+			return False
+		if not isinstance(self.popup_window, bool):
+			if self.popup_window.isVisible():
+				self.popup_window.hide()
+				self.popup_window = False
+				return False
+			if self.popup_window.isHidden():
+				self.popup_window.show()
+				self.popup_window.update_image(self.db.images[self.current_images[0]].path)
+				return True
+		self.popup_window = CustomWidgets.ImageWindow(self.db.images[self.current_images[0]].path)
+		self.popup_window.show()
+
+	def update_pop_up_image(self):
+		if not self.current_images:
+			return False
+		if not isinstance(self.popup_window, bool):
+			if self.popup_window.isHidden():
+				return False
+			self.popup_window.update_image(self.db.images[self.current_images[0]].path)
+
 

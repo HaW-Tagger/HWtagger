@@ -6,7 +6,7 @@ import numpy as np
 import PySide6.QtGui as QtGui
 from PySide6.QtMultimedia import QSoundEffect, QMediaPlayer, QAudioOutput
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QProgressBar, QCompleter, QTreeWidgetItem, QStyledItemDelegate, \
-    QDialog, QDialogButtonBox, QMessageBox, QToolTip, QLabel, QCheckBox, QHBoxLayout, QLineEdit, QPushButton
+    QDialog, QDialogButtonBox, QMessageBox, QToolTip, QLabel, QCheckBox, QHBoxLayout, QLineEdit, QPushButton, QFrame
 from PySide6.QtGui import QPixmap, QImageReader
 import PySide6.QtCore as QtCore
 from PySide6.QtCore import Signal, Slot, QStringListModel
@@ -76,14 +76,38 @@ class InputDialog(QDialog):
 
         self.setLayout(layout)
 
-class ScaledLabelPopUp(QWidget, popupscaledlabel.Ui_Form):
+class ImageWindow(QWidget):
     def __init__(self, image_path):
         super().__init__()
-        self.setupUi(self)
-        self.show_image(image_path)
+        self.setWindowTitle("Image Window")
 
-    def show_image(self, image_path):
-        self.label.setPixmap(QPixmap(image_path))
+        # Load the image
+        self.image = QPixmap(image_path)
+
+        # Create a label to display the image
+        self.label = QLabel()
+        self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.label.setScaledContents(False)
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0,0,0,0)
+        layout.setSpacing(0)
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+
+        # Set the initial size of the window
+        self.setGeometry(100, 100, 300, 200)
+        self.setMinimumSize(100,100)
+
+    def resizeEvent(self, event):
+        # Resize the image to fit the window
+        self.label.setPixmap(self.image.scaled(self.size(), QtCore.Qt.AspectRatioMode.KeepAspectRatio))
+
+    def update_image(self, image_path):
+        self.image = QPixmap(image_path)
+        self.label.setPixmap(self.image.scaled(self.size(), QtCore.Qt.AspectRatioMode.KeepAspectRatio))
+
+
 
 class GlobalDatabaseItem(QWidget, global_database_item.Ui_Form):
     def __init__(self, database: Database):

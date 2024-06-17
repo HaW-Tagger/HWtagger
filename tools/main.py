@@ -12,6 +12,7 @@ from tools import files
 COLOR_CATEGORIES = tag_categories.COLOR_CATEGORIES
 TAG_CATEGORIES = tag_categories.TAG_CATEGORIES
 
+# todo: autodownload the models using huggingface_hub
 
 def swin_v2v2_auto_tag(images_paths: list[str]):
     """
@@ -40,7 +41,7 @@ def swin_v2v3_auto_tag(images_paths: list[str]):
     from tools import swinv2_tagger_onnx
     model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["swinv2v3_folder"])
     if not os.path.exists(model_folder):
-        # checl the backup location
+        # check the backup location
         model_folder = os.path.join(os.path.join(parameters.MAIN_FOLDER, "HWtagger"), parameters.PARAMETERS["swinv2v3_folder"])
     temp_dict = swinv2_tagger_onnx.main(images_paths, model_folder)
     return temp_dict
