@@ -4,7 +4,7 @@ Here is a link to the release article on civitai: https://civitai.com/articles/5
 
 # Installation
 
-We don't know if it works with linux, we don't have access to a computer running Linux and an NVIDIA card directly, but it should work better if the dependencies are properly met.
+We don't know if it works with linux, we don't have access to a computer running Linux and an NVIDIA card directly, but it should work better if the dependencies are properly met. (Update: We have a few reports of it working with linux).
 
 ## Windows instructions
 
@@ -36,6 +36,8 @@ The installation should be done
 ### Running the tagger
 
 You can run the tagger by using the run.bat
+
+*for linux, you might need to change how the venv is activated from .venv\scripts\activate to .venv\bin\activate
 
 #### How to wiki link
 
