@@ -20,6 +20,9 @@ In the tutorial, it's also explained that to download the CUDNN installer you ne
 
 We assume you already have python and git installed.
 We both use python 3.10.11. Using this specific version of python is **HIGHLY** recommended because the last Tensorflow doesn't support GPUs on Windows starting from version 2.11, and xformers that is compatible with this version of tensorflow (2.10) requires python 3.10.
+Tensorflow is only used to handle the dataloader for the code that loads the taggers, scorer, etc ... For Windows, any tensorflow version between 2.0.0 to 2.10 should be fine to use, any tensorflow version above 2.10 doesn't directly support GPUs on Windows, that's why we recommend using python 3.10.X
+Even if you solve the tensorflow problem, you might hit a problem with xformers on windows, so this is the recommended version, because the compatibility between tensorflow, pytorch and xformers are resolved.
+I want to make it compatible with all versions, but xformers and CUDA are a pain in the ass.
 
 Clone the repository:
 `
