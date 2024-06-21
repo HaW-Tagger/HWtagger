@@ -19,7 +19,7 @@ In the tutorial, it's also explained that to download the CUDNN installer you ne
 ### Installation
 
 We assume you already have python and git installed.
-We both use python 3.10.11. Using this specific version of python is **HIGHLY** recommended because the last Tensorflow version that supports GPU on windows is compatible only up to python version 3.10.11.
+We both use python 3.10.11. Using this specific version of python is **HIGHLY** recommended because the last Tensorflow doesn't support GPUs on Windows starting from version 2.11, and xformers that is compatible with this version of tensorflow (2.10) requires python 3.10.
 
 Clone the repository:
 `
