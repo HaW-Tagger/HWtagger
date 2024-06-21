@@ -18,7 +18,8 @@ In the tutorial, it's also explained that to download the CUDNN installer you ne
 
 ### Installation
 
-We assume you already have python and git installed, We both use python 3.10.11, other versions may work but the used libraries may require specific versions.
+We assume you already have python and git installed.
+We both use python 3.10.11. Using this specific version of python is **HIGHLY** recommended because the last Tensorflow version that supports GPU on windows is compatible only up to python version 3.10.11.
 
 Clone the repository:
 `
