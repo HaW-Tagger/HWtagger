@@ -6,7 +6,7 @@ from PIL import Image, ImageQt
 from operator import itemgetter
 from clip import tokenize
 from collections import Counter
-
+import math
 from resources import parameters, tag_categories
 
 # ["3d", "anime coloring", "comic", "illustration", "not_painting"]
@@ -70,6 +70,8 @@ class ImageDatabase:
         self.image_height = None
         self.similarity_group: int = 0
         self.image_name = None
+        self.auto_tags_merged_confidence: dict[str: float] = {}
+        
         # todo: make similarity group into a tuple of the group then the average belong to the group
         
         # pixel related, one time calc done together
@@ -483,6 +485,14 @@ class ImageDatabase:
         self.update_review_tags()
         self.update_full_tags()
 
+    def filter_sentence(self):
+        """
+        Not yet implemented, will replace words from the caption/sentence to other things that are decided somewhere else
+        Returns:
+
+        """
+        return
+
     def refresh_unsafe_tags(self, all_accepted_tags):
         external_keys = list(self.external_tags.keys())
         for key in external_keys:
@@ -582,7 +592,18 @@ class ImageDatabase:
 
         """
         self.update_full_tags()
-        autotag_below_thresh = [t[0] for t in [x for x in self.auto_tags.values()] if t[1]<confidence]
+        
+        # build merged confidence if it wasn't made
+        if not self.auto_tags_merged_confidence: 
+            for _, tags in self.auto_tags.items():
+                for (tag, confidence) in tags:
+                    if tag not in self.auto_tags_merged_confidence:
+                        self.auto_tags_merged_confidence[tag] = confidence
+                    else: # take the higher confidence
+                        if self.auto_tags_merged_confidence[tag] < confidence:
+                            self.auto_tags_merged_confidence[tag] = confidence        
+                
+        autotag_below_thresh = [k for k, v in self.auto_tags_merged_confidence.items() if v < confidence]
         tags = [t for t in self.full_tags if t not in autotag_below_thresh]
         return tags
         
@@ -631,7 +652,7 @@ class ImageDatabase:
                     recommendations.append(recommended_tag)
         return recommendations
 
-    def get_character_conflicts_len(self):
+    def get_character_conflicts_len(self) -> int:
         """
         return the number of characters in an image tags that appear in the conflicts
         """
@@ -641,7 +662,8 @@ class ImageDatabase:
         if "KNOWN CHARACTERS 2" in self.filtered_review.keys():
             x += len(self.filtered_review["KNOWN CHARACTERS 2"])
         return x
-    def get_character_count(self):
+    
+    def get_character_count(self) -> int:
         """
         return the number of characters in an image tags
         """
@@ -675,8 +697,71 @@ class ImageDatabase:
             _ = self.get_brightness()
         return self.underlighting
 
+    def round_and_crop_to_bucket(self, x:float, reso_step=64) -> int:
+        x = int(x+0.5) # round to nearest int
+        return x - x%reso_step # crop to nearest multiple of reso_step
+        
+    
+    def get_bucket_size(self, base_height=1024, base_width=1024, bucket_steps=64) -> tuple[int, int]:
+        # we didn't impliment upscale in this bucket size cause it's not a feature we use
+        
+        # implimentation from kohya's bucket manager with some explanation of the math behind it
+        #base h x w is (1024, 1024) for XL and (512 x 512) or (768, 768) for SD1.5 and SD2
+        
+        if self.image_object is None:
+            img_obj = Image.open(self.path)
+            self.image_height = img_obj.height
+            self.image_width = img_obj.width
+            self.image_ratio = self.image_width/self.image_height
+        
+        
+        self.image_ratio = self.image_width / self.image_height
+        max_area = base_height * base_width
+        if self.image_width* self.image_height > max_area: # we need to rescale the image down
+            # explanation of the sqrt in kohya's code:
+            # (w, h) is the image resolution, s is the scale factor needed to resize the image
+            # (w_res, h_res) is the resolution used for the max area
+            # max_area = w_res * h_res and AR (aspect ratio) = w/h
+            # the max area is also equal to s*w * s*h, because the rescaled image needs to fit in the max area
+            # the goal is to find either s*w or s*h, which is one of the rescaled sizes 
+            # so we do s*w = sqrt(max_area * AR) = sqrt(s*w * s*h * w/h) = sqrt(s^2 * w^2)
+            
+            resized_width = math.sqrt(max_area * self.image_ratio)
+            resized_height = max_area / resized_width
+            assert abs(resized_width / resized_height - self.image_ratio) < 1e-2, "aspect is illegal"
+        
+            # at this point, resized_width and height are floats and we need to get the closest int value
+            
+            # bucket resolution by clipping based on width
+            b_width_rounded = self.round_and_crop_to_bucket(resized_width)
+            b_height_in_wr = self.round_and_crop_to_bucket(b_width_rounded / self.image_ratio)
+            ar_width_rounded = b_width_rounded / b_height_in_wr
+            
+            # bucket resolution by clipping based on height
+            b_height_rounded = self.round_and_crop_to_bucket(resized_height)
+            b_width_in_hr = self.round_and_crop_to_bucket(b_height_rounded * self.image_ratio)
+            ar_height_rounded = b_width_in_hr / b_height_rounded
+            
+            # check the error between the aspect ratio and choose the one that's smallest
+            # most times the resulting bucket size would be the same
+            if abs(ar_width_rounded - self.image_ratio) < abs(ar_height_rounded - self.image_ratio):
+                resized_size = (b_width_rounded, int(b_width_rounded / self.image_ratio + 0.5))
+            else:
+                resized_size = (int(b_height_rounded * self.image_ratio + 0.5), b_height_rounded)
+            
+        else:
+            resized_size = (self.image_width, self.image_height)
+        
+        # remove any outer pixels from the bottom and right of the image that doesn't match the bucket steps (usualy 64)
+        bucket_width = resized_size[0] - resized_size[0] % bucket_steps
+        bucket_height = resized_size[1] - resized_size[1] % bucket_steps
+        
+        bucketed_resolution = (bucket_width, bucket_height)
+        
+        return bucketed_resolution
 
     def get_brightness(self):
+        # returns a np.float
         if not self.brightness_value:
             def intensity_count(img_object):
                 # adapting code/theory from https://stackoverflow.com/a/58270890
@@ -910,7 +995,8 @@ class ImageDatabase:
         return result
 
     def get_search_tags(self) -> set[str]:
-        full_tags = self.get_full_tags().union({"source_"+x for x in self.external_tags.keys()}, {"source_"+x for x in self.auto_tags.keys()})
+        manual_source = {"source_manual"} if len(self.manual_tags) else {}
+        full_tags = self.get_full_tags().union({"source_"+x for x in self.external_tags.keys()}, {"source_"+x for x in self.auto_tags.keys()}, manual_source)
         return full_tags
           
 def percentile_to_label(percentile):

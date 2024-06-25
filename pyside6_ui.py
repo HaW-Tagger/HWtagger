@@ -28,7 +28,7 @@ import ImageTools
 from interfaces import interface
 from tools import files, images, main
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QSpinBox
 from PySide6.QtCore import Slot, Qt
 from PySide6.QtGui import QFont, QPalette, QColor, Qt
 
@@ -51,26 +51,35 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         #############################
         # DATABASE TOOLS
 
-        # left
+        # TOP BAR:
         self.pushButton_load_database.clicked.connect(self.load_database_button)
         self.pushButton_save_database.clicked.connect(self.save_database_button)
 
-        self.pushButton_create_txt_files.clicked.connect(self.create_txt_files_button)
-        self.pushButton_create_sample_toml.clicked.connect(self.create_sample_toml_button)
-
+        # LEFT:
+        
+        # Preprocessing tools
+        self.pushButton_convert_images_to_png.clicked.connect(self.convert_images_to_png_button)
+        self.pushButton_rename_images_md5.clicked.connect(self.rename_images_md5_button)
+        
+        # Database validation tools
         self.pushButton_images_existence.clicked.connect(self.images_existence_button)
         self.pushButton_filter_images.clicked.connect(self.filter_images_button)
         self.pushButton_reautotags.clicked.connect(self.reautotags_button)
         self.pushButton_rescores.clicked.connect(self.rescore_button)
         self.pushButton_reclassify.clicked.connect(self.reclassify_button)
-
+        self.pushButton_rehash.clicked.connect(self.rehash_button)
+        
+        # Group Management Tools
         self.pushButton_move_files_groupings.clicked.connect(self.move_files_groupings_button)
         self.pushButton_rebuild_groups.clicked.connect(self.rebuild_groups_button)
-        self.pushButton_rehash.clicked.connect(self.rehash_button)
-
+        
+        self.pushButton_load_and_merge_secondary.clicked.connect(self.merge_secondary_database)
+        
+        # RIGHT:
+        self.pushButton_create_txt_files.clicked.connect(self.create_txt_files_button)
+        self.pushButton_create_sample_toml.clicked.connect(self.create_sample_toml_button)
         self.pushButton_print_unknown_tags.clicked.connect(self.print_unknown_tags_button)
-        self.pushButton_convert_images_to_png.clicked.connect(self.convert_images_to_png_button)
-        self.pushButton_rename_images_md5.clicked.connect(self.rename_images_md5_button)
+        
 
         # checkpoint TOOLS TAB
         self.pushButton_rename_all.clicked.connect(self.rename_bad_names_to_md5)
@@ -234,7 +243,23 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             return False
         self.basic_database.trigger_tags["main_tags"] = [x.strip() for x in self.lineEdit_main_trigger_tags.text().split(",")]
         self.basic_database.trigger_tags["secondary_tags"] = [x.strip() for x in self.plainTextEdit_secondary_trigger_tags.toPlainText().split(",")]
-        self.basic_database.create_sample_toml()
+        
+        selected_resolution = self.comboBox_toml_resolution.currentText()
+        resolution_dict = {
+      		"SDXL":	(1024, 1024, 64), 
+			"SD1.5":(768, 768, 64), 
+			"SD1.0":(512,512, 64), 
+			"Custom":(parameters.PARAMETERS['custom_export_width'], 
+						parameters.PARAMETERS['custom_export_height'], 
+						parameters.PARAMETERS['custom_export_bucket_steps'])
+        }
+        if selected_resolution in resolution_dict:
+            res_info = resolution_dict[selected_resolution]
+        else:
+            parameters.log.error("Resolution string not found")
+            res_info = resolution_dict["SDXL"]
+
+        self.basic_database.create_sample_toml(res_info[0], res_info[1], res_info[2])    
 
     @Slot()
     def images_existence_button(self):
@@ -376,58 +401,117 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         return True
 
 
-    def merge_secondary(self): # load and merge database method
+    def merge_secondary_database(self): # load and merge database method
         # load old db and transfer data for files with matching md5
-        db_path = self.lineEdit_secondarydata.text().strip()
-        if db_path:
-            sec_db = Database(db_path)
-            update_counter = 0
-            if sec_db and self.basic_database:
-                sec_md5s = [img.md5 for img in sec_db.images]
-                current_md5 = [img.md5 for img in self.basic_database.images]
-                md5_intersect = set(current_md5).intersection(set(sec_md5s))
-                for md5 in md5_intersect:
-                    i = self.basic_database.index_of_image_by_md5(md5)
-                    current_full_path = self.basic_database.images[i].path
-                    current_groups = self.basic_database.images[i].group_names
-                    
-                    current_score_val = self.basic_database.images[i].score_value
-                    current_score_label = self.basic_database.images[i].score_label
-                    current_class_val = self.basic_database.images[i].classify_label
-                    current_class_label = self.basic_database.images[i].classify_value
-                    current_media = self.basic_database.images[i].media
-                    
-                    sec_i = sec_db.index_of_image_by_md5(md5)
-                    data_dict = sec_db.images[sec_i].get_saving_dict()
-                    
-                    # update non-tags
-                    self.basic_database.images[i].init_image_dict(data_dict, fast_load=True)
-                    self.basic_database.images[i].path = current_full_path
-                    self.basic_database.images[i].group_names = current_groups
-                    
-                    if current_score_label and not self.basic_database.images[i].score_label:
-                        self.basic_database.images[i].score_label = current_score_label
-                        self.basic_database.images[i].score_value = current_score_val
-                    
-                    if current_class_label and not self.basic_database.images[i].classify_label:
-                        self.basic_database.images[i].classify_label = current_class_val
-                        self.basic_database.images[i].classify_value = current_class_label 
-                    
-                    if current_media and not self.basic_database.images[i].media:
-                        self.basic_database.images[i].media = current_media
-                    
-                    # legacy, update score to new [0~1] if found
-                    old_score = self.basic_database.images[i].score_value
-                    if 1 >= current_score_val > 0 and current_score_val < old_score:
-                        self.basic_database.images[i].score_value = current_score_val
-                    
-                    update_counter+=1
-                parameters.log.info(f"Updated {update_counter} images in primary database from secondary database")
+        
+        db_path = self.lineEdit_secondary_db_folder.text().strip()
+        parameters.log.info("Loading and transfering tags from secondary database")
+        # check for any errors:
+        if not self.basic_database:
+            parameters.log.error("No Primary database loaded")
+            return
+        elif not db_path:
+            parameters.log.error("No secondary database location entered")
+            return
+        elif not files.check_database_exist(db_path):
+            parameters.log.error("Secondary database location doesn't have a database file") 
+            return
+        
+        # we passed the errors and load secondary db and start the tag transfer
+        sec_db = Database(db_path)
+        update_counter = 0
+        sec_md5s = [img.md5 for img in sec_db.images]
+        
+        # notify user if secondary database has trigger tags that they might want to know.
+        if sec_db.trigger_tags["main_tags"] or sec_db.trigger_tags["secondary_tags"]:
+            parameters.log.info("Secondary database had the following trigger tags, but they're merged as regualar tags, update primary database's trigger tags if needed")
+            parameters.log.info(f"PRIMARY: {sec_db.trigger_tags['main_tags']}, SECONDARY: {sec_db.trigger_tags['secondary_tags']}")
+            
 
+        primary_md5 = [img.md5 for img in self.basic_database.images]
+        md5_intersect = set(primary_md5).intersection(set(sec_md5s))
+        
+        # make a set of md5s preassigned in a group and use it to see if we need to add it to a new group
+        md5_preassigned_to_group = []
+        if self.basic_database.groups:
+            # check if primary db has the database and get a list of md5s that has a group
+            for group_name, group_content in self.basic_database.groups.items():
+                md5_preassigned_to_group += [md5_hash for md5_hash in group_content["images"] if md5_hash in md5_intersect]
+        md5_preassigned_to_group = set(md5_preassigned_to_group) # making a set for faster check
+        md5_not_assigned = [m for m in md5_intersect if m not in md5_preassigned_to_group]
+        
+        if md5_not_assigned and sec_db.groups: # if any md5 is unassigned and groups exists in secondary db
+            for group_name, group_content in sec_db.groups.items():
+                if group_content["images"]: #check if this secondary group is not empty
+                    
+                    if not group_name in self.basic_database.groups.keys(): # check if the group name exists
+                        self.basic_database.groups[group_name] =  {"images": []}
+                        
+                    self.basic_database.groups[group_name]["images"]+= [m for m in group_content["images"] if m in md5_not_assigned]
+             
+        if md5_intersect:
+            parameters.log.info(f"starting tag transfering for {len(md5_intersect)}")
+        # loop for transfering content one by one
+        for md5 in md5_intersect:
+            
+            # find the two indexes that have matching md5
+            i = self.basic_database.index_of_image_by_md5(md5)
+            sec_i = sec_db.index_of_image_by_md5(md5)
+            
+            # How the merge/export works: 
+            # before overwriting, save some values we might want to keep in temp variables
+            # then load the image data_dict that stores all the img data from secondary to primary, 
+            # then overwrite specific sections, like path, from the temp variable back into primary
+            
+            # temp variable that might be need overwriting
+            primary_full_path = self.basic_database.images[i].path
+            
+            primary_score_value = self.basic_database.images[i].score_value
+            primary_score_label = self.basic_database.images[i].score_label
+            primary_class_value = self.basic_database.images[i].classify_label
+            primary_class_label = self.basic_database.images[i].classify_value
+          
+            # temp original md5 and bool if it's the same with the base md5
+            primary_original_md5 = self.basic_database.images[i].original_md5
+            primary_two_md5 = self.basic_database.images[i].md5 != primary_original_md5
+            
+            data_dict = sec_db.images[sec_i].get_saving_dict()
+            print(data_dict)
+            # update non-tags
+            self.basic_database.images[i].init_image_dict(data_dict, fast_load=True)
+            
+            # at this stage basic database has the new values from the secondary database
+            
+            # update path
+            self.basic_database.images[i].path = primary_full_path
+         
+            # update score if necessary
+            sec_score_value = self.basic_database.images[i].score_value
+            if ((primary_score_label and not self.basic_database.images[i].score_label) or 
+                (sec_score_value > primary_score_value and 1 >= primary_score_value > 0)):
+                # if secondary doesn't have scores, use primary's scores
+                # OR
+                # lecagy, use the score that has the new values [0~1] if found
+                self.basic_database.images[i].score_label = primary_score_label
+                self.basic_database.images[i].score_value = primary_score_value
+            
+            # update class label if necessary 
+            if primary_class_label and not self.basic_database.images[i].classify_label:
+                self.basic_database.images[i].classify_label = primary_class_value
+                self.basic_database.images[i].classify_value = primary_class_label 
+
+            # update md5 if necessary, very rare, but if primary has older md5 and secondary doesn't have older md5
+            if primary_two_md5 and self.basic_database.images[i].original_md5 == self.basic_database.images[i].md5:
+                self.basic_database.images[i].original_md5 = primary_original_md5
             else:
-                parameters.log.error("Primary or secondary db is not loaded properly")
-        else:
-            parameters.log.error("No secondary dataset selected")
+                pass
+                # ignore the case if both primary and secondary have md5 != original_md5 because 
+                # there's no way of knowing which is the original. So we assume the secondary, which
+                # is intended to be the older database, to have the true original
+     
+            
+            update_counter+=1
+        parameters.log.info(f"Updated {update_counter} images in primary database from secondary database")
 
     def export_for_checkpoint(self):
         default_name = "meta_lat.json"
@@ -614,6 +698,17 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
 
     @Slot()
     def init_settings(self):
+        # remove wheel event
+        list_of_widget_to_have_their_wheel_event_removed = [
+            self.spin_font_size, self.spin_image_load_size, self.spin_swinv2_thresh, self.spin_swinv2_chara_thresh,
+            self.spin_swinv2_chara_count, self.check_swinv2_chara, self.spin_caformer_thresh, self.spin_max_batch_size,
+            self.spin_max_images_loader_thread, self.spin_max_4k_pixels_save_multiplier, self.spin_similarity_thresh,
+            self.comboBox_click_option, self.spinBox_custom_height, self.spinBox_custom_width, self.spinBox_custom_bucket_steps,
+            self.spinBox_sample_count
+        ]
+        for x in list_of_widget_to_have_their_wheel_event_removed:
+            x.wheelEvent = lambda event: None
+
         self.spin_font_size.setValue(parameters.PARAMETERS["font_size"])
         self.lineEdit_external_image_editor_path.setText(parameters.PARAMETERS["external_image_editor_path"])
         self.spin_image_load_size.setValue(parameters.PARAMETERS["image_load_size"])
@@ -623,6 +718,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spin_swinv2_chara_count.setValue(parameters.PARAMETERS["swinv2_character_count_threshold"])
         self.check_swinv2_chara.setChecked(parameters.PARAMETERS["swinv2_enable_character"])
         self.checkBox_enable_image_tooltip.setChecked(parameters.PARAMETERS["database_view_tooltip"])
+        self.checkBox_hide_sentence_in_view.setChecked(parameters.PARAMETERS["hide_sentence_in_view"])
         self.spin_caformer_thresh.setValue(parameters.PARAMETERS["caformer_threshold"])
         self.spin_max_batch_size.setValue(parameters.PARAMETERS["max_batch_size"])
         self.lineEdit_keep_token_tag_separator.setText(parameters.PARAMETERS["keep_token_tags_separator"])
@@ -637,6 +733,13 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.check_filter_remove_characters.setChecked(parameters.PARAMETERS["filter_remove_characters"])
         self.check_filter_remove_metadata.setChecked(parameters.PARAMETERS["filter_remove_metadata"])
         self.check_filter_remove_series.setChecked(parameters.PARAMETERS["filter_remove_series"])
+         
+        # settings for custom toml creation
+        self.spinBox_custom_height.setValue(parameters.PARAMETERS["custom_export_height"])
+        self.spinBox_custom_width.setValue(parameters.PARAMETERS["custom_export_width"])
+        self.spinBox_custom_bucket_steps.setValue(parameters.PARAMETERS["custom_export_bucket_steps"])
+        self.spinBox_sample_count.setValue(parameters.PARAMETERS["toml_sample_max_count"])
+         
          
         self.pushButton_save_settings.clicked.connect(self.save_settings_button)
         self.pushButton_cancel_settings.clicked.connect(self.init_settings)
@@ -653,6 +756,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spin_swinv2_chara_count.setValue(parameters.default_parameters['Taggers']["swinv2_character_count_threshold"])
         self.check_swinv2_chara.setChecked(parameters.default_parameters['Taggers']["swinv2_enable_character"])
         self.checkBox_enable_image_tooltip.setChecked(parameters.default_parameters['Interface']["database_view_tooltip"])
+        self.checkBox_hide_sentence_in_view.setChecked(parameters.default_parameters['Interface']["hide_sentence_in_view"])
         self.spin_caformer_thresh.setValue(parameters.default_parameters['Taggers']["caformer_threshold"])
         self.spin_max_batch_size.setValue(parameters.default_parameters['Taggers']["max_batch_size"])
         self.lineEdit_keep_token_tag_separator.setText(parameters.default_parameters['Database']["keep_token_tags_separator"])
@@ -667,12 +771,19 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.check_filter_remove_characters.setChecked(parameters.default_parameters['Filter']["filter_remove_characters"])
         self.check_filter_remove_metadata.setChecked(parameters.default_parameters['Filter']["filter_remove_metadata"])
         self.check_filter_remove_series.setChecked(parameters.default_parameters['Filter']["filter_remove_series"])
+        
+        # settings for custom toml creation
+        self.spinBox_custom_height.setValue(parameters.default_parameters['Exporting']["custom_export_height"])
+        self.spinBox_custom_width.setValue(parameters.default_parameters['Exporting']["custom_export_width"])
+        self.spinBox_custom_bucket_steps.setValue(parameters.default_parameters['Exporting']["custom_export_bucket_steps"])
+        self.spinBox_sample_count.setValue(parameters.default_parameters['Exporting']["toml_sample_max_count"])
 
     @Slot()
     def save_settings_button(self):
         parameters.PARAMETERS["font_size"] = self.spin_font_size.value()
         parameters.PARAMETERS["external_image_editor_path"] = self.lineEdit_external_image_editor_path.text().strip()
         parameters.PARAMETERS["database_view_tooltip"] = self.checkBox_enable_image_tooltip.isChecked()
+        parameters.PARAMETERS["hide_sentence_in_view"] = self.checkBox_hide_sentence_in_view.isChecked()
         parameters.PARAMETERS["image_load_size"] = self.spin_image_load_size.value()
         parameters.PARAMETERS["automatic_tagger"] = [parameters.AvailableTaggers[t.strip().upper()] for t in self.lineEdit_automatic_tagger.text().strip().split(",")]
         parameters.PARAMETERS["swinv2_threshold"] = self.spin_swinv2_thresh.value()
@@ -692,6 +803,12 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.PARAMETERS["filter_remove_characters"] = self.check_filter_remove_characters.isChecked()
         parameters.PARAMETERS["filter_remove_metadata"] = self.check_filter_remove_metadata.isChecked()
         parameters.PARAMETERS["filter_remove_series"] = self.check_filter_remove_series.isChecked()
+        
+        # settings for custom toml creation
+        parameters.PARAMETERS["custom_export_height"] = self.spinBox_custom_height.value()
+        parameters.PARAMETERS["custom_export_width"] = self.spinBox_custom_width.value()
+        parameters.PARAMETERS["custom_export_bucket_steps"] = self.spinBox_custom_bucket_steps.value()
+        parameters.PARAMETERS["toml_sample_max_count"] = self.spinBox_sample_count.value()
         
         parameters.save_config()
 

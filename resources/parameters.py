@@ -25,6 +25,8 @@ DATABASE_FILE_NAME = "database.json"
 IMAGES_EXT = (".png", ".jpeg", ".jpg", ".PNG", ".JPEG", ".JPG")
 MAIN_FOLDER = os.getcwd()
 
+
+
 default_discard_folder = str(",".join(["TO EDIT", "to edit", "DISCARDED", "discarded", "DUPLICATES", "duplicates", "ADJUST_RATIO", "adjust_ratio", "DISCARDED_ANIMATION"]))
 
 default_parameters = dict()
@@ -38,6 +40,7 @@ default_parameters['Interface'] = {
 	'image_load_size': 128,
 	'database_view_tooltip': True,
 	'double_click': True,
+	'hide_sentence_in_view': True,
 }
 default_parameters['Taggers'] = {
 	'automatic_tagger': [AvailableTaggers.SWINV2V3, AvailableTaggers.CAFORMER],
@@ -67,7 +70,12 @@ default_parameters['Filter'] = {
 	'filter_remove_metadata': False,
 	'filter_remove_characters': False
 }
-
+default_parameters['Exporting'] = {
+	'custom_export_height': 1024,
+	'custom_export_width': 1024,
+	'custom_export_bucket_steps':64,
+	'toml_sample_max_count': 5
+}
 
 def create_config():
 	default_config = configparser.ConfigParser()

@@ -21,10 +21,14 @@ def load_database(folder):
         db = json.load(f)
     return db
 
-def save_database(database: dict, folder_path):
-    add_history(folder_path)
-    with open(os.path.join(folder_path, parameters.DATABASE_FILE_NAME), 'w') as f:
+def save_database(database: dict, folder):
+    add_history(folder)
+    with open(os.path.join(folder, parameters.DATABASE_FILE_NAME), 'w') as f:
         json.dump(database, f)
+
+def check_database_exist(folder):
+    # return bool, if database.json exists
+    return os.path.exists(os.path.join(folder, parameters.DATABASE_FILE_NAME))
 
 def create_database_file(folder):
     with open(os.path.join(folder, parameters.DATABASE_FILE_NAME), 'w') as f:

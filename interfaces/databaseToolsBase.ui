@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>843</height>
+    <width>309</width>
+    <height>528</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>428</width>
-        <height>325</height>
+        <width>295</width>
+        <height>116</height>
        </rect>
       </property>
      </widget>
@@ -61,15 +61,15 @@
    <item row="3" column="0" colspan="3">
     <widget class="QToolBox" name="toolBox">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>430</width>
-        <height>384</height>
+        <width>284</width>
+        <height>260</height>
        </rect>
       </property>
       <attribute name="label">
@@ -140,35 +140,16 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
-        <widget class="QLineEdit" name="lineEdit_main_trigger_tag">
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="checkBox_use_sentence">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The tag order in main trigger tag(s) are unshuffled&lt;/p&gt;&lt;p&gt;The tag order in secondary trigger tag(s) is shuffled&lt;/p&gt;&lt;p&gt;The other tags are shuffled.&lt;/p&gt;&lt;p&gt;Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="placeholderText">
-          <string>Main Trigger Tag(s), Separate with &quot;,&quot;</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="checkBox_export_aesthetic_score">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lookup what aesthetic score values map to any quality tags, then export the aesthetic/quality tag with the other tags.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>include any sentences/caption in the export.  If no captions were set, they're not added to the exported file(s)</string>
          </property>
          <property name="text">
-          <string>Aesthetic scores</string>
+          <string>Sentence</string>
          </property>
          <property name="checked">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -185,26 +166,35 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
-        <widget class="QPushButton" name="pushButton_make_sample_toml">
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="checkBox_export_aesthetic_score">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to generate a toml that can be used by the trainer to generate the samples. It does some calculations to make a distribution weighted by the &amp;quot;complexity&amp;quot; of the image, and then it samples tags from some images until it fills the sample size (default is 10)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lookup what aesthetic score values map to any quality tags, then export the aesthetic/quality tag with the other tags.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Generate sample TOML</string>
+          <string>Aesthetic scores</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="checkBox_use_sentence">
-         <property name="toolTip">
-          <string>include any sentences/caption in the export.  If no captions were set, they're not added to the exported file(s)</string>
+       <item row="6" column="0">
+        <widget class="QLineEdit" name="lineEdit_main_trigger_tag">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
          </property>
-         <property name="text">
-          <string>Sentence</string>
-         </property>
-         <property name="checked">
+         <property name="acceptDrops">
           <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.&lt;/p&gt;&lt;p&gt;You can add a * to a tag and it will add all variants to the selection. Example: hole* will add black hole, white hole, sinkhole, whole grain, ...&lt;/p&gt;&lt;p&gt;The tag order in main trigger tag(s) are unshuffled&lt;/p&gt;&lt;p&gt;The tag order in secondary trigger tag(s) is shuffled&lt;/p&gt;&lt;p&gt;The other tags are shuffled.&lt;/p&gt;&lt;p&gt;Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="placeholderText">
+          <string>Main Trigger Tag(s), Separate with &quot;,&quot;</string>
          </property>
         </widget>
        </item>
@@ -223,15 +213,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.
-
-
-The tag order in main trigger tag(s) are unshuffled
-The tag order in secondary trigger tag(s) is shuffled
-The other tags are shuffled.
-
-
-Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can add a * to a tag and it will add all variants to the selection. Example: hole* will add black hole, white hole, sinkhole, whole grain, ...&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The tag order in main trigger tag(s) are unshuffled&lt;/p&gt;&lt;p&gt;The tag order in secondary trigger tag(s) is shuffled&lt;/p&gt;&lt;p&gt;The other tags are shuffled.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustIgnored</enum>
@@ -254,6 +236,62 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
          </property>
         </widget>
        </item>
+       <item row="10" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="pushButton_make_sample_toml">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to generate a toml that can be used by the trainer to generate the samples. It does some calculations to make a distribution weighted by the &amp;quot;complexity&amp;quot; of the image, and then it samples tags from some images until it fills the sample size (default is 10)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Generate sample TOML</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="comboBox_toml_resolution">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;this defines the base output resolution in the toml (using buckets)&lt;/p&gt;&lt;p&gt;SDXL: (1024, 1024)&lt;/p&gt;&lt;p&gt;SD1.5: (768, 768)&lt;/p&gt;&lt;p&gt;SD1.0: (512, 512)&lt;/p&gt;&lt;p&gt;Custom Resolution: (modify in setting)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>SDXL</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SD1.5</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SD1.0</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Custom</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="page_2">
@@ -261,28 +299,78 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>430</width>
-        <height>282</height>
+        <width>284</width>
+        <height>262</height>
        </rect>
       </property>
       <attribute name="label">
        <string>Batch Operations:</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="3" column="0">
-        <widget class="QPushButton" name="pushButton_auto_classify">
+       <item row="10" column="0">
+        <widget class="QPushButton" name="pushButton_refresh_tags_from_gelbooru_and_rule34">
          <property name="text">
-          <string>Auto-classifier</string>
+          <string>Refresh Tags from rule34 and gelbooru</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pushButton_apply_replacement_to_sentence">
+         <property name="toolTip">
+          <string>Currently doesn't do anything, will be implemented later</string>
+         </property>
+         <property name="text">
+          <string>Apply Replacement to Sentence</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0">
+        <widget class="QPushButton" name="pushButton_export_images">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will export the selection (check the apply to section above) to a new directory.&lt;br/&gt;&lt;br/&gt;A pop up will show up and ask for a directory and a group name&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database doesn't exist in the output location, then a new database is created with the same tags.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database exists, then the images are exported, and the tags are automatically added to the previously exisiting database under the entered group name.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Export Images</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
         <widget class="QPushButton" name="pushButton_reset_manual_score">
          <property name="toolTip">
           <string>reset all scores that were changed, and if the threshold are changed, will change the scores, without needing to restart the scorer</string>
          </property>
          <property name="text">
           <string>Reset manual score</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QPushButton" name="pushButton_purge_manual">
+         <property name="toolTip">
+          <string>remove all manually edited tags and reviewed conflicts</string>
+         </property>
+         <property name="text">
+          <string>Purge Manual</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QPushButton" name="pushButton_auto_classify">
+         <property name="toolTip">
+          <string>Use the classifer model and some images will have additional tags for sources if the confidence is high</string>
+         </property>
+         <property name="text">
+          <string>Auto-classifier</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="pushButton_only_tag_characters">
+         <property name="toolTip">
+          <string>Use the Swinv2-3 tagger and only extract identified characters</string>
+         </property>
+         <property name="text">
+          <string>Only auto-tag characters</string>
          </property>
         </widget>
        </item>
@@ -308,27 +396,17 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
          </property>
         </widget>
        </item>
-       <item row="12" column="0">
-        <widget class="QPushButton" name="pushButton_discard_image">
+       <item row="5" column="0">
+        <widget class="QPushButton" name="pushButton_auto_score">
          <property name="toolTip">
-          <string>discard the selected images by moving it to the discarded folder</string>
+          <string>use an auto scorer for scoring the image using your preferred scoring method</string>
          </property>
          <property name="text">
-          <string>Discard Image</string>
+          <string>Auto-aesthetic scorer</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
-        <widget class="QPushButton" name="pushButton_purge_manual">
-         <property name="toolTip">
-          <string>remove all manually edited tags and reviewed conflicts</string>
-         </property>
-         <property name="text">
-          <string>Purge Manual</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QPushButton" name="pushButton_auto_tag">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -350,27 +428,23 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QPushButton" name="pushButton_auto_score">
+       <item row="13" column="0">
+        <widget class="QPushButton" name="pushButton_discard_image">
          <property name="toolTip">
-          <string>use an auto scorer for scoring the image using your preferred scoring method</string>
+          <string>discard the selected images by moving it to the discarded folder</string>
          </property>
          <property name="text">
-          <string>Auto-aesthetic scorer</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QPushButton" name="pushButton_refresh_tags_from_gelbooru_and_rule34">
-         <property name="text">
-          <string>Refresh Tags from rule34 and gelbooru</string>
+          <string>Discard Images</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="pushButton_only_tag_characters">
-         <property name="text">
-          <string>Only auto-tag characters</string>
+       <item row="14" column="0">
+        <widget class="QLineEdit" name="lineEdit_tag_highlight">
+         <property name="toolTip">
+          <string>Enter any word and it'll be highlighted in the tag view, separate multiple tags with comma</string>
+         </property>
+         <property name="placeholderText">
+          <string>Enter text to highlight in tag view</string>
          </property>
         </widget>
        </item>
@@ -381,8 +455,8 @@ Here's an example with no token separator, 1 main trigger word, and 3 secondary 
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>430</width>
-        <height>259</height>
+        <width>297</width>
+        <height>227</height>
        </rect>
       </property>
       <attribute name="label">

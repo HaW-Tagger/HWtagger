@@ -165,6 +165,26 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.groupBox_5)
 
+        self.groupBox_10 = QGroupBox(self.tab)
+        self.groupBox_10.setObjectName(u"groupBox_10")
+        sizePolicy.setHeightForWidth(self.groupBox_10.sizePolicy().hasHeightForWidth())
+        self.groupBox_10.setSizePolicy(sizePolicy)
+        self.gridLayout_13 = QGridLayout(self.groupBox_10)
+        self.gridLayout_13.setObjectName(u"gridLayout_13")
+        self.gridLayout_13.setContentsMargins(-1, 12, -1, -1)
+        self.lineEdit_secondary_db_folder = QLineEdit(self.groupBox_10)
+        self.lineEdit_secondary_db_folder.setObjectName(u"lineEdit_secondary_db_folder")
+
+        self.gridLayout_13.addWidget(self.lineEdit_secondary_db_folder, 0, 0, 1, 1)
+
+        self.pushButton_load_and_merge_secondary = QPushButton(self.groupBox_10)
+        self.pushButton_load_and_merge_secondary.setObjectName(u"pushButton_load_and_merge_secondary")
+
+        self.gridLayout_13.addWidget(self.pushButton_load_and_merge_secondary, 1, 0, 1, 1)
+
+
+        self.verticalLayout_3.addWidget(self.groupBox_10)
+
         self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_3)
@@ -188,40 +208,10 @@ class Ui_MainWindow(object):
         self.gridLayout_5 = QGridLayout(self.groupBox_2)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.gridLayout_5.setContentsMargins(-1, 12, -1, -1)
-        self.checkBox_token_separator = QCheckBox(self.groupBox_2)
-        self.checkBox_token_separator.setObjectName(u"checkBox_token_separator")
+        self.checkBox_remove_tag_in_sentence = QCheckBox(self.groupBox_2)
+        self.checkBox_remove_tag_in_sentence.setObjectName(u"checkBox_remove_tag_in_sentence")
 
-        self.gridLayout_5.addWidget(self.checkBox_token_separator, 3, 0, 1, 1)
-
-        self.lineEdit_main_trigger_tags = QLineEdit(self.groupBox_2)
-        self.lineEdit_main_trigger_tags.setObjectName(u"lineEdit_main_trigger_tags")
-
-        self.gridLayout_5.addWidget(self.lineEdit_main_trigger_tags, 0, 0, 1, 2)
-
-        self.pushButton_create_sample_toml = QPushButton(self.groupBox_2)
-        self.pushButton_create_sample_toml.setObjectName(u"pushButton_create_sample_toml")
-
-        self.gridLayout_5.addWidget(self.pushButton_create_sample_toml, 6, 0, 1, 2)
-
-        self.checkBox_sentence = QCheckBox(self.groupBox_2)
-        self.checkBox_sentence.setObjectName(u"checkBox_sentence")
-
-        self.gridLayout_5.addWidget(self.checkBox_sentence, 2, 1, 1, 1)
-
-        self.checkBox_sentence_in_token_separator = QCheckBox(self.groupBox_2)
-        self.checkBox_sentence_in_token_separator.setObjectName(u"checkBox_sentence_in_token_separator")
-
-        self.gridLayout_5.addWidget(self.checkBox_sentence_in_token_separator, 3, 1, 1, 1)
-
-        self.pushButton_create_txt_files = QPushButton(self.groupBox_2)
-        self.pushButton_create_txt_files.setObjectName(u"pushButton_create_txt_files")
-
-        self.gridLayout_5.addWidget(self.pushButton_create_txt_files, 5, 0, 1, 2)
-
-        self.plainTextEdit_secondary_trigger_tags = QPlainTextEdit(self.groupBox_2)
-        self.plainTextEdit_secondary_trigger_tags.setObjectName(u"plainTextEdit_secondary_trigger_tags")
-
-        self.gridLayout_5.addWidget(self.plainTextEdit_secondary_trigger_tags, 1, 0, 1, 2)
+        self.gridLayout_5.addWidget(self.checkBox_remove_tag_in_sentence, 4, 1, 1, 1)
 
         self.checkBox_trigger_tags = QCheckBox(self.groupBox_2)
         self.checkBox_trigger_tags.setObjectName(u"checkBox_trigger_tags")
@@ -229,15 +219,70 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.checkBox_trigger_tags, 2, 0, 1, 1)
 
-        self.checkBox_remove_tag_in_sentence = QCheckBox(self.groupBox_2)
-        self.checkBox_remove_tag_in_sentence.setObjectName(u"checkBox_remove_tag_in_sentence")
+        self.plainTextEdit_secondary_trigger_tags = QPlainTextEdit(self.groupBox_2)
+        self.plainTextEdit_secondary_trigger_tags.setObjectName(u"plainTextEdit_secondary_trigger_tags")
 
-        self.gridLayout_5.addWidget(self.checkBox_remove_tag_in_sentence, 4, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.plainTextEdit_secondary_trigger_tags, 1, 0, 1, 2)
 
         self.checkBox_aesthetic_score = QCheckBox(self.groupBox_2)
         self.checkBox_aesthetic_score.setObjectName(u"checkBox_aesthetic_score")
 
         self.gridLayout_5.addWidget(self.checkBox_aesthetic_score, 4, 0, 1, 1)
+
+        self.checkBox_token_separator = QCheckBox(self.groupBox_2)
+        self.checkBox_token_separator.setObjectName(u"checkBox_token_separator")
+
+        self.gridLayout_5.addWidget(self.checkBox_token_separator, 3, 0, 1, 1)
+
+        self.checkBox_sentence_in_token_separator = QCheckBox(self.groupBox_2)
+        self.checkBox_sentence_in_token_separator.setObjectName(u"checkBox_sentence_in_token_separator")
+
+        self.gridLayout_5.addWidget(self.checkBox_sentence_in_token_separator, 3, 1, 1, 1)
+
+        self.checkBox_sentence = QCheckBox(self.groupBox_2)
+        self.checkBox_sentence.setObjectName(u"checkBox_sentence")
+
+        self.gridLayout_5.addWidget(self.checkBox_sentence, 2, 1, 1, 1)
+
+        self.lineEdit_main_trigger_tags = QLineEdit(self.groupBox_2)
+        self.lineEdit_main_trigger_tags.setObjectName(u"lineEdit_main_trigger_tags")
+
+        self.gridLayout_5.addWidget(self.lineEdit_main_trigger_tags, 0, 0, 1, 2)
+
+        self.pushButton_create_txt_files = QPushButton(self.groupBox_2)
+        self.pushButton_create_txt_files.setObjectName(u"pushButton_create_txt_files")
+
+        self.gridLayout_5.addWidget(self.pushButton_create_txt_files, 5, 0, 1, 2)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(-1, -1, -1, 0)
+        self.pushButton_create_sample_toml = QPushButton(self.groupBox_2)
+        self.pushButton_create_sample_toml.setObjectName(u"pushButton_create_sample_toml")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.pushButton_create_sample_toml.sizePolicy().hasHeightForWidth())
+        self.pushButton_create_sample_toml.setSizePolicy(sizePolicy1)
+
+        self.horizontalLayout_2.addWidget(self.pushButton_create_sample_toml)
+
+        self.comboBox_toml_resolution = QComboBox(self.groupBox_2)
+        self.comboBox_toml_resolution.addItem("")
+        self.comboBox_toml_resolution.addItem("")
+        self.comboBox_toml_resolution.addItem("")
+        self.comboBox_toml_resolution.addItem("")
+        self.comboBox_toml_resolution.setObjectName(u"comboBox_toml_resolution")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.comboBox_toml_resolution.sizePolicy().hasHeightForWidth())
+        self.comboBox_toml_resolution.setSizePolicy(sizePolicy2)
+
+        self.horizontalLayout_2.addWidget(self.comboBox_toml_resolution)
+
+
+        self.gridLayout_5.addLayout(self.horizontalLayout_2, 6, 0, 1, 2)
 
 
         self.verticalLayout_4.addWidget(self.groupBox_2)
@@ -335,29 +380,9 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1032, 814))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1015, 808))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.horizontalLayout_15 = QHBoxLayout()
-        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
-        self.pushButton_cancel_settings = QPushButton(self.scrollAreaWidgetContents)
-        self.pushButton_cancel_settings.setObjectName(u"pushButton_cancel_settings")
-
-        self.horizontalLayout_15.addWidget(self.pushButton_cancel_settings)
-
-        self.pushButton_reload_default = QPushButton(self.scrollAreaWidgetContents)
-        self.pushButton_reload_default.setObjectName(u"pushButton_reload_default")
-
-        self.horizontalLayout_15.addWidget(self.pushButton_reload_default)
-
-        self.pushButton_save_settings = QPushButton(self.scrollAreaWidgetContents)
-        self.pushButton_save_settings.setObjectName(u"pushButton_save_settings")
-
-        self.horizontalLayout_15.addWidget(self.pushButton_save_settings)
-
-
-        self.gridLayout.addLayout(self.horizontalLayout_15, 4, 0, 1, 1)
-
         self.groupBox = QGroupBox(self.scrollAreaWidgetContents)
         self.groupBox.setObjectName(u"groupBox")
         self.verticalLayout_5 = QVBoxLayout(self.groupBox)
@@ -420,6 +445,11 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_5.addLayout(self.horizontalLayout)
+
+        self.checkBox_hide_sentence_in_view = QCheckBox(self.groupBox)
+        self.checkBox_hide_sentence_in_view.setObjectName(u"checkBox_hide_sentence_in_view")
+
+        self.verticalLayout_5.addWidget(self.checkBox_hide_sentence_in_view)
 
 
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
@@ -525,9 +555,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
         self.lineEdit_external_image_editor_path = QLineEdit(self.groupBox_8)
         self.lineEdit_external_image_editor_path.setObjectName(u"lineEdit_external_image_editor_path")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.lineEdit_external_image_editor_path.sizePolicy().hasHeightForWidth())
         self.lineEdit_external_image_editor_path.setSizePolicy(sizePolicy1)
 
@@ -557,6 +584,61 @@ class Ui_MainWindow(object):
         self.check_filter_remove_characters.setObjectName(u"check_filter_remove_characters")
 
         self.verticalLayout_7.addWidget(self.check_filter_remove_characters)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(-1, -1, -1, 0)
+        self.horizontalLayout_18 = QHBoxLayout()
+        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
+        self.spinBox_custom_height = QSpinBox(self.groupBox_8)
+        self.spinBox_custom_height.setObjectName(u"spinBox_custom_height")
+        self.spinBox_custom_height.setMaximum(4096)
+        self.spinBox_custom_height.setValue(1024)
+
+        self.horizontalLayout_18.addWidget(self.spinBox_custom_height)
+
+        self.spinBox_custom_width = QSpinBox(self.groupBox_8)
+        self.spinBox_custom_width.setObjectName(u"spinBox_custom_width")
+        self.spinBox_custom_width.setMaximum(4096)
+        self.spinBox_custom_width.setValue(1024)
+
+        self.horizontalLayout_18.addWidget(self.spinBox_custom_width)
+
+        self.spinBox_custom_bucket_steps = QSpinBox(self.groupBox_8)
+        self.spinBox_custom_bucket_steps.setObjectName(u"spinBox_custom_bucket_steps")
+        self.spinBox_custom_bucket_steps.setMinimum(1)
+        self.spinBox_custom_bucket_steps.setMaximum(128)
+        self.spinBox_custom_bucket_steps.setValue(64)
+
+        self.horizontalLayout_18.addWidget(self.spinBox_custom_bucket_steps)
+
+
+        self.horizontalLayout_5.addLayout(self.horizontalLayout_18)
+
+        self.label_15 = QLabel(self.groupBox_8)
+        self.label_15.setObjectName(u"label_15")
+
+        self.horizontalLayout_5.addWidget(self.label_15)
+
+
+        self.verticalLayout_7.addLayout(self.horizontalLayout_5)
+
+        self.horizontalLayout_20 = QHBoxLayout()
+        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
+        self.horizontalLayout_20.setContentsMargins(-1, -1, -1, 10)
+        self.spinBox_sample_count = QSpinBox(self.groupBox_8)
+        self.spinBox_sample_count.setObjectName(u"spinBox_sample_count")
+        self.spinBox_sample_count.setValue(5)
+
+        self.horizontalLayout_20.addWidget(self.spinBox_sample_count)
+
+        self.label_16 = QLabel(self.groupBox_8)
+        self.label_16.setObjectName(u"label_16")
+
+        self.horizontalLayout_20.addWidget(self.label_16)
+
+
+        self.verticalLayout_7.addLayout(self.horizontalLayout_20)
 
 
         self.gridLayout.addWidget(self.groupBox_8, 2, 0, 1, 1)
@@ -668,6 +750,26 @@ class Ui_MainWindow(object):
 
         self.gridLayout_15.addWidget(self.scrollArea, 0, 0, 1, 1)
 
+        self.horizontalLayout_15 = QHBoxLayout()
+        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
+        self.pushButton_cancel_settings = QPushButton(self.tab_2)
+        self.pushButton_cancel_settings.setObjectName(u"pushButton_cancel_settings")
+
+        self.horizontalLayout_15.addWidget(self.pushButton_cancel_settings)
+
+        self.pushButton_reload_default = QPushButton(self.tab_2)
+        self.pushButton_reload_default.setObjectName(u"pushButton_reload_default")
+
+        self.horizontalLayout_15.addWidget(self.pushButton_reload_default)
+
+        self.pushButton_save_settings = QPushButton(self.tab_2)
+        self.pushButton_save_settings.setObjectName(u"pushButton_save_settings")
+
+        self.horizontalLayout_15.addWidget(self.pushButton_save_settings)
+
+
+        self.gridLayout_15.addLayout(self.horizontalLayout_15, 1, 0, 1, 1)
+
         self.tabWidget.addTab(self.tab_2, "")
 
         self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
@@ -699,7 +801,7 @@ class Ui_MainWindow(object):
         self.pushButton_save_database.setToolTip(QCoreApplication.translate("MainWindow", u"save the database that is in memory", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_save_database.setText(QCoreApplication.translate("MainWindow", u"Save Database", None))
-        self.groupBox_6.setTitle(QCoreApplication.translate("MainWindow", u"Pre Process Tools", None))
+        self.groupBox_6.setTitle(QCoreApplication.translate("MainWindow", u"Pre-Processing Tools", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_convert_images_to_png.setToolTip(QCoreApplication.translate("MainWindow", u"use the path above", None))
 #endif // QT_CONFIG(tooltip)
@@ -708,7 +810,7 @@ class Ui_MainWindow(object):
         self.pushButton_rename_images_md5.setToolTip(QCoreApplication.translate("MainWindow", u"use the path above", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_rename_images_md5.setText(QCoreApplication.translate("MainWindow", u"Rename images to MD5 (destructive)", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Correct Database", None))
+        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Database Validation Tools", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_rescores.setToolTip(QCoreApplication.translate("MainWindow", u"only change the score tags for existing images in the dataset", None))
 #endif // QT_CONFIG(tooltip)
@@ -742,48 +844,65 @@ class Ui_MainWindow(object):
         self.pushButton_rebuild_groups.setToolTip(QCoreApplication.translate("MainWindow", u"delete all groups and add images to groups following the directory structure", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_rebuild_groups.setText(QCoreApplication.translate("MainWindow", u"Rebuild groups (doesn't move images, remove actual groups)", None))
+        self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"External Database Tools", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_secondary_db_folder.setToolTip(QCoreApplication.translate("MainWindow", u"Enter the location of the secondary database", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_secondary_db_folder.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter secondary database folder", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_load_and_merge_secondary.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>There's two database at play.</p><p><br/></p><p>The primary database loaded at the top and the secondary database entered right above this button.<br/><br/>This will search for any duplicate md5 hashes in both databases and pull tags from the secondary database and update the content of the primary database.<br/><br/>This is useful if you're importing tags from a previously cleaned database</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_load_and_merge_secondary.setText(QCoreApplication.translate("MainWindow", u"Load secondary database and merge tags", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Output Captions/Tags", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_remove_tag_in_sentence.setToolTip(QCoreApplication.translate("MainWindow", u"remove tags if in sentence, so no repetitive", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_remove_tag_in_sentence.setText(QCoreApplication.translate("MainWindow", u"Remove tag if included in sentence", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_trigger_tags.setToolTip(QCoreApplication.translate("MainWindow", u"put trigger tags at the front", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_trigger_tags.setText(QCoreApplication.translate("MainWindow", u"Trigger Tags", None))
+#if QT_CONFIG(tooltip)
+        self.plainTextEdit_secondary_trigger_tags.setToolTip(QCoreApplication.translate("MainWindow", u"tags separated by commas that will be put at the front, after the main trigger tags and that will have their order randomized", None))
+#endif // QT_CONFIG(tooltip)
+        self.plainTextEdit_secondary_trigger_tags.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Secondary Trigger Tag(s), Separate with \",\"", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_aesthetic_score.setToolTip(QCoreApplication.translate("MainWindow", u"put the aesthetic score in the final output", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_aesthetic_score.setText(QCoreApplication.translate("MainWindow", u"Aesthetic Score", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_token_separator.setToolTip(QCoreApplication.translate("MainWindow", u"use the token separator to separate the trigger tags from the rest", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_token_separator.setText(QCoreApplication.translate("MainWindow", u"Token Separator", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_sentence_in_token_separator.setToolTip(QCoreApplication.translate("MainWindow", u"put the sentence in the token separator", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_sentence_in_token_separator.setText(QCoreApplication.translate("MainWindow", u"Sentence in token separator", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_sentence.setToolTip(QCoreApplication.translate("MainWindow", u"output the sentence in the tags", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_sentence.setText(QCoreApplication.translate("MainWindow", u"Sentence", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_main_trigger_tags.setToolTip(QCoreApplication.translate("MainWindow", u"tags separated by commas that will be put at the front, the list is ordered", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_main_trigger_tags.setInputMask("")
         self.lineEdit_main_trigger_tags.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Main Trigger Tag(s), Separate with \",\"", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_create_sample_toml.setToolTip(QCoreApplication.translate("MainWindow", u"generate example prompts from the dataset", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_create_sample_toml.setText(QCoreApplication.translate("MainWindow", u"Create sample TOML", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_sentence.setToolTip(QCoreApplication.translate("MainWindow", u"output the sentence in the tags", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_sentence.setText(QCoreApplication.translate("MainWindow", u"Sentence", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_sentence_in_token_separator.setToolTip(QCoreApplication.translate("MainWindow", u"put the sentence in the token separator", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_sentence_in_token_separator.setText(QCoreApplication.translate("MainWindow", u"Sentence in token separator", None))
-#if QT_CONFIG(tooltip)
         self.pushButton_create_txt_files.setToolTip(QCoreApplication.translate("MainWindow", u"create txt files with the settings from the left, txt files are named after the image path", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_create_txt_files.setText(QCoreApplication.translate("MainWindow", u"Create .txt Files", None))
 #if QT_CONFIG(tooltip)
-        self.plainTextEdit_secondary_trigger_tags.setToolTip(QCoreApplication.translate("MainWindow", u"tags separated by commas that will be put at the front, after the main trigger tags and that will have their order randomized", None))
+        self.pushButton_create_sample_toml.setToolTip(QCoreApplication.translate("MainWindow", u"do some filtering and generate example prompts based off the dataset, and makes a toml file (currently using the pony template) in the database location", None))
 #endif // QT_CONFIG(tooltip)
-        self.plainTextEdit_secondary_trigger_tags.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Secondary Trigger Tag(s), Separate with \",\"", None))
+        self.pushButton_create_sample_toml.setText(QCoreApplication.translate("MainWindow", u"Create sample TOML", None))
+        self.comboBox_toml_resolution.setItemText(0, QCoreApplication.translate("MainWindow", u"SDXL", None))
+        self.comboBox_toml_resolution.setItemText(1, QCoreApplication.translate("MainWindow", u"SD1.5", None))
+        self.comboBox_toml_resolution.setItemText(2, QCoreApplication.translate("MainWindow", u"SD1.0", None))
+        self.comboBox_toml_resolution.setItemText(3, QCoreApplication.translate("MainWindow", u"Custom", None))
+
 #if QT_CONFIG(tooltip)
-        self.checkBox_trigger_tags.setToolTip(QCoreApplication.translate("MainWindow", u"put trigger tags at the front", None))
+        self.comboBox_toml_resolution.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>this defines the base output resolution in the toml (using buckets)</p><p>SDXL: (1024, 1024)</p><p>SD1.5: (768, 768)</p><p>SD1.0: (512, 512)</p><p>Custom Resolution: (modify in setting)</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_trigger_tags.setText(QCoreApplication.translate("MainWindow", u"Trigger Tags", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_remove_tag_in_sentence.setToolTip(QCoreApplication.translate("MainWindow", u"remove tags if in sentence, so no repetitive", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_remove_tag_in_sentence.setText(QCoreApplication.translate("MainWindow", u"Remove tag if included in sentence", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_aesthetic_score.setToolTip(QCoreApplication.translate("MainWindow", u"put the aesthetic score in the final output", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_aesthetic_score.setText(QCoreApplication.translate("MainWindow", u"Aesthetic Score", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_print_unknown_tags.setToolTip(QCoreApplication.translate("MainWindow", u"useful for making the tag categories csv, prints tags that are known by tagger, that are not listed in the tag category", None))
 #endif // QT_CONFIG(tooltip)
@@ -816,18 +935,6 @@ class Ui_MainWindow(object):
         self.pushButton_view_database.setText(QCoreApplication.translate("MainWindow", u"View Database", None))
         self.lineEdit_view_database_path.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter Database Directory", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.databasesViewTab), QCoreApplication.translate("MainWindow", u"View Databases", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_cancel_settings.setToolTip(QCoreApplication.translate("MainWindow", u"cancel the changes, doesn't restore to defaults, it only restore the previous setting, if yyou want to restore the default, delete the .ini file that acts as the config", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_cancel_settings.setText(QCoreApplication.translate("MainWindow", u"Cancel", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_reload_default.setToolTip(QCoreApplication.translate("MainWindow", u"Load the default settings, but doesn't save them", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_reload_default.setText(QCoreApplication.translate("MainWindow", u"Load Default Settings", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_save_settings.setToolTip(QCoreApplication.translate("MainWindow", u"save the settings for the changes to take effects, either relaunch the app or, in the case of the database view, reopen the database", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_save_settings.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"UI", None))
 #if QT_CONFIG(tooltip)
         self.label.setToolTip(QCoreApplication.translate("MainWindow", u"font size", None))
@@ -842,6 +949,7 @@ class Ui_MainWindow(object):
         self.comboBox_click_option.setItemText(1, QCoreApplication.translate("MainWindow", u"Double Click", None))
 
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Tag Edit Click Count", None))
+        self.checkBox_hide_sentence_in_view.setText(QCoreApplication.translate("MainWindow", u"Hide Sentence in the Database View", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("MainWindow", u"Misc", None))
 #if QT_CONFIG(tooltip)
         self.label_8.setToolTip(QCoreApplication.translate("MainWindow", u"used for the taggers, recommended 8 but if the VRAM is lacking we recommend to reduce it", None))
@@ -877,6 +985,8 @@ class Ui_MainWindow(object):
         self.check_filter_remove_series.setText(QCoreApplication.translate("MainWindow", u"Filter remove series", None))
         self.check_filter_remove_metadata.setText(QCoreApplication.translate("MainWindow", u"Filter remove metadata", None))
         self.check_filter_remove_characters.setText(QCoreApplication.translate("MainWindow", u"Filter remove characters", None))
+        self.label_15.setText(QCoreApplication.translate("MainWindow", u"Custom WxH and bucket steps for sample toml", None))
+        self.label_16.setText(QCoreApplication.translate("MainWindow", u"Prompt count for sample toml", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("MainWindow", u"Tagger", None))
 #if QT_CONFIG(tooltip)
         self.label_3.setToolTip(QCoreApplication.translate("MainWindow", u"if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2", None))
@@ -903,6 +1013,18 @@ class Ui_MainWindow(object):
         self.label_7.setToolTip(QCoreApplication.translate("MainWindow", u"threshold for tags to be added by caformer", None))
 #endif // QT_CONFIG(tooltip)
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"Caformer Threshold", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_cancel_settings.setToolTip(QCoreApplication.translate("MainWindow", u"cancel the changes, doesn't restore to defaults, it only restore the previous setting, if yyou want to restore the default, delete the .ini file that acts as the config", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_cancel_settings.setText(QCoreApplication.translate("MainWindow", u"Cancel", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_reload_default.setToolTip(QCoreApplication.translate("MainWindow", u"Load the default settings, but doesn't save them", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_reload_default.setText(QCoreApplication.translate("MainWindow", u"Load Default Settings", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_save_settings.setToolTip(QCoreApplication.translate("MainWindow", u"save the settings for the changes to take effects, either relaunch the app or, in the case of the database view, reopen the database", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_save_settings.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Settings", None))
     # retranslateUi
 

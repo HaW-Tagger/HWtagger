@@ -27,9 +27,23 @@ class Ui_Form(object):
         Form.resize(508, 844)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(3, 3, 3, 3)
         self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setSpacing(6)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
+        self.pushButton_deleted_group = QPushButton(Form)
+        self.pushButton_deleted_group.setObjectName(u"pushButton_deleted_group")
+
+        self.horizontalLayout.addWidget(self.pushButton_deleted_group)
+
+        self.pushButton_add_group = QPushButton(Form)
+        self.pushButton_add_group.setObjectName(u"pushButton_add_group")
+        icon = QIcon(QIcon.fromTheme(u"list-add"))
+        self.pushButton_add_group.setIcon(icon)
+
+        self.horizontalLayout.addWidget(self.pushButton_add_group)
+
         self.comboBox_group_name = QComboBox(Form)
         self.comboBox_group_name.setObjectName(u"comboBox_group_name")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -44,30 +58,33 @@ class Ui_Form(object):
 
         self.horizontalLayout.addWidget(self.comboBox_group_name)
 
-        self.pushButton_add_group = QPushButton(Form)
-        self.pushButton_add_group.setObjectName(u"pushButton_add_group")
-        icon = QIcon(QIcon.fromTheme(u"list-add"))
-        self.pushButton_add_group.setIcon(icon)
 
-        self.horizontalLayout.addWidget(self.pushButton_add_group)
+        self.verticalLayout.addLayout(self.horizontalLayout)
 
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.comboBox_sort_type = QComboBox(Form)
         self.comboBox_sort_type.setObjectName(u"comboBox_sort_type")
 
-        self.horizontalLayout.addWidget(self.comboBox_sort_type)
+        self.horizontalLayout_5.addWidget(self.comboBox_sort_type)
 
         self.checkBox_reverse = QCheckBox(Form)
         self.checkBox_reverse.setObjectName(u"checkBox_reverse")
 
-        self.horizontalLayout.addWidget(self.checkBox_reverse)
+        self.horizontalLayout_5.addWidget(self.checkBox_reverse)
+
+        self.checkBox_include_sentence = QCheckBox(Form)
+        self.checkBox_include_sentence.setObjectName(u"checkBox_include_sentence")
+
+        self.horizontalLayout_5.addWidget(self.checkBox_include_sentence)
 
         self.lineEdit_tag_search = QLineEdit(Form)
         self.lineEdit_tag_search.setObjectName(u"lineEdit_tag_search")
 
-        self.horizontalLayout.addWidget(self.lineEdit_tag_search)
+        self.horizontalLayout_5.addWidget(self.lineEdit_tag_search)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
 
         self.listView_groups = QListView(Form)
         self.listView_groups.setObjectName(u"listView_groups")
@@ -76,38 +93,36 @@ class Ui_Form(object):
 
         self.verticalLayout.addWidget(self.listView_groups)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.pushButton_add_selection_to_group = QPushButton(Form)
-        self.pushButton_add_selection_to_group.setObjectName(u"pushButton_add_selection_to_group")
-
-        self.horizontalLayout_2.addWidget(self.pushButton_add_selection_to_group)
-
-        self.pushButton_remove_selection_from_group = QPushButton(Form)
-        self.pushButton_remove_selection_from_group.setObjectName(u"pushButton_remove_selection_from_group")
-
-        self.horizontalLayout_2.addWidget(self.pushButton_remove_selection_from_group)
-
-        self.pushButton_deleted_group = QPushButton(Form)
-        self.pushButton_deleted_group.setObjectName(u"pushButton_deleted_group")
-
-        self.horizontalLayout_2.addWidget(self.pushButton_deleted_group)
-
-        self.checkBox_toggle_ungrouped_images = QCheckBox(Form)
-        self.checkBox_toggle_ungrouped_images.setObjectName(u"checkBox_toggle_ungrouped_images")
-        self.checkBox_toggle_ungrouped_images.setTristate(False)
-
-        self.horizontalLayout_2.addWidget(self.checkBox_toggle_ungrouped_images)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
-
         self.listView_other = QListView(Form)
         self.listView_other.setObjectName(u"listView_other")
         self.listView_other.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.listView_other.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.verticalLayout.addWidget(self.listView_other)
+
+        self.widget = QWidget(Form)
+        self.widget.setObjectName(u"widget")
+        self.horizontalLayout_2 = QHBoxLayout(self.widget)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.pushButton_add_selection_to_group = QPushButton(self.widget)
+        self.pushButton_add_selection_to_group.setObjectName(u"pushButton_add_selection_to_group")
+
+        self.horizontalLayout_2.addWidget(self.pushButton_add_selection_to_group)
+
+        self.pushButton_remove_selection_from_group = QPushButton(self.widget)
+        self.pushButton_remove_selection_from_group.setObjectName(u"pushButton_remove_selection_from_group")
+
+        self.horizontalLayout_2.addWidget(self.pushButton_remove_selection_from_group)
+
+        self.checkBox_toggle_ungrouped_images = QCheckBox(self.widget)
+        self.checkBox_toggle_ungrouped_images.setObjectName(u"checkBox_toggle_ungrouped_images")
+        self.checkBox_toggle_ungrouped_images.setTristate(False)
+
+        self.horizontalLayout_2.addWidget(self.checkBox_toggle_ungrouped_images)
+
+
+        self.verticalLayout.addWidget(self.widget)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
@@ -144,12 +159,16 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
 #if QT_CONFIG(tooltip)
-        self.comboBox_group_name.setToolTip(QCoreApplication.translate("Form", u"list of groups", None))
+        self.pushButton_deleted_group.setToolTip(QCoreApplication.translate("Form", u"delete the group (doesn't delete the images)", None))
 #endif // QT_CONFIG(tooltip)
+        self.pushButton_deleted_group.setText(QCoreApplication.translate("Form", u"Delete group", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_add_group.setToolTip(QCoreApplication.translate("Form", u"create a new group", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_add_group.setText(QCoreApplication.translate("Form", u"Add Group", None))
+#if QT_CONFIG(tooltip)
+        self.comboBox_group_name.setToolTip(QCoreApplication.translate("Form", u"list of groups", None))
+#endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
         self.comboBox_sort_type.setToolTip(QCoreApplication.translate("Form", u"sorting images view, some sorting requires calculations", None))
 #endif // QT_CONFIG(tooltip)
@@ -157,8 +176,9 @@ class Ui_Form(object):
         self.checkBox_reverse.setToolTip(QCoreApplication.translate("Form", u"reverse the sort", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_reverse.setText(QCoreApplication.translate("Form", u"Reverse", None))
+        self.checkBox_include_sentence.setText(QCoreApplication.translate("Form", u"Sentence", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_tag_search.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Enter text to search for tags:</p><p>By default, it search for any partial matches</p><p>- use the star, &quot;*&quot;, as a wildcard for any number of characters in that position. can be placed in between, before, or after other characters</p><p>- place quotation marks, &quot; &quot;, around the text for exact keyword search</p><p>- use the minus sign, &quot;-&quot;, in front of the text to remove images with that keyword</p><p>- search source_&lt;source name&gt; to filter where the tags came from. Ex: source_swin, source_caformer, source_danbooru, ...</p><p>- special seach keywords (we only have 1 tag rn): &quot;2persons&quot; --&gt; search for images with tag combinations that implies 2 people in the image, ex: &quot;1boy&quot; + &quot;1girl&quot;, &quot;2girls&quot;, &quot;2boys&quot;, etc</p><p>Separate multiple tag searches using &quot;,&quot;</p></body></html>", None))
+        self.lineEdit_tag_search.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Enter text to search for tags:</p><p>By default, it search for any partial matches</p><p>- use the star, &quot;*&quot;, as a wildcard for any number of characters in that position. can be placed in between, before, or after other characters</p><p>- place quotation marks, &quot; &quot;, around the text for exact keyword search</p><p>- use the minus sign, &quot;-&quot;, in front of the text to remove images with that keyword</p><p>- search source_&lt;source name&gt; to filter where the tags came from. Ex: source_swin, source_caformer, source_danbooru, source_manual ...</p><p>- special seach keywords (we only have 1 tag rn): &quot;2persons&quot; --&gt; search for images with tag combinations that implies 2 people in the image, ex: &quot;1boy&quot; + &quot;1girl&quot;, &quot;2girls&quot;, &quot;2boys&quot;, etc</p><p>Separate multiple tag searches using &quot;,&quot;</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_tag_search.setPlaceholderText(QCoreApplication.translate("Form", u"Enter Tag(s) to Search", None))
 #if QT_CONFIG(tooltip)
@@ -169,10 +189,6 @@ class Ui_Form(object):
         self.pushButton_remove_selection_from_group.setToolTip(QCoreApplication.translate("Form", u"remove all selected images in the top view from the group", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_remove_selection_from_group.setText(QCoreApplication.translate("Form", u"Remove selection from group", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_deleted_group.setToolTip(QCoreApplication.translate("Form", u"delete the group (doesn't delete the images)", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_deleted_group.setText(QCoreApplication.translate("Form", u"Delete group", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_toggle_ungrouped_images.setToolTip(QCoreApplication.translate("Form", u"show all images in the bottom group except if they belong to the top group", None))
 #endif // QT_CONFIG(tooltip)

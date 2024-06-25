@@ -102,7 +102,7 @@ class TokenView(QtCore.QAbstractListModel):
                 brush.setColor(QtGui.QColor.fromRgb(red, green, blue, alpha))
             else:
                 # default black
-                brush.setColor(QtGui.QColor.fromRgb(0,0,0,255))
+                brush.setColor(QtGui.QColor.fromRgb(255,255,255,255))
             return brush
         
 class StatisticsView(QWidget, statistics.Ui_Form):

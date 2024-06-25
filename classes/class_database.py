@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 from collections import Counter
+import copy
 
 import cloudscraper
 import tqdm
@@ -70,7 +71,6 @@ class VirtualDatabase:
 
         if untagged_images_paths:
             parameters.log.error(f"These files were not added to the database {untagged_images_paths}")
-
 
     def character_only_tag_images(self, image_paths: list[str],*, character_tagger=parameters.AvailableTaggers.SWINV2V3_CHARACTERS):
         path_set = set(image_paths)
@@ -170,6 +170,22 @@ class VirtualDatabase:
                     pass
             pool.shutdown(wait=True)
         parameters.log.info("Filter applied to all images")
+
+    def filter_sentence_all(self):
+        if len(self.images) < 100:
+            for image in self.images:
+                image.filter_sentence()
+        else:
+            pool = concurrent.futures.ThreadPoolExecutor()
+
+            if len(self.images) < 1000:
+                for image in self.images:
+                    pool.submit(lambda i: i.filter(), image)
+            else:
+                for _ in main.tqdm_parallel_map(pool, lambda i: i.filter_sentence(), self.images):
+                    pass
+            pool.shutdown(wait=True)
+        parameters.log.info("Filter sentence applied to all images")
 
     def update_all_full_tags(self):
         for image in self.images:
@@ -804,15 +820,19 @@ class Database(VirtualDatabase):
             json.dump(image_dict, f, indent=4)
         parameters.log.info("Created json for exporting data for checkpoint")
 
-    def create_sample_toml(self):
-        required_tags = [("1girl","1boy"), "solo"] # use tuple for or
+    def create_sample_toml(self, export_width=1024, export_height=1024, bucket_steps=64):
+        # use tuple for or
+        required_tags = [("1girl","1boy"), ("solo", "solo focus")] 
+        # samples with these tags are removed
         blacklist_tags = ["loli", "shota", "monochrome","greyscale", "comic", "close up", "white border", "letterboxed", "2koma", "multiple views", "sepia"]
-        post_filter_tags = ["heart", "censored", "sketch", "signature", "spoken x", "though bubble", "speech bubble", 'empty speech bubble']
+        # these tags are filtered out from the choosen samples
+        post_filter_tags = ["heart", "heart-shaped pupils", "censored", "sketch", "signature", "spoken x", "though bubble", "speech bubble", 'empty speech bubble', "watermark"]
+
 
         main_tags = self.trigger_tags["main_tags"]
         secondary_tags = self.trigger_tags["secondary_tags"]
 
-        desired_sample_count = 10
+        desired_sample_count = parameters.PARAMETERS["toml_sample_max_count"]
 
         from sklearn.feature_extraction.text import TfidfVectorizer
         import seaborn as sns
@@ -820,21 +840,28 @@ class Database(VirtualDatabase):
         from resources.tag_categories import CATEGORY_TAG_DICT, COLOR_DICT_ORDER
         from random import shuffle
 
+        # filter images based on filtering preferences
         idx_list = []
         for idx, image in enumerate(self.images):
             full_tags = image.full_tags
             if all(any(or_t in full_tags for or_t in t) if type(t) is tuple else t in full_tags for t in required_tags) and all(t not in full_tags for t in blacklist_tags):
                 idx_list.append(idx)
 
+        # if the number of total samples (in database) is greater than 1000, randomly sample 1000 to cut down computation
         max_corpus_count = 1000
         if len(idx_list) > max_corpus_count:
-
             shuffle(idx_list)
             parameters.log.info(f"We have {len(idx_list)} potential source images for samples, reduced to random {max_corpus_count} samples")
             idx_list = idx_list[:max_corpus_count]
         else:
             parameters.log.info(f"We have {len(idx_list)} potential source images for samples")
-
+        
+        if len(idx_list) < desired_sample_count:
+            desired_sample_count = len(idx_list)
+        min_df = 5
+        if len(idx_list) < min_df:
+            min_df = len(idx_list)
+        
 
         corpus = [", ".join(self.images[i].full_tags) for i in idx_list]
 
@@ -843,12 +870,13 @@ class Database(VirtualDatabase):
         # https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
 
         parameters.log.info("Generating TFIDF")
-        vect = TfidfVectorizer(token_pattern=r'[^,]+', min_df=5)
+        vect = TfidfVectorizer(token_pattern=r'[^,]+', min_df=min_df)
         tfidf = vect.fit_transform(corpus)
         pairwise_similarity = tfidf * tfidf.T
         # convert to np
         pair_arr = pairwise_similarity.toarray()
 
+        # look for very similar prompts/tags and penalize them so we have a lower probability of sampling them
         # fill diagonal with 0 in place (so that all self-pairs are out of the equation)
         np.fill_diagonal(pair_arr, 0)
 
@@ -860,7 +888,7 @@ class Database(VirtualDatabase):
         parameters.log.debug(similar_coord[:, 0]) #x_coords
         parameters.log.debug(similar_coord[:, 1]) #y_coords
         common_coord_val = list(set(similar_coord[:, 0] +similar_coord[:, 1]))
-        common_penatly = 30
+        common_penatly = 30 # penalty for common tags
 
         if sq_dim_size - len(common_coord_val) < desired_sample_count: # get the unique samples and add random overlapping coords
             shuffle(common_coord_val)
@@ -884,10 +912,12 @@ class Database(VirtualDatabase):
                                       for i in idx_list])
             img_colors = np.array([0 if i not in common_coord_val else 1 for i in idx_list], dtype=int)
 
-
+            # we make two graphs, one is without the penalties, and one with the penalty
+            # the two graphs is nice for debugging the distributions
             no_penalty_prob = get_prob_dist(img_no_penalty)
             img_sample_prob = get_prob_dist(img_token_len)
 
+            # matplotlib plot setup
             fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
             sample_indices = np.random.choice(idx_list, size=desired_sample_count, replace=False, p=img_sample_prob)
             parameters.log.info(([img_colors==0], img_no_penalty[img_colors==0], no_penalty_prob[img_colors==0]))
@@ -917,10 +947,12 @@ class Database(VirtualDatabase):
             tag_list.extend(t for t in full_tag if t not in tag_list)
             tag_list = [t for t in tag_list if t not in post_filter]
             return ", ".join(tag_list)
-
+        
+        # get the selected tags and convert them to a prompt.
         prompts = []
+        bucket_sizes = []
         for i in sample_indices:
-            parameters.log.info((i, self.images[i].path))
+            parameters.log.info(f"Used sample: {self.images[i].path}")
             #full_tags = self.images[i].get_full_tags()
             full_tag_over_conf = self.images[i].get_full_tags_over_confidence(confidence=0.65)
             full_tags = self.images[i].get_full_tags()
@@ -928,15 +960,48 @@ class Database(VirtualDatabase):
             sample = convert_to_prompt(full_tags, model_prefix=["score_7_up, anime"],
                                        keep_token_tags=main_tags+secondary_tags, post_filter=post_filter_tags,
                                        tags_under_conf=full_tags_under_conf)
-            parameters.log.info(sample)
-            parameters.log.info("*"*20)
+            resized_resolution = self.images[i].get_bucket_size(export_width, export_height, bucket_steps)
+            bucket_sizes.append(resized_resolution)
+            #parameters.log.info(sample)
+            #parameters.log.info(resized_resolution)
+            #parameters.log.info("*"*20)
             prompts.append(sample)
 
         #xy_axis = [self.images[i].relative_path for i in idx_list]
         #parameters.log.info("Generating graph")
         #sns.heatmap(pair_arr,xticklabels=xy_axis, yticklabels=xy_axis, square=True, cbar_kws={'shrink': 0.8})
         #plt.show()
-        parameters.log.info("Done")
+        
+        # code to export the prompt:
+        import toml
+        import imagesize
+        toml_path = self.folder
+        toml_name = "exported_samples.toml"
+        toml_full_path = os.path.join(toml_path, toml_name)
+        
+        neg_prompt = "monochrome, greyscale, furry, pony, blurry, simple background"
+        
+        # default prompt setting
+        data_dict = {
+            "prompt":{
+                "negative_prompt" : neg_prompt,
+                "scale" : 7,
+                "sample_steps": 24,
+                "clip_skip" : 1,
+                "seed" : 42,
+                "subset":[]
+            }
+        }
+        # add the individual prompt and bucket resolution
+        for prompt, resolution in zip(prompts, bucket_sizes):
+            data_dict["prompt"]["subset"].append({"prompt":prompt, "width":resolution[0], "height":resolution[1]})
+        
+        
+        with open(toml_full_path, "w") as f:
+            toml.dump(data_dict, f,)
+        
+        
+        parameters.log.info(f"Samples are added in {toml_full_path}")
 
 
     def update_images_paths(self):
@@ -1110,4 +1175,73 @@ class Database(VirtualDatabase):
             for tup in c:
                 if tup[0] not in tag_categories.COLOR_DICT.keys():
                     file.write(f"{tup[1]}: {tup[0]}\n")
+
+    def export_database(self, images_index: list[int], export_path: str, export_group_name: str=""):
+        export_database = Database(export_path)
+        export_md5_list = export_database.get_all_md5()
+        for index in images_index:
+            if self.images[index].md5 not in export_md5_list:
+                to_export_image = copy.deepcopy(self.images[index])
+                # copy the file name
+                if not export_group_name:
+                    new_path = os.path.join(export_path, os.path.basename(to_export_image.path))
+                else:
+                    new_path = os.path.join(export_path, export_group_name, os.path.basename(to_export_image.path))
+
+                try:
+                    shutil.copy2(to_export_image.path, new_path)
+                except FileNotFoundError:
+                    os.makedirs(os.path.dirname(new_path))
+                    shutil.copy2(to_export_image.path, new_path)
+
+                to_export_image.path = new_path
+                export_database.images.append(to_export_image)
+                export_database.add_image_to_group(export_group_name, len(export_database.images)-1)
+
+            # todo: make the conditions when the md5 is present in the database
+            else:
+                to_export_image = copy.deepcopy(self.images[index])
+                # compare images between present and export database
+                export_index = export_database.index_of_image_by_md5(to_export_image.md5)
+
+                # adding it to the groups
+                export_database.add_image_to_group(export_group_name, export_index)
+
+                # merge manuals
+                export_database.images[export_index].append_manual_tags(to_export_image.manual_tags)
+                export_database.images[export_index].append_rejected_manual_tags(to_export_image.rejected_manual_tags)
+                export_database.images[export_index].resolved_conflicts = list(set(to_export_image.resolved_conflicts + export_database.images[export_index].resolved_conflicts))
+
+                # add sentence
+                if not export_database.images[export_index].sentence_description and to_export_image.sentence_description:
+                    export_database.images[export_index].sentence_description = to_export_image.sentence_description
+
+                # merge possible external tags
+                for key, value in to_export_image.external_tags:
+                    if key not in export_database.images[export_index].external_tags.keys():
+                        export_database.images[export_index].add_external_tags_key(key, value)
+
+                # don't touch automatic tags
+
+                # find the best original md5: take one that is different from current and if both are different the one with data from rule34
+                if to_export_image.original_md5 != export_database.images[export_index].original_md5:
+
+                    to_export_image_diff_o_md5 = False
+                    from_export_image_diff_o_md5 = False
+
+                    if to_export_image.original_md5 != to_export_image.md5:
+                        to_export_image_diff_o_md5 = True
+                    if export_database.images[export_index].original_md5 != export_database.images[export_index].md5:
+                        from_export_image_diff_o_md5 = True
+
+                    if to_export_image_diff_o_md5 and not from_export_image_diff_o_md5:
+                        export_database.images[export_index].original_md5 = to_export_image.original_md5
+                        # no need for the other case
+                    elif from_export_image_diff_o_md5 and to_export_image_diff_o_md5:
+
+                        # check if any has external tags data, todo: make it specific to online data
+                        if not export_database.images[export_index].external_tags and to_export_image.external_tags:
+                            export_database.images[export_index].original_md5 = to_export_image.original_md5
+        export_database.save_database()
+
 

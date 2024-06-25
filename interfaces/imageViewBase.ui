@@ -14,11 +14,49 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
+     <item>
+      <widget class="QPushButton" name="pushButton_deleted_group">
+       <property name="toolTip">
+        <string>delete the group (doesn't delete the images)</string>
+       </property>
+       <property name="text">
+        <string>Delete group</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_add_group">
+       <property name="toolTip">
+        <string>create a new group</string>
+       </property>
+       <property name="text">
+        <string>Add Group</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-add"/>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QComboBox" name="comboBox_group_name">
        <property name="sizePolicy">
@@ -44,19 +82,10 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_add_group">
-       <property name="toolTip">
-        <string>create a new group</string>
-       </property>
-       <property name="text">
-        <string>Add Group</string>
-       </property>
-       <property name="icon">
-        <iconset theme="list-add"/>
-       </property>
-      </widget>
-     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <widget class="QComboBox" name="comboBox_sort_type">
        <property name="toolTip">
@@ -75,9 +104,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="checkBox_include_sentence">
+       <property name="text">
+        <string>Sentence</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLineEdit" name="lineEdit_tag_search">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter text to search for tags:&lt;/p&gt;&lt;p&gt;By default, it search for any partial matches&lt;/p&gt;&lt;p&gt;- use the star, &amp;quot;*&amp;quot;, as a wildcard for any number of characters in that position. can be placed in between, before, or after other characters&lt;/p&gt;&lt;p&gt;- place quotation marks, &amp;quot; &amp;quot;, around the text for exact keyword search&lt;/p&gt;&lt;p&gt;- use the minus sign, &amp;quot;-&amp;quot;, in front of the text to remove images with that keyword&lt;/p&gt;&lt;p&gt;- search source_&amp;lt;source name&amp;gt; to filter where the tags came from. Ex: source_swin, source_caformer, source_danbooru, ...&lt;/p&gt;&lt;p&gt;- special seach keywords (we only have 1 tag rn): &amp;quot;2persons&amp;quot; --&amp;gt; search for images with tag combinations that implies 2 people in the image, ex: &amp;quot;1boy&amp;quot; + &amp;quot;1girl&amp;quot;, &amp;quot;2girls&amp;quot;, &amp;quot;2boys&amp;quot;, etc&lt;/p&gt;&lt;p&gt;Separate multiple tag searches using &amp;quot;,&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter text to search for tags:&lt;/p&gt;&lt;p&gt;By default, it search for any partial matches&lt;/p&gt;&lt;p&gt;- use the star, &amp;quot;*&amp;quot;, as a wildcard for any number of characters in that position. can be placed in between, before, or after other characters&lt;/p&gt;&lt;p&gt;- place quotation marks, &amp;quot; &amp;quot;, around the text for exact keyword search&lt;/p&gt;&lt;p&gt;- use the minus sign, &amp;quot;-&amp;quot;, in front of the text to remove images with that keyword&lt;/p&gt;&lt;p&gt;- search source_&amp;lt;source name&amp;gt; to filter where the tags came from. Ex: source_swin, source_caformer, source_danbooru, source_manual ...&lt;/p&gt;&lt;p&gt;- special seach keywords (we only have 1 tag rn): &amp;quot;2persons&amp;quot; --&amp;gt; search for images with tag combinations that implies 2 people in the image, ex: &amp;quot;1boy&amp;quot; + &amp;quot;1girl&amp;quot;, &amp;quot;2girls&amp;quot;, &amp;quot;2boys&amp;quot;, etc&lt;/p&gt;&lt;p&gt;Separate multiple tag searches using &amp;quot;,&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="placeholderText">
         <string>Enter Tag(s) to Search</string>
@@ -97,53 +133,6 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="pushButton_add_selection_to_group">
-       <property name="toolTip">
-        <string>add all images selected at the bottom to the group</string>
-       </property>
-       <property name="text">
-        <string>Add selection to group</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_remove_selection_from_group">
-       <property name="toolTip">
-        <string>remove all selected images in the top view from the group</string>
-       </property>
-       <property name="text">
-        <string>Remove selection from group</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_deleted_group">
-       <property name="toolTip">
-        <string>delete the group (doesn't delete the images)</string>
-       </property>
-       <property name="text">
-        <string>Delete group</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_toggle_ungrouped_images">
-       <property name="toolTip">
-        <string>show all images in the bottom group except if they belong to the top group</string>
-       </property>
-       <property name="text">
-        <string>Show grouped</string>
-       </property>
-       <property name="tristate">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
     <widget class="QListView" name="listView_other">
      <property name="sizeAdjustPolicy">
       <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -151,6 +140,57 @@
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="pushButton_add_selection_to_group">
+        <property name="toolTip">
+         <string>add all images selected at the bottom to the group</string>
+        </property>
+        <property name="text">
+         <string>Add selection to group</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_remove_selection_from_group">
+        <property name="toolTip">
+         <string>remove all selected images in the top view from the group</string>
+        </property>
+        <property name="text">
+         <string>Remove selection from group</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_toggle_ungrouped_images">
+        <property name="toolTip">
+         <string>show all images in the bottom group except if they belong to the top group</string>
+        </property>
+        <property name="text">
+         <string>Show grouped</string>
+        </property>
+        <property name="tristate">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>

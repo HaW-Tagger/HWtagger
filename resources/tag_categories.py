@@ -7,11 +7,34 @@ REJECTED_TAGS = {
     # depreciated
     "looking away", "just the tip","tired","furniture", "correction","qiya","wtf",
     
-    # body parts:
-    "face", "nose","hands","ears","mouth","fur",
+    # remove maybe
+    "nsfw", "sfw",
     
-    # rule 34 specific weird tags:
-    "bedding", "screenshot background", "extinct", "forced exposure","rule 63","original character","cuntboy","on ass",
+    # rejecting cause comma is a problem with these tags:
+    "please don't bully me", "nagatoro"
+    
+    # body parts:
+    "face", "nose","hands","ears","mouth","fur","hair","human","cum","posing", 
+    
+    # ambiguous clothing
+    "clothing", "mostly clothed", "clothed",
+    
+    # rule 34 specific weird/ambiguous tags:
+    "bedding", "screenshot background", "extinct", "forced exposure","rule 63","original character","cuntboy","on ass", "pinup", "m-preg",
+    "chastity", "penetration", "girly", "nipple fetish", "domestic cat", "intersex only", "mammal", "incest_(lore)", "nonbinary_(lore)", 
+    "parent_(lore)", "trans_(lore)", "sibling_(lore)", "trans_woman_(lore)", "parent_and_child_(lore)", "mother_(lore)", "son_(lore)", 
+    "father_(lore)", "sister_(lore)", "parent_and_son_(lore)", "brother_(lore)", "father_and_child_(lore)", "male_(lore)", "mother_and_child_(lore)", 
+    "herm_(lore)", "daughter_(lore)", "father_and_son_(lore)", "brother_and_sister_(lore)", "parent_and_daughter_(lore)", "sisters_(lore)", 
+    "trans_man_(lore)", "female_(lore)", "brothers_(lore)", "mother_and_son_(lore)", "mother_and_daughter_(lore)", "twins_(lore)", "gynomorph_(lore)", 
+    "father_and_daughter_(lore)", "intersex_(lore)", "cousins_(lore)", "grandparent_(lore)", "uncle_(lore)", "nephew_(lore)", "twincest_(lore)", 
+    "uncle_and_nephew_(lore)", "adult_(lore)", "grandmother_(lore)", "adopted_(lore)", "young_(lore)", "indirect_incest_(lore)", "pseudo_incest_(lore)", 
+    "grandchild_(lore)", "grandparent_and_grandchild_(lore)", "andromorph_(lore)", "grandson_(lore)", "adopted_daughter_(lore)", "adoptive_father_(lore)", 
+    "stepparent_(lore)", "grandfather_(lore)", "mother_and_father_(lore)", "adopted_son_(lore)", "stepfather_(lore)", "grandfather_and_grandchild_(lore)", 
+    "stepsibling_(lore)", "stepbrother_(lore)", "stepfather_and_stepchild_(lore)", "stepparent_and_stepchild_(lore)", "stepson_(lore)", "aunt_(lore)", 
+    "stepfather_and_stepson_(lore)", "stepparent_and_stepson_(lore)", "grandfather_and_grandson_(lore)", "grandmother_and_grandchild_(lore)", "stepsister_(lore)", 
+    "niece_(lore)", "uncle_and_niece_(lore)", "grandmother_and_grandson_(lore)", "aunt_and_nephew_(lore)", "real person", "john doe", "shaved","hairless", "fit",
+    "exposed nipples", "exposed balls", "horny", "caged dom", "chastity cage only", "both sexes in same situation", "straight",
+    
     
     'fucked silly',"plug","older","traditional clothes", "ground vehicle", "military", "bdsm", "off shoulder",
     "age regression","spreading",
@@ -79,8 +102,8 @@ REJECTED_TAGS = {
     'jav', 'low bitrate', 'machine translated','screenshot redraw', 'self-portrait', 'serbo-croatian commentary', 'skima commission', 'source mismatch', 'spanish audio', 
     'spine (medium)', 'stitched', 'swedish audio', 'swedish commentary', 'tegaki draw and tweet', 'comic panel redraw','detexted','decensored', 'deviantart sample', 'disc menu', 
     'download link', 'downscaled', 'dutch commentary', 'making-of', 'masking tape (medium)', 'merchandise available', 'mixed-language audio', 'picrew (medium)', 'pixiv banner',
-    'highres', 'absurdres'
-    
+    'highres', 'absurdres', "hi res", "high res", "2d", "digital media", "digital media (artwork)", "absurd res", "patreon url", "twitter url", "pixiv url", "url",
+    "artist cg",
     
     
     'no headwear',"no testicles","no bangs", "no arms", "no symbol", "no hat",
@@ -90,7 +113,10 @@ REJECTED_TAGS = {
     'incest', 'mother and daughter','genderswap (ftm)', 'genderswap (mtf)', 'genderswap','multiple persona',"left-handed","reverse trap",
     "genderswap (otf)",'shimaindon (sex)',"shimaidon (sex)", "bisexual (female)", "ambiguous gender", "friends","father and daughter",
     "implied pregnancy","implied bisexual","implied fingering", "implied anal", "everyone","teenage",'aged up', 'aged down','mother and son',
-    "group"
+    "group", "functionally nude male", "functionally nude female","gay","lesbian", "light-skinned femboy", "light-skinned male",
+    "light-skinned futanari","light-skinned female", "pale-skinned femboy", "pale-skinned male",
+    "pale-skinned futanari","pale-skinned female","better than girls", "female with femboy", "female with female", 
+    "female with face unlike mammal", "female with feral", 
     
     # races
     "mithra (ff11)","warrior of light (ff14)","lalafell",
@@ -142,7 +168,7 @@ REJECTED_TAGS = {
     
     "borrowed design", "borrowed hairstyle", "borrowed accessory", "borrowed character", "borrowed clothes",
     "borrowed pose",  "borrowed weapon", "borrowed inset", 'borrowed character',"matching outfit", "matching outfits",
-    'adapted costume',
+    'adapted costume', "fan character",
     
     # time, events, date, etc
     "year of the dog", "year of the rat","year of the tiger", "year of the rabbit", "year of the dragon",
@@ -205,6 +231,8 @@ REJECTED_TAGS = {
     "beige jacket","beige cardigan", "beige sweater","beige shirt",  
     
     'sperm cell',
+    
+    "textless", "textless version",
     
     'fusion',  'convenient censoring', 'star of david', 'cosplay', "evolutionary line",  "macro", "micro", "diagonal stripes", 
     'pointless condom', 'dakimakura (medium)',  'multicolored', 'dimples of venus', "stance", "symbol", "seat",  "vertical stripes", 

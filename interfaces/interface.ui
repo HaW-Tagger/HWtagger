@@ -162,7 +162,7 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_6">
                   <property name="title">
-                   <string>Pre Process Tools</string>
+                   <string>Pre-Processing Tools</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_11">
                    <property name="topMargin">
@@ -200,7 +200,7 @@
                    </sizepolicy>
                   </property>
                   <property name="title">
-                   <string>Correct Database</string>
+                   <string>Database Validation Tools</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
                    <property name="topMargin">
@@ -308,6 +308,44 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QGroupBox" name="groupBox_10">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="title">
+                   <string>External Database Tools</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_13">
+                   <property name="topMargin">
+                    <number>12</number>
+                   </property>
+                   <item row="0" column="0">
+                    <widget class="QLineEdit" name="lineEdit_secondary_db_folder">
+                     <property name="toolTip">
+                      <string>Enter the location of the secondary database</string>
+                     </property>
+                     <property name="placeholderText">
+                      <string>Enter secondary database folder</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="pushButton_load_and_merge_secondary">
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;There's two database at play.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The primary database loaded at the top and the secondary database entered right above this button.&lt;br/&gt;&lt;br/&gt;This will search for any duplicate md5 hashes in both databases and pull tags from the secondary database and update the content of the primary database.&lt;br/&gt;&lt;br/&gt;This is useful if you're importing tags from a previously cleaned database&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                     <property name="text">
+                      <string>Load secondary database and merge tags</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
                  <spacer name="verticalSpacer_3">
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
@@ -346,76 +384,13 @@
                    <property name="topMargin">
                     <number>12</number>
                    </property>
-                   <item row="3" column="0">
-                    <widget class="QCheckBox" name="checkBox_token_separator">
+                   <item row="4" column="1">
+                    <widget class="QCheckBox" name="checkBox_remove_tag_in_sentence">
                      <property name="toolTip">
-                      <string>use the token separator to separate the trigger tags from the rest</string>
+                      <string>remove tags if in sentence, so no repetitive</string>
                      </property>
                      <property name="text">
-                      <string>Token Separator</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_main_trigger_tags">
-                     <property name="toolTip">
-                      <string>tags separated by commas that will be put at the front, the list is ordered</string>
-                     </property>
-                     <property name="inputMask">
-                      <string/>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Main Trigger Tag(s), Separate with &quot;,&quot;</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="0" colspan="2">
-                    <widget class="QPushButton" name="pushButton_create_sample_toml">
-                     <property name="toolTip">
-                      <string>generate example prompts from the dataset</string>
-                     </property>
-                     <property name="text">
-                      <string>Create sample TOML</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QCheckBox" name="checkBox_sentence">
-                     <property name="toolTip">
-                      <string>output the sentence in the tags</string>
-                     </property>
-                     <property name="text">
-                      <string>Sentence</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1">
-                    <widget class="QCheckBox" name="checkBox_sentence_in_token_separator">
-                     <property name="toolTip">
-                      <string>put the sentence in the token separator</string>
-                     </property>
-                     <property name="text">
-                      <string>Sentence in token separator</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0" colspan="2">
-                    <widget class="QPushButton" name="pushButton_create_txt_files">
-                     <property name="toolTip">
-                      <string>create txt files with the settings from the left, txt files are named after the image path</string>
-                     </property>
-                     <property name="text">
-                      <string>Create .txt Files</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0" colspan="2">
-                    <widget class="QPlainTextEdit" name="plainTextEdit_secondary_trigger_tags">
-                     <property name="toolTip">
-                      <string>tags separated by commas that will be put at the front, after the main trigger tags and that will have their order randomized</string>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Secondary Trigger Tag(s), Separate with &quot;,&quot;</string>
+                      <string>Remove tag if included in sentence</string>
                      </property>
                     </widget>
                    </item>
@@ -432,13 +407,13 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="4" column="1">
-                    <widget class="QCheckBox" name="checkBox_remove_tag_in_sentence">
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QPlainTextEdit" name="plainTextEdit_secondary_trigger_tags">
                      <property name="toolTip">
-                      <string>remove tags if in sentence, so no repetitive</string>
+                      <string>tags separated by commas that will be put at the front, after the main trigger tags and that will have their order randomized</string>
                      </property>
-                     <property name="text">
-                      <string>Remove tag if included in sentence</string>
+                     <property name="placeholderText">
+                      <string>Secondary Trigger Tag(s), Separate with &quot;,&quot;</string>
                      </property>
                     </widget>
                    </item>
@@ -451,6 +426,115 @@
                       <string>Aesthetic Score</string>
                      </property>
                     </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QCheckBox" name="checkBox_token_separator">
+                     <property name="toolTip">
+                      <string>use the token separator to separate the trigger tags from the rest</string>
+                     </property>
+                     <property name="text">
+                      <string>Token Separator</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="1">
+                    <widget class="QCheckBox" name="checkBox_sentence_in_token_separator">
+                     <property name="toolTip">
+                      <string>put the sentence in the token separator</string>
+                     </property>
+                     <property name="text">
+                      <string>Sentence in token separator</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QCheckBox" name="checkBox_sentence">
+                     <property name="toolTip">
+                      <string>output the sentence in the tags</string>
+                     </property>
+                     <property name="text">
+                      <string>Sentence</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_main_trigger_tags">
+                     <property name="toolTip">
+                      <string>tags separated by commas that will be put at the front, the list is ordered</string>
+                     </property>
+                     <property name="inputMask">
+                      <string/>
+                     </property>
+                     <property name="placeholderText">
+                      <string>Main Trigger Tag(s), Separate with &quot;,&quot;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0" colspan="2">
+                    <widget class="QPushButton" name="pushButton_create_txt_files">
+                     <property name="toolTip">
+                      <string>create txt files with the settings from the left, txt files are named after the image path</string>
+                     </property>
+                     <property name="text">
+                      <string>Create .txt Files</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0" colspan="2">
+                    <layout class="QHBoxLayout" name="horizontalLayout_2">
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <widget class="QPushButton" name="pushButton_create_sample_toml">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="toolTip">
+                        <string>do some filtering and generate example prompts based off the dataset, and makes a toml file (currently using the pony template) in the database location</string>
+                       </property>
+                       <property name="text">
+                        <string>Create sample TOML</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QComboBox" name="comboBox_toml_resolution">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="toolTip">
+                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;this defines the base output resolution in the toml (using buckets)&lt;/p&gt;&lt;p&gt;SDXL: (1024, 1024)&lt;/p&gt;&lt;p&gt;SD1.5: (768, 768)&lt;/p&gt;&lt;p&gt;SD1.0: (512, 512)&lt;/p&gt;&lt;p&gt;Custom Resolution: (modify in setting)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                       </property>
+                       <item>
+                        <property name="text">
+                         <string>SDXL</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>SD1.5</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>SD1.0</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>Custom</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                   </layout>
                  </widget>
@@ -631,45 +715,11 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1032</width>
-             <height>814</height>
+             <width>1015</width>
+             <height>808</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="4" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_15">
-              <item>
-               <widget class="QPushButton" name="pushButton_cancel_settings">
-                <property name="toolTip">
-                 <string>cancel the changes, doesn't restore to defaults, it only restore the previous setting, if yyou want to restore the default, delete the .ini file that acts as the config</string>
-                </property>
-                <property name="text">
-                 <string>Cancel</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButton_reload_default">
-                <property name="toolTip">
-                 <string>Load the default settings, but doesn't save them</string>
-                </property>
-                <property name="text">
-                 <string>Load Default Settings</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButton_save_settings">
-                <property name="toolTip">
-                 <string>save the settings for the changes to take effects, either relaunch the app or, in the case of the database view, reopen the database</string>
-                </property>
-                <property name="text">
-                 <string>Save</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupBox">
               <property name="title">
@@ -764,6 +814,13 @@
                   </widget>
                  </item>
                 </layout>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBox_hide_sentence_in_view">
+                 <property name="text">
+                  <string>Hide Sentence in the Database View</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -973,6 +1030,78 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_18">
+                   <item>
+                    <widget class="QSpinBox" name="spinBox_custom_height">
+                     <property name="maximum">
+                      <number>4096</number>
+                     </property>
+                     <property name="value">
+                      <number>1024</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="spinBox_custom_width">
+                     <property name="maximum">
+                      <number>4096</number>
+                     </property>
+                     <property name="value">
+                      <number>1024</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="spinBox_custom_bucket_steps">
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="maximum">
+                      <number>128</number>
+                     </property>
+                     <property name="value">
+                      <number>64</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_15">
+                   <property name="text">
+                    <string>Custom WxH and bucket steps for sample toml</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_20">
+                 <property name="bottomMargin">
+                  <number>10</number>
+                 </property>
+                 <item>
+                  <widget class="QSpinBox" name="spinBox_sample_count">
+                   <property name="value">
+                    <number>5</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_16">
+                   <property name="text">
+                    <string>Prompt count for sample toml</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
               </layout>
              </widget>
             </item>
@@ -1139,6 +1268,40 @@
            </layout>
           </widget>
          </widget>
+        </item>
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <widget class="QPushButton" name="pushButton_cancel_settings">
+            <property name="toolTip">
+             <string>cancel the changes, doesn't restore to defaults, it only restore the previous setting, if yyou want to restore the default, delete the .ini file that acts as the config</string>
+            </property>
+            <property name="text">
+             <string>Cancel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_reload_default">
+            <property name="toolTip">
+             <string>Load the default settings, but doesn't save them</string>
+            </property>
+            <property name="text">
+             <string>Load Default Settings</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_save_settings">
+            <property name="toolTip">
+             <string>save the settings for the changes to take effects, either relaunch the app or, in the case of the database view, reopen the database</string>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
