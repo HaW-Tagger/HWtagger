@@ -2,6 +2,9 @@
 Most of our models, LORAs and the eclispeXL checkpoint (https://civitai.com/models/486131/eclipse-xl) were made using this tool.
 Here is a link to the release article on civitai: https://civitai.com/articles/5751/hw-tagger-release
 
+A changelog is available at the bottom of this page
+
+
 # Installation
 
 We don't know if it works with linux, we don't have access to a computer running Linux and an NVIDIA card directly, but it should work better if the dependencies are properly met. (Update: We have a few reports of it working with linux).
@@ -46,3 +49,25 @@ You can run the tagger by using the run.bat
 #### How to wiki link
 
 https://github.com/HaW-Tagger/HWtagger/wiki/How-to-use-(basic-tutorial)
+
+# Changelog
+
+## 25/06/24
+- Changes: the scrollwheel doesn't affect the settings page anymore
+- Changes: Added spacers to the database view and an highlight entry so that you can highlight certain tags, not saved
+- Added: New button to filter the sentence (currently no logic is in it, so the button does nothing)
+- Added: Export function to the database view, you can merge parts of one database to a new folder, either merging it to an existing database or creating a new database
+- Added: sample TOML now creates a sample TOML in the location of the database that you can use in the LoraEasyTrainer (currently negative prompt and positive prompts are not visible in the settings)
+- Fix: Negative search is working
+- Fix: Sentence is now properly visible
+- Fix: White base color in settings
+- Fix: Tooltip show that you can click on w to go the the danbooru wiki for the selected tag 
+
+## 17/06/24
+ - Checks for a second model folder in case the first one fails
+ - Fixed a folder path issue on linux
+ - Fixed the xformers version/requirements
+ - Added the image popup in the database viewer
+ - Added confirmation dialogue when opening for edit multiple images
+ - Updated the default parameters and added a reload default parameters button
+ - Removed base danbooru filtering that cause weird behaviours with our own filtering
