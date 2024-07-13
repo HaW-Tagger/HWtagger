@@ -66,7 +66,7 @@ Changes:
  - Discarded batch button moves the file to a TEMP_DISCARDED folder and moves it to the DISCARDED folder when loading the database again
  - Popup image updated when selecting multiple images (mainly when selecting one image more)
  - Sample TOML creates a file directly and more settings, no settings for the positive and negative tags for now
- - Group names are available for search
+ - Group names are available for search (check tooltip)
 
 Fix:
  - Token length sort is sorting properly
