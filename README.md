@@ -52,6 +52,25 @@ https://github.com/HaW-Tagger/HWtagger/wiki/How-to-use-(basic-tutorial)
 
 # Changelog
 
+## 14/07/24
+Added:
+ - Rare tags count sort (less than 2% frequency)
+ - Buttons to remove tags from a category
+ - Frequency tags view tab with category filtering
+ - Batch button to cleanup useless information in the rejected tags
+ - Keybinds for next and prev (left arrow and right arrow), CTRLS+S for saving
+ - BACKUP settings for files (CTRL+Z is WIP and is currently disabled because it costs too much RAM, need optimizations, but the logic is working)
+
+Changes:
+ - Maybe more accurate similarity detection so that it doesn't save the database when it holds the same information
+ - Discarded batch button moves the file to a TEMP_DISCARDED folder and moves it to the DISCARDED folder when loading the database again
+ - Popup image updated when selecting multiple images (mainly when selecting one image more)
+ - Sample TOML creates a file directly and more settings, no settings for the positive and negative tags for now
+ - Group names are available for search
+
+Fix:
+ - Token length sort is sorting properly
+
 ## 25/06/24
 - Changes: the scrollwheel doesn't affect the settings page anymore
 - Changes: Added spacers to the database view and an highlight entry so that you can highlight certain tags, not saved
