@@ -15,6 +15,16 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
+    <widget class="QLineEdit" name="lineEdit_tag_highlight">
+     <property name="toolTip">
+      <string>Enter any word and it'll be highlighted in the tag view, separate multiple tags with comma</string>
+     </property>
+     <property name="placeholderText">
+      <string>Enter text to highlight in tag view</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label_image_path">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Preferred">

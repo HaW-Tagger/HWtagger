@@ -38,6 +38,10 @@ class VirtualDatabase:
         # todo: return -1 in case of failure
         return self.get_all_md5().index(image_md5)
 
+    def index_of_image_by_originalmd5(self, image_md5) -> int:
+        # todo: return -1 in case of failure
+        return self.get_all_original_md5().index(image_md5)
+    
     def index_of_images_by_md5(self, images_md5: list[str]) -> list[int]:
         # todo: return -1 in case of failure
         md5_images_list = self.get_all_md5()
@@ -228,7 +232,10 @@ class VirtualDatabase:
 
     def get_all_md5(self):
         return [img.md5 for img in self.images]
-
+    
+    def get_all_original_md5(self):
+        return [img.original_md5 for img in self.images]
+    
     def add_image_to_group(self, group_name, image_index):
         """
         create the group if necessary
@@ -616,7 +623,7 @@ class VirtualDatabase:
                         image.path = dst_path
                         self.change_md5_of_image(index, file_md5)
 
-    def get_frequency_of_all_tags(self):
+    def get_frequency_of_all_tags(self) -> list[tuple[str, int]]:
         c = Counter()
         for image in self.images:
             c.update(image.get_full_tags())
@@ -631,6 +638,25 @@ class VirtualDatabase:
         all_accepted_tags = all_accepted_tags.union(set(tag_categories.DESCRIPTION_TAGS.keys()))
         for index in images_index:
             self.images[index].refresh_unsafe_tags(all_accepted_tags)
+
+
+    def cleanup_all_images_rejected_tags(self):
+        self.cleanup_images_rejected_tags([k for k in range(len(self.images))])
+
+    def cleanup_images_rejected_tags(self, images_index: list[int]):
+        """
+        This function removes all rejected manual tags that are not removing any tag
+        """
+        for index in images_index:
+            self.images[index].cleanup_rejected_manual_tags()
+
+    def update_rare_tags(self):
+        load_tag_perc = parameters.PARAMETERS["frequency_rare_tag_threshold"]*len(self.images)
+        for image in self.images:
+            low_frequency_tags = set([tag for tag, freq in self.get_frequency_of_all_tags() if freq<=load_tag_perc])
+            image.rare_tags_count = low_frequency_tags.intersection(image.get_full_tags())
+
+
 
 
 
@@ -680,9 +706,20 @@ class Database(VirtualDatabase):
             self.groups = db["groups"]
             for group_name in self.groups.keys():
                 try:
+                    md5_list = self.get_all_md5()
+                    org_md5_list = self.get_all_original_md5()
+                    
+                    md5_set = set(md5_list)
+                    original_md5_set = set(org_md5_list)
+                    
                     for image_md5 in self.groups[group_name]["images"]:
                         try:
-                            self.images[self.index_of_image_by_md5(image_md5)].group_names.append(group_name)
+                            # todo : check for original md5?
+                            if image_md5 in md5_set:
+                                img_index = md5_list.index(image_md5)
+                            else: # backup is the original md5
+                                img_index = org_md5_list.index(image_md5)
+                            self.images[img_index].group_names.append(group_name)
                         except ValueError:
                             parameters.log.error(f"Error on md5 search for image: {image_md5}, image doesn't exists in the database")
                 except KeyError:
@@ -696,14 +733,18 @@ class Database(VirtualDatabase):
         parameters.log.info("Database loaded.")
 
     def save_database(self):
+        result = self.get_saving_dict()
+        files.save_database(result, self.folder)
+        parameters.log.info("Saved Database")
+
+    def get_saving_dict(self):
         result = {"images":{}}
         for image in self.images:
             result["images"][image.md5] = image.get_saving_dict()
         result["trigger_tags"] = self.trigger_tags
         result["groups"] = self.groups
         result["duplicate_paths"] = self.duplicate_paths
-        files.save_database(result, self.folder)
-        parameters.log.info("Saved Database")
+        return result
 
     def check_existence_images(self):
         """
@@ -820,13 +861,16 @@ class Database(VirtualDatabase):
             json.dump(image_dict, f, indent=4)
         parameters.log.info("Created json for exporting data for checkpoint")
 
-    def create_sample_toml(self, export_width=1024, export_height=1024, bucket_steps=64):
+    def create_sample_toml(self, export_width=1024, export_height=1024, bucket_steps=64, token_len=77):
         # use tuple for or
-        required_tags = [("1girl","1boy"), ("solo", "solo focus")] 
+        required_tags = [("1girl","1boy"), ("solo", "solo focus")]
         # samples with these tags are removed
-        blacklist_tags = ["loli", "shota", "monochrome","greyscale", "comic", "close up", "white border", "letterboxed", "2koma", "multiple views", "sepia"]
+        blacklist_tags = ["loli", "shota", "monochrome","greyscale", "comic", "close up", "white border", 
+                          "letterboxed", "2koma", "multiple views", "sepia"]
         # these tags are filtered out from the choosen samples
-        post_filter_tags = ["heart", "heart-shaped pupils", "censored", "sketch", "signature", "spoken x", "though bubble", "speech bubble", 'empty speech bubble', "watermark"]
+        post_filter_tags = ["heart", "heart-shaped pupils", "censored", "sketch", "signature", "spoken x", 'blurry background', 
+                            "blurry",
+                            "though bubble", "speech bubble", 'empty speech bubble', "watermark", "navel", "collarbone"]
 
 
         main_tags = self.trigger_tags["main_tags"]
@@ -837,7 +881,7 @@ class Database(VirtualDatabase):
         from sklearn.feature_extraction.text import TfidfVectorizer
         import seaborn as sns
         import matplotlib.pyplot as plt
-        from resources.tag_categories import CATEGORY_TAG_DICT, COLOR_DICT_ORDER
+        from resources.tag_categories import CATEGORY_TAG_DICT, COLOR_DICT_ORDER, COLOR_CATEGORIES
         from random import shuffle
 
         # filter images based on filtering preferences
@@ -846,6 +890,17 @@ class Database(VirtualDatabase):
             full_tags = image.full_tags
             if all(any(or_t in full_tags for or_t in t) if type(t) is tuple else t in full_tags for t in required_tags) and all(t not in full_tags for t in blacklist_tags):
                 idx_list.append(idx)
+
+        if len(idx_list) == 0:
+            parameters.log.info("No candidates were found using required and blacklisted tags, removing restrictions")
+            required_tags = []
+            blacklist_tags = []
+            idx_list = []
+            for idx, image in enumerate(self.images):
+                full_tags = image.full_tags
+                if all(any(or_t in full_tags for or_t in t) if type(t) is tuple else t in full_tags for t in
+                       required_tags) and all(t not in full_tags for t in blacklist_tags):
+                    idx_list.append(idx)
 
         # if the number of total samples (in database) is greater than 1000, randomly sample 1000 to cut down computation
         max_corpus_count = 1000
@@ -889,6 +944,7 @@ class Database(VirtualDatabase):
         parameters.log.debug(similar_coord[:, 1]) #y_coords
         common_coord_val = list(set(similar_coord[:, 0] +similar_coord[:, 1]))
         common_penatly = 30 # penalty for common tags
+        #tag_len_penalty = 20 # penalty for long tags
 
         if sq_dim_size - len(common_coord_val) < desired_sample_count: # get the unique samples and add random overlapping coords
             shuffle(common_coord_val)
@@ -908,7 +964,7 @@ class Database(VirtualDatabase):
                 return sample_prob
 
             img_no_penalty = np.array([min(255, self.images[i].get_token_length()) for i in idx_list])
-            img_token_len = np.array([min(255, self.images[i].get_token_length() if i not in common_coord_val else self.images[i].get_token_length()+common_penatly)
+            img_token_len = np.array([min(255, self.images[i].get_token_length() if i not in common_coord_val or self.images[i].get_token_length() > 77 else self.images[i].get_token_length()+common_penatly)
                                       for i in idx_list])
             img_colors = np.array([0 if i not in common_coord_val else 1 for i in idx_list], dtype=int)
 
@@ -933,20 +989,87 @@ class Database(VirtualDatabase):
             sorted_x = np_tokens_len[sorted_index]
             ax3.plot(sorted_x, sorted_y)
             plt.show()
-
-        def convert_to_prompt(full_tag, model_prefix=[], keep_token_tags=[], post_filter=[], tags_under_conf=[]):
+        
+        
+        first_chosen = [
+            "MODELS","COUNT", "OCCUPATION","FETISH GROUPS",
+            "BODY SHAPE","EYES COLOR ALL", "HAIR COLOR ALL","BREASTS SIZE","HAIR LENGTH",  "RACE", "FAKE EARS ALL","ANIMALS", "VIEW",
+        ]
+        second_chosen = [
+                    "EMOTIONS","CLOTHES ACTION", "ACTION", "POSITION", "VEHICLE", "ENVIRONMENT",
+                    "SEX", "SEX ACTION","SEX TOY","OTHER","STATE", 
+                    "SHOES",
+                    "MAKEUP", "ACCESSORIES",
+                    "SEX GENERAL ALL","CUM ALL",  "TENTACLES",
+                    "HOLDING", "HANDHELD OBJECT", "INTERACTIVE OBJECTS", "FOOD", "WEAPON",
+                    "EXTREME","HAIR", "HEAD","TATTOO", "PIERCING",
+                    "CLOTHES", "CLOTHES TIGHT", "CLOTHES COLOR","CLOTHES EASTERN", "CLOTHES PARTS", "UPPER BODY","BODY","LOWER BODY","APPENDICES","ABSENCE","CHARACTERS", "CHARACTERS_LESSER",
+                    ]
+        second_chosen += [category for category in COLOR_CATEGORIES.keys() if category not in second_chosen]
+        
+        
+        def get_tags_below_token(ordered_tags, token_limit=75):
+       
+            if tokenize([", ".join(ordered_tags)], context_length=token_limit+75, truncate=True).count_nonzero(dim=1)[0]-2 < token_limit:
+                return ordered_tags
+            max_tag_len = len(ordered_tags)
+            starting_index =  max_tag_len if max_tag_len < 15 else 15
+            
+            tag_combination = [", ".join(ordered_tags[:starting_index+x]) for x in range(min(1, max_tag_len - starting_index))]
+            all_tokens_len = tokenize(tag_combination, context_length=token_limit+75, truncate=True).count_nonzero(dim=1)
+            
+            good_i = 0
+            for i, tag_len in enumerate(all_tokens_len):
+                if tag_len -2 <= token_limit:
+                    good_i = i
+            
+            good_tags = ordered_tags[:starting_index+good_i]
+            
+            if all_tokens_len[good_i] - 3 < token_limit: # we can fit an extra need an extra token for the comma
+                for tag in ordered_tags[starting_index+good_i:]:
+                    if tag not in good_tags and tokenize([", ".join(good_tags + [tag])], context_length=token_limit+75, truncate=True).count_nonzero(dim=1)[0]<=token_limit:
+                        good_tags+=[tag]
+         
+            return good_tags
+        
+        
+        def convert_to_prompt(full_tag, model_prefix=[], keep_token_tags=[], pre_filter=[], tags_under_conf=[]):
             # this reorders full tags, <model tags>, <special tokens>, <the other tags with descending importance>
+            
+            full_tag = [t for t in full_tag if t not in pre_filter]
+            
             tag_list = model_prefix
             shuffle(keep_token_tags)
             for t in keep_token_tags:
                 if t in full_tag:
                     tag_list.append(t)
 
-            for category in COLOR_DICT_ORDER:
+            for category in first_chosen:
                 tag_list.extend([t for t in CATEGORY_TAG_DICT[category] if t in full_tag and t not in tag_list and t not in tags_under_conf])
-            tag_list.extend(t for t in full_tag if t not in tag_list)
-            tag_list = [t for t in tag_list if t not in post_filter]
-            return ", ".join(tag_list)
+            
+            unused_tags = [t for t in full_tag if t not in tag_list]
+            used_tags = []
+            other_tags = []
+            for category in second_chosen:
+                tags_to_add = [t for t in unused_tags if t in CATEGORY_TAG_DICT[category] and t not in tags_under_conf and t not in used_tags]
+                if tags_to_add:
+                    other_tags.append(tags_to_add)
+                    used_tags+=tags_to_add
+            
+            if other_tags:
+                left_over_tags = []
+                max_index = max([len(ot) for ot in other_tags]) 
+                for i in range(max_index):
+                    for j in range(len(other_tags)):
+                        if len(other_tags[j]) > i:
+                            left_over_tags.append(other_tags[j][i])
+            
+                fully_sorted_tags = tag_list + left_over_tags
+            else:
+                fully_sorted_tags = tag_list
+            new_tags = get_tags_below_token(fully_sorted_tags)
+            
+            return ", ".join(new_tags)
         
         # get the selected tags and convert them to a prompt.
         prompts = []
@@ -955,10 +1078,11 @@ class Database(VirtualDatabase):
             parameters.log.info(f"Used sample: {self.images[i].path}")
             #full_tags = self.images[i].get_full_tags()
             full_tag_over_conf = self.images[i].get_full_tags_over_confidence(confidence=0.65)
+           
             full_tags = self.images[i].get_full_tags()
             full_tags_under_conf = [t for t in full_tags if t not in full_tag_over_conf]
             sample = convert_to_prompt(full_tags, model_prefix=["score_7_up, anime"],
-                                       keep_token_tags=main_tags+secondary_tags, post_filter=post_filter_tags,
+                                       keep_token_tags=main_tags+secondary_tags, pre_filter=post_filter_tags,
                                        tags_under_conf=full_tags_under_conf)
             resized_resolution = self.images[i].get_bucket_size(export_width, export_height, bucket_steps)
             bucket_sizes.append(resized_resolution)
@@ -995,7 +1119,6 @@ class Database(VirtualDatabase):
         # add the individual prompt and bucket resolution
         for prompt, resolution in zip(prompts, bucket_sizes):
             data_dict["prompt"]["subset"].append({"prompt":prompt, "width":resolution[0], "height":resolution[1]})
-        
         
         with open(toml_full_path, "w") as f:
             toml.dump(data_dict, f,)

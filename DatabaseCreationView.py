@@ -63,7 +63,7 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 
 		if os.path.exists(os.path.join(folder, parameters.DATABASE_FILE_NAME)):
 			files.backup_database_file(folder)
-			parameters.log.error(f"Database exists in {folder}, database is backed")
+			parameters.log.error(f"Database exists in {folder}, database is backedup")
 		images_paths = files.get_all_images_in_folder(folder)
 		self.db = Database(folder)
 		self.db.add_images_to_db(images_paths, move_dupes=self.checkBox_move_duplicates_out_of_folder.isChecked(), grouping_from_path=self.checkBox_groups_from_folders.isChecked())

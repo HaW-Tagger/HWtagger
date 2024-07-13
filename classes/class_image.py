@@ -71,6 +71,7 @@ class ImageDatabase:
         self.similarity_group: int = 0
         self.image_name = None
         self.auto_tags_merged_confidence: dict[str: float] = {}
+        self.rare_tags_count = 0
         
         # todo: make similarity group into a tuple of the group then the average belong to the group
         
@@ -171,10 +172,10 @@ class ImageDatabase:
 
         # legacy code convert for database old auto tags storage
         if "caformer_auto_tags" in new_keys:
-            self.auto_tags["caformer"] = image_dict["caformer_auto_tags"]
+            self.auto_tags["Caformer"] = image_dict["caformer_auto_tags"]
             update_simple_tags = True
         if "swinv2_auto_tags" in new_keys:
-            self.auto_tags["swinv2v3"] = image_dict["swinv2_auto_tags"]
+            self.auto_tags["Swinv2v3"] = image_dict["swinv2_auto_tags"]
             update_simple_tags = True
 
         # Manual Tags
@@ -603,7 +604,7 @@ class ImageDatabase:
                         if self.auto_tags_merged_confidence[tag] < confidence:
                             self.auto_tags_merged_confidence[tag] = confidence        
                 
-        autotag_below_thresh = [k for k, v in self.auto_tags_merged_confidence.items() if v < confidence]
+        autotag_below_thresh = [k for k, v in self.auto_tags_merged_confidence.items() if v < confidence and k not in  self.manual_tags]
         tags = [t for t in self.full_tags if t not in autotag_below_thresh]
         return tags
         
@@ -996,8 +997,21 @@ class ImageDatabase:
 
     def get_search_tags(self) -> set[str]:
         manual_source = {"source_manual"} if len(self.manual_tags) else {}
-        full_tags = self.get_full_tags().union({"source_"+x for x in self.external_tags.keys()}, {"source_"+x for x in self.auto_tags.keys()}, manual_source)
+        group_names = {"group_"+x for x in self.group_names} if self.group_names else {}
+        full_tags = self.get_full_tags().union({"source_"+x for x in self.external_tags.keys()}, {"source_"+x for x in self.auto_tags.keys()}, manual_source, group_names)
         return full_tags
+
+    def cleanup_rejected_manual_tags(self):
+        k = 0
+        while k < len(self.rejected_manual_tags):
+            if self.rejected_manual_tags[k] not in self.manual_tags+self.external_tags_list+self.simple_auto_tags_list+self.secondary_new_tags:
+                self.rejected_manual_tags.pop(k)
+            else:
+                k+=1
+
+    def get_rare_tags_count(self):
+        return self.rare_tags_count
+
           
 def percentile_to_label(percentile):
     mapping = tag_categories.QUALITY_LABELS_MAPPING

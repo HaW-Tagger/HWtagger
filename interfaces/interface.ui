@@ -716,7 +716,7 @@
              <x>0</x>
              <y>0</y>
              <width>1015</width>
-             <height>808</height>
+             <height>838</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -834,6 +834,33 @@
                <property name="topMargin">
                 <number>12</number>
                </property>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_21">
+                 <item>
+                  <widget class="QSpinBox" name="spin_max_amount_of_backups">
+                   <property name="suffix">
+                    <string/>
+                   </property>
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>999</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_17">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The amount of backups saved in the database folder.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string>Maximum amount of backups per databases</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_11">
                  <item>

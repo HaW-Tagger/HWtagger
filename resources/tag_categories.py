@@ -11,7 +11,7 @@ REJECTED_TAGS = {
     "nsfw", "sfw",
     
     # rejecting cause comma is a problem with these tags:
-    "please don't bully me", "nagatoro"
+    "please don't bully me", "nagatoro",
     
     # body parts:
     "face", "nose","hands","ears","mouth","fur","hair","human","cum","posing", 
@@ -33,10 +33,11 @@ REJECTED_TAGS = {
     "stepsibling_(lore)", "stepbrother_(lore)", "stepfather_and_stepchild_(lore)", "stepparent_and_stepchild_(lore)", "stepson_(lore)", "aunt_(lore)", 
     "stepfather_and_stepson_(lore)", "stepparent_and_stepson_(lore)", "grandfather_and_grandson_(lore)", "grandmother_and_grandchild_(lore)", "stepsister_(lore)", 
     "niece_(lore)", "uncle_and_niece_(lore)", "grandmother_and_grandson_(lore)", "aunt_and_nephew_(lore)", "real person", "john doe", "shaved","hairless", "fit",
-    "exposed nipples", "exposed balls", "horny", "caged dom", "chastity cage only", "both sexes in same situation", "straight",
+    "exposed nipples", "exposed balls", "horny", "caged dom", "chastity cage only", "both sexes in same situation", "straight", "non-human",
+    "foot fetish", "chastity device only","light skin",
     
     
-    'fucked silly',"plug","older","traditional clothes", "ground vehicle", "military", "bdsm", "off shoulder",
+    'fucked silly',"plug","traditional clothes", "ground vehicle", "military", "bdsm", "off shoulder",
     "age regression","spreading",
     "food", "public", "weapon", 'bangs',  "pose",'public nudity',
     "eyebrows", "areolae","focused","accident",
@@ -103,7 +104,7 @@ REJECTED_TAGS = {
     'spine (medium)', 'stitched', 'swedish audio', 'swedish commentary', 'tegaki draw and tweet', 'comic panel redraw','detexted','decensored', 'deviantart sample', 'disc menu', 
     'download link', 'downscaled', 'dutch commentary', 'making-of', 'masking tape (medium)', 'merchandise available', 'mixed-language audio', 'picrew (medium)', 'pixiv banner',
     'highres', 'absurdres', "hi res", "high res", "2d", "digital media", "digital media (artwork)", "absurd res", "patreon url", "twitter url", "pixiv url", "url",
-    "artist cg",
+    "artist cg","alternate version available", "alternate version at source",  "comission", "high resolution", "no text version", "oc", "unknown artist",
     
     
     'no headwear',"no testicles","no bangs", "no arms", "no symbol", "no hat",
@@ -114,9 +115,9 @@ REJECTED_TAGS = {
     "genderswap (otf)",'shimaindon (sex)',"shimaidon (sex)", "bisexual (female)", "ambiguous gender", "friends","father and daughter",
     "implied pregnancy","implied bisexual","implied fingering", "implied anal", "everyone","teenage",'aged up', 'aged down','mother and son',
     "group", "functionally nude male", "functionally nude female","gay","lesbian", "light-skinned femboy", "light-skinned male",
-    "light-skinned futanari","light-skinned female", "pale-skinned femboy", "pale-skinned male",
+    "light-skinned futanari","light-skinned female", "pale-skinned femboy", "pale-skinned male", "male/female",
     "pale-skinned futanari","pale-skinned female","better than girls", "female with femboy", "female with female", 
-    "female with face unlike mammal", "female with feral", 
+    "female with face unlike mammal", "female with feral", "older","twink", "teen boy", "teen girl",
     
     # races
     "mithra (ff11)","warrior of light (ff14)","lalafell",
@@ -407,6 +408,7 @@ COLOR_CATEGORIES = {
     "CLOTHES EASTERN":(0,255,127), # Spring Green
 # TEAL>NAVY:
     "LOWER BODY": (100,149,237), # Corn Flower Blue
+    "BREASTS SIZE":  (0,139,139), # dark cyan
     "UPPER BODY": (0,139,139), # dark cyan
     "HEAD": (0,206,209), # Dark Turquoise
     "BODY": (0,191,240), # Deep Sky Blue
@@ -426,6 +428,7 @@ COLOR_CATEGORIES = {
     "VIEW":(199,21,133), # medium violet red
     "FETISH GROUPS":(199,21,133), # medium violet red
     "HAIR COLOR ALL": (212,115,212), # French Mauve
+    "HAIR LENGTH": (223,115,255), # Heliotrope
     "HAIR": (223,115,255), # Heliotrope
     "HOLDING": (228,0,124), #Mexican Pink
 # GREY>BLACK:
@@ -441,8 +444,8 @@ COLOR_CATEGORIES = {
 # this is the order in which tags are going to be listed, categories not includes will be added to the end
 COLOR_DICT_ORDER = [
                     "MODELS","COUNT", "OCCUPATION","FETISH GROUPS", "RACE", "FAKE EARS ALL","ANIMALS", "VEHICLE", "ENVIRONMENT",
-                    "BODY SHAPE","EYES COLOR ALL", "HAIR COLOR ALL","HAIR", "HEAD","EMOTIONS",
-                    "UPPER BODY","BODY","LOWER BODY","APPENDICES","ABSENCE",
+                    "BODY SHAPE","EYES COLOR ALL", "HAIR COLOR ALL","HAIR LENGTH", "HAIR", "HEAD","EMOTIONS",
+                    "BREASTS SIZE","UPPER BODY","BODY","LOWER BODY","APPENDICES","ABSENCE",
                     "CLOTHES", "CLOTHES TIGHT", "CLOTHES COLOR","CLOTHES EASTERN", "CLOTHES PARTS", 
                     "SHOES",
                     "MAKEUP", "TATTOO", "PIERCING", "ACCESSORIES",

@@ -17,12 +17,15 @@ from resources import parameters
 
 
 def load_database(folder):
+    if "TEMP_DISCARDED" in os.listdir(folder):
+        export_images(get_all_images_in_folder(os.path.join(folder, "TEMP_DISCARDED")), folder)
     with open(os.path.join(folder, parameters.DATABASE_FILE_NAME), 'r') as f:
         db = json.load(f)
     return db
 
 def save_database(database: dict, folder):
     add_history(folder)
+    backup_database_file(folder)
     with open(os.path.join(folder, parameters.DATABASE_FILE_NAME), 'w') as f:
         json.dump(database, f)
 
@@ -37,16 +40,19 @@ def create_database_file(folder):
 
 def backup_database_file(folder):
     files = os.listdir(folder)
-    backups = [parameters.DATABASE_FILE_NAME+".bak"+'0']
+    backups = []
     for file in files:
         if parameters.DATABASE_FILE_NAME+".bak" in file:
             backups.append(file)
-    backups = [file[-1] for file in backups]
-    backups.sort(reverse=True)
-
-    if os.path.exists(os.path.join(folder, parameters.DATABASE_FILE_NAME+".bak")):
-        os.remove(os.path.join(folder, parameters.DATABASE_FILE_NAME+".bak"))
-    os.rename(os.path.join(folder, parameters.DATABASE_FILE_NAME),os.path.join(folder, parameters.DATABASE_FILE_NAME+".bak"+str(int(backups[0])+1)))
+    backups.sort(key=lambda x: int(x[x.index(".bak")+4:]))
+    while len(backups)>0:
+        if len(backups) >= parameters.PARAMETERS['max_databases_view_backup']:
+            os.remove(os.path.join(folder, backups[-1]))
+        else:
+            dst_path = os.path.join(folder,backups[-1][:backups[-1].index(".bak")+4] + str(int(backups[-1][backups[-1].index(".bak")+4:])+1).zfill(3))
+            os.rename(os.path.join(folder, backups[-1]), dst_path)
+        backups.pop()
+    os.rename(os.path.join(folder, parameters.DATABASE_FILE_NAME), os.path.join(folder, parameters.DATABASE_FILE_NAME+".bak"+'001'))
 
 def get_all_images_in_folder(folder, image_ext=resources.parameters.IMAGES_EXT, rejected_folders=resources.parameters.PARAMETERS["discard_folder_name_from_search"]):
     """

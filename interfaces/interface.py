@@ -380,7 +380,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1015, 808))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1015, 838))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
         self.groupBox = QGroupBox(self.scrollAreaWidgetContents)
@@ -459,6 +459,23 @@ class Ui_MainWindow(object):
         self.verticalLayout_7 = QVBoxLayout(self.groupBox_8)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.verticalLayout_7.setContentsMargins(-1, 12, -1, -1)
+        self.horizontalLayout_21 = QHBoxLayout()
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.spin_max_amount_of_backups = QSpinBox(self.groupBox_8)
+        self.spin_max_amount_of_backups.setObjectName(u"spin_max_amount_of_backups")
+        self.spin_max_amount_of_backups.setMinimum(1)
+        self.spin_max_amount_of_backups.setMaximum(999)
+
+        self.horizontalLayout_21.addWidget(self.spin_max_amount_of_backups)
+
+        self.label_17 = QLabel(self.groupBox_8)
+        self.label_17.setObjectName(u"label_17")
+
+        self.horizontalLayout_21.addWidget(self.label_17)
+
+
+        self.verticalLayout_7.addLayout(self.horizontalLayout_21)
+
         self.horizontalLayout_11 = QHBoxLayout()
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.spin_max_batch_size = QSpinBox(self.groupBox_8)
@@ -951,6 +968,11 @@ class Ui_MainWindow(object):
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Tag Edit Click Count", None))
         self.checkBox_hide_sentence_in_view.setText(QCoreApplication.translate("MainWindow", u"Hide Sentence in the Database View", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("MainWindow", u"Misc", None))
+        self.spin_max_amount_of_backups.setSuffix("")
+#if QT_CONFIG(tooltip)
+        self.label_17.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>The amount of backups saved in the database folder.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_17.setText(QCoreApplication.translate("MainWindow", u"Maximum amount of backups per databases", None))
 #if QT_CONFIG(tooltip)
         self.label_8.setToolTip(QCoreApplication.translate("MainWindow", u"used for the taggers, recommended 8 but if the VRAM is lacking we recommend to reduce it", None))
 #endif // QT_CONFIG(tooltip)

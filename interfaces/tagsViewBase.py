@@ -29,6 +29,11 @@ class Ui_Form(object):
         Form.resize(554, 847)
         self.verticalLayout_3 = QVBoxLayout(Form)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.lineEdit_tag_highlight = QLineEdit(Form)
+        self.lineEdit_tag_highlight.setObjectName(u"lineEdit_tag_highlight")
+
+        self.verticalLayout_3.addWidget(self.lineEdit_tag_highlight)
+
         self.label_image_path = QLabel(Form)
         self.label_image_path.setObjectName(u"label_image_path")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
@@ -183,6 +188,10 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_tag_highlight.setToolTip(QCoreApplication.translate("Form", u"Enter any word and it'll be highlighted in the tag view, separate multiple tags with comma", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_tag_highlight.setPlaceholderText(QCoreApplication.translate("Form", u"Enter text to highlight in tag view", None))
 #if QT_CONFIG(tooltip)
         self.label_image_path.setToolTip(QCoreApplication.translate("Form", u"path of the image", None))
 #endif // QT_CONFIG(tooltip)

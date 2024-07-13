@@ -704,7 +704,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             self.spin_swinv2_chara_count, self.check_swinv2_chara, self.spin_caformer_thresh, self.spin_max_batch_size,
             self.spin_max_images_loader_thread, self.spin_max_4k_pixels_save_multiplier, self.spin_similarity_thresh,
             self.comboBox_click_option, self.spinBox_custom_height, self.spinBox_custom_width, self.spinBox_custom_bucket_steps,
-            self.spinBox_sample_count
+            self.spinBox_sample_count, self.spin_max_amount_of_backups
         ]
         for x in list_of_widget_to_have_their_wheel_event_removed:
             x.wheelEvent = lambda event: None
@@ -725,6 +725,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.check_remove_transparency_from_images.setChecked(parameters.PARAMETERS["remove_transparency_from_images"])
         self.spin_max_images_loader_thread.setValue(parameters.PARAMETERS["max_images_loader_thread"])
         self.spin_max_4k_pixels_save_multiplier.setValue(parameters.PARAMETERS["max_4k_pixel_save_multiplier"])
+        self.spin_max_amount_of_backups.setValue(parameters.PARAMETERS["max_databases_view_backup"])
         self.spin_similarity_thresh.setValue(parameters.PARAMETERS["similarity_threshold"])
         
         #self.comboBox_click_option.addItems(["Single Click", "Double Click"])
@@ -763,6 +764,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.check_remove_transparency_from_images.setChecked(parameters.default_parameters['Database']["remove_transparency_from_images"])
         self.spin_max_images_loader_thread.setValue(parameters.default_parameters['Database']["max_images_loader_thread"])
         self.spin_max_4k_pixels_save_multiplier.setValue(parameters.default_parameters['Database']["max_4k_pixel_save_multiplier"])
+        self.spin_max_amount_of_backups.setValue(parameters.default_parameters['Database']["max_databases_view_backup"])
         self.spin_similarity_thresh.setValue(parameters.default_parameters['General']["similarity_threshold"])
 
         #self.comboBox_click_option.addItems(["Single Click", "Double Click"])
@@ -796,6 +798,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.PARAMETERS["remove_transparency_from_images"] = self.check_remove_transparency_from_images.isChecked()
         parameters.PARAMETERS["max_images_loader_thread"] = self.spin_max_images_loader_thread.value()
         parameters.PARAMETERS["max_4k_pixel_save_multiplier"] = self.spin_max_4k_pixels_save_multiplier.value()
+        parameters.PARAMETERS["max_databases_view_backup"] = self.spin_max_amount_of_backups.value()
         parameters.PARAMETERS["similarity_threshold"] = self.spin_similarity_thresh.value()
         
         parameters.PARAMETERS["double_click"] = self.comboBox_click_option.currentText() == "Double Click"

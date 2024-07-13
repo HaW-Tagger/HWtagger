@@ -63,7 +63,9 @@ default_parameters['Database'] = {
 	'remove_transparency_from_images': True,
 	'discard_folder_name_from_search': default_discard_folder,
 	'max_images_loader_thread' : 24,
-	'max_4k_pixel_save_multiplier': 10
+	'max_4k_pixel_save_multiplier': 10,
+	'max_databases_view_backup': 5,
+	'frequency_rare_tag_threshold': 0.02
 }
 default_parameters['Filter'] = {
 	'filter_remove_series': True,

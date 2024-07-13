@@ -1,14 +1,16 @@
+import copy
 import os
 import webbrowser
 import subprocess
 import enum
 import datetime
 import concurrent.futures
+from collections import Counter
 
 import PySide6.QtGui as QtGui
 from PySide6.QtWidgets import QWidget, QCompleter, QTreeWidgetItem, \
 	QListWidgetItem, QTabBar, QSizePolicy, QSplitter, QLayout, QHBoxLayout, QFrame, QCheckBox, QLabel, QGridLayout, \
-	QFormLayout, QVBoxLayout, QDialog, QPushButton, QLineEdit, QStackedWidget
+	QFormLayout, QVBoxLayout, QDialog, QPushButton, QLineEdit, QStackedWidget, QButtonGroup, QRadioButton
 from PySide6.QtGui import QPixmap, QStandardItemModel, QStandardItem, QBrush
 import PySide6.QtCore as QtCore
 from PySide6.QtCore import Slot, QStringListModel, QSize
@@ -23,7 +25,8 @@ from tools import files
 from CustomWidgets import confirmation_dialog, InputDialog
 
 class UniqueTagsView(QtCore.QAbstractListModel):
-	def __init__(self, display_tags: list[str] | set[str], image: ImageDatabase, highlight_tags: list[str]=[]):
+	def __init__(self, display_tags: list[str] | set[str], image: ImageDatabase, highlight_tags: list[str]=[], uncommon_tags: list[tuple[str, float]]=[]):
+
 		super().__init__()
 		self.display_tags = []
 		for category in tag_categories.COLOR_DICT_ORDER:
@@ -31,6 +34,15 @@ class UniqueTagsView(QtCore.QAbstractListModel):
 		self.display_tags.extend(tag for tag in display_tags if tag not in self.display_tags)
 		self.image = image # never change anything in this object, it's only to gather information on the tags
 		self.highlight_tags = highlight_tags
+
+		# uncommon tags are tags not present in all the images when using a common image
+		self.uncommon_tags: dict[str: float] = {}
+		if uncommon_tags:
+			for tag_tuple in uncommon_tags:
+				if tag_tuple[0] not in self.display_tags:
+					self.display_tags.append(tag_tuple[0])
+					self.uncommon_tags[tag_tuple[0]] = int(255*tag_tuple[1])
+		self.uncommon_tags_keys = self.uncommon_tags.keys()
 
 	def rowCount(self, parent=None):
 		return len(self.display_tags)
@@ -49,8 +61,9 @@ class UniqueTagsView(QtCore.QAbstractListModel):
 				font.setBold(True)
 			if (tag in self.image.filtered_rejected_tags or tag in self.image.rejected_tags) and (tag not in self.image.secondary_new_tags and tag not in self.image.manual_tags):
 				font.setStrikeOut(True)
-			if (tag in self.image.secondary_rejected_tags and tag not in self.image.filtered_rejected_tags) or tag in self.image.secondary_new_tags:
+			if tag in self.uncommon_tags_keys:
 				font.setItalic(True)
+				font.setPointSize(parameters.PARAMETERS["font_size"]-2)
 			return font
 
 		if role == QtGui.Qt.ItemDataRole.ForegroundRole and type(tag) == str and tag in tag_categories.COLOR_DICT.keys():
@@ -76,9 +89,11 @@ class UniqueTagsView(QtCore.QAbstractListModel):
 
 
 		if role == QtGui.Qt.ItemDataRole.ToolTipRole:
-			tooltip_text = f""
+			tooltip_text = f"Tag: {tag}"
+			if tag in self.uncommon_tags_keys:
+				tooltip_text += f"\nOccurrence: {int((self.uncommon_tags[tag]/255)*100)} % of the selected images"
 			if tag in tag_categories.TAG_DEFINITION.keys():
-				tooltip_text += f"Definition:  {tag_categories.TAG_DEFINITION[tag]}"
+				tooltip_text += f"\nDefinition:  {tag_categories.TAG_DEFINITION[tag]}"
 
 			if tag in self.image.external_tags_list:
 				tooltip_text += f"\nOrigin: {', '.join(self.image.get_external_tag_origin(tag))} - external tags"
@@ -207,12 +222,41 @@ class ConflictTagsView(QtCore.QAbstractItemModel):
 
 		return QtCore.QModelIndex()
 
+
+class FrequencyTagsView(QtCore.QAbstractListModel):
+	def __init__(self, frequency_tags: list[tuple[str, int]]):
+
+		super().__init__()
+		self.display_tags = frequency_tags
+
+	def rowCount(self, parent=None):
+		return len(self.display_tags)
+
+	def data(self, index, role):
+		tag, freq = self.display_tags[index.row()]
+		if role == QtGui.Qt.ItemDataRole.DisplayRole:
+			return f"{freq}: {tag}"
+
+		if role == QtGui.Qt.ItemDataRole.ForegroundRole and type(tag) == str and tag in tag_categories.COLOR_DICT.keys():
+			red, green, blue, alpha = tag_categories.COLOR_DICT[tag]
+			brush = QtGui.QBrush()
+			brush.setColor(QtGui.QColor.fromRgb(red, green, blue, alpha))
+			return brush
+
+		if role == QtGui.Qt.ItemDataRole.ToolTipRole:
+			tooltip_text = f"Tag: {tag}"
+			if tag in tag_categories.TAG_DEFINITION.keys():
+				tooltip_text += f"\nDefinition:  {tag_categories.TAG_DEFINITION[tag]}"
+			return tooltip_text
+
+
+
 class SortType(enum.Enum):
 	# add sort name and the sort function here to add sort method to ui
 
 	# Name, function, Tooltip description
 	TAGS_LEN = "Tags length", lambda x: len(x.full_tags), "Tags Length"
-	TOKEN_LEN = "Token length", lambda x: x.full_tags_token_length, "Other"
+	TOKEN_LEN = "Token length", lambda x: x.get_token_length(), "Other"
 	SENTENCE_TOKEN_LEN = "Sentence token length", lambda x: x.get_sentence_token_length(), "Other"
 	MANUAL_TAGS_LEN = "Manual tags length", lambda x: len(x.manual_tags), "Other"
 	FILE_NAME = "Filename", lambda x: x.get_filename(), "Other"
@@ -220,8 +264,8 @@ class SortType(enum.Enum):
 	SCORE_RATING = "Aesthetic score", lambda x: x.get_score_sort_tuple(), "Other" # double sort (label, score)
 	IMAGE_RATIO = "Image ratio", lambda x: x.image_ratio, "Other"
 	IMAGE_PIXEL_COUNT = "Image pixel count", lambda x: x.image_width*x.image_height, "Other"
-	IMAGE_WIDTH = "Image width", lambda x: x.image_width, "Other"
-	IMAGE_HEIGHT = "Image height", lambda x: x.image_height, "Other"
+	IMAGE_WIDTH = "Image width", lambda x: (x.image_width, x.image_height), "Other"
+	IMAGE_HEIGHT = "Image height", lambda x: (x.image_height, x.image_width), "Other"
 	SIMILARITY_GROUP = "Similarity", lambda x: x.similarity_group, "Other"
 	BRIGHTNESS_VALUE = "Brightness", lambda x: x.get_brightness(), "Other"
 	AVERAGE_PIXEL = "Average pixel", lambda x: x.get_average_pixel(), "Other"
@@ -231,6 +275,7 @@ class SortType(enum.Enum):
 
  
 	CHARACTER_COUNT = "Named characters count", lambda x: x.get_character_count(), "Other"
+	RARE_TAGS_COUNT = "Rare tags count", lambda x: x.get_rare_tags_count(), "Other"
 	UNKNOWN_TAGS = "Unknown tags", lambda x: x.get_unknown_tags_count(), "Other"
 
 	def sort_function(self, image):
@@ -300,7 +345,6 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
 		self.other_splitter.addWidget(self.listView_other)
 		self.layout().insertWidget(2, self.other_splitter)
 
-
 class TagsViewBase(QWidget, tagsViewBase.Ui_Form):
 	def __init__(self):
 		super().__init__()
@@ -330,15 +374,19 @@ class TagsViewBase(QWidget, tagsViewBase.Ui_Form):
 
 
 
-		self.layout().insertWidget(3, splitter)
-
-
+		self.layout().insertWidget(4, splitter)
 
 class DatabaseViewBase(QWidget):
 	def __init__(self, db: Database):
 		super().__init__()
 
 		self.db = db
+		self.saved_recent_db = self.db
+
+		# history, the most ancient one is the first one, the most recent one is on index -1
+		self.db_history: list[tuple[Database, str]] = [(copy.deepcopy(self.db), "Database on Load")]
+		self.db_history_last_saved_index = 0
+
 
 		# create the big 3 layout
 		splitter = QSplitter()
@@ -372,7 +420,13 @@ class DatabaseViewBase(QWidget):
 		self.current_search_tags: list[tuple[list[str], bool, bool]] = [] #tag, positive, exact
 		self.current_images: list[int] = []
 		self.common_image: ImageDatabase = None
-		
+		self.uncommon_added_tags: list[tuple[str, float]] = []
+		self.uncommon_rejected_tags: list[tuple[str, float]] = []
+
+		# Tracking tags
+		self.current_highlight_tag: list[str] = []
+		self.tags_view.lineEdit_tag_highlight.editingFinished.connect(self.update_highlight_tags)
+
   
 		# popup image
 		self.popup_window = False
@@ -382,6 +436,7 @@ class DatabaseViewBase(QWidget):
 		self.init_tools_view()
 		#self.init_tags_view()
 		self.init_favourites()
+		self.init_history_view()
 		self.database_tools.lineEdit_edit_favourites.returnPressed.connect(self.edit_favourites)
 		self.tags_view.comboBox_score_tags.addItem("NONE")
 		self.tags_view.comboBox_score_tags.addItems(tag_categories.QUALITY_LABELS)
@@ -675,29 +730,38 @@ class DatabaseViewBase(QWidget):
 	@Slot()
 	def clicked_images_changed(self):
 		selected_indexes = [int(self.image_view.listView_groups.model().itemData(index)[0]) for index in self.image_view.listView_groups.selectedIndexes()]
-		for base_index in range(self.image_view.listView_groups.model().rowCount()):
-			index = self.image_view.listView_groups.model().index(base_index, 0)
-			gradient = QtGui.QRadialGradient(0,20,100)
-			gradient.setColorAt(0, QtCore.Qt.GlobalColor.red)
-			gradient.setColorAt(0.2, QtCore.Qt.GlobalColor.yellow)
-			gradient.setColorAt(0.4, QtCore.Qt.GlobalColor.green)
-			gradient.setColorAt(0.6, QtCore.Qt.GlobalColor.cyan)
-			gradient.setColorAt(0.8, QtCore.Qt.GlobalColor.blue)
-			gradient.setColorAt(1.0, QtCore.Qt.GlobalColor.magenta)
-			brush = QBrush(gradient)
-			blank_brush = QBrush(QtGui.QColor(214, 214, 214, 255))
-			if index in self.image_view.listView_groups.selectedIndexes():
-				self.image_view.listView_groups.model().setData(index, brush, QtGui.Qt.ItemDataRole.BackgroundRole)
-			else:
-				self.image_view.listView_groups.model().setData(index, blank_brush, QtGui.Qt.ItemDataRole.BackgroundRole)
+		self.apply_selection_gradient(self.image_view.listView_groups.selectedIndexes())
+		self.update_selected_images_changed(selected_indexes)
 
+
+	def update_selected_images_changed(self, selected_indexes):
+		"""
+		Args:
+			selected_indexes: indexes of the images inside the database images list
+		"""
+		self.update_pop_up_image(selected_indexes)
 		self.init_tags_view(selected_indexes)
 
 		if len(selected_indexes) == 1 and self.image_view.checkBox_zoom_on_click.isChecked():
 			self.stacked_widget.setCurrentIndex(1)
 			self.update_single_image_view()
 
-		self.update_pop_up_image()
+	def apply_selection_gradient(self, selected_model_indexes):
+		gradient = QtGui.QRadialGradient(0, 20, 100)
+		gradient.setColorAt(0, QtCore.Qt.GlobalColor.red)
+		gradient.setColorAt(0.2, QtCore.Qt.GlobalColor.yellow)
+		gradient.setColorAt(0.4, QtCore.Qt.GlobalColor.green)
+		gradient.setColorAt(0.6, QtCore.Qt.GlobalColor.cyan)
+		gradient.setColorAt(0.8, QtCore.Qt.GlobalColor.blue)
+		gradient.setColorAt(1.0, QtCore.Qt.GlobalColor.magenta)
+		brush = QBrush(gradient)
+		blank_brush = QBrush(QtGui.QColor(214, 214, 214, 255))
+		for base_index in range(self.image_view.listView_groups.model().rowCount()):
+			index = self.image_view.listView_groups.model().index(base_index, 0)
+			if index in selected_model_indexes:
+				self.image_view.listView_groups.model().setData(index, brush, QtGui.Qt.ItemDataRole.BackgroundRole)
+			else:
+				self.image_view.listView_groups.model().setData(index, blank_brush, QtGui.Qt.ItemDataRole.BackgroundRole)
 
 
 
@@ -710,6 +774,8 @@ class DatabaseViewBase(QWidget):
 
 
 	def update_tags_view(self):
+		if not self.current_images:
+			return False
 		self.get_current_image().filter()
 		self.show_or_hide_sentence(bool(self.get_current_image().sentence_description))
 		self.update_single_image_tags(self.get_current_image())
@@ -763,6 +829,10 @@ class DatabaseViewBase(QWidget):
 
 	def init_tags_view(self, image_index_list: list[int]):
 		self.save_current_images()
+		#self.add_db_to_history()
+
+		self.uncommon_added_tags = []
+		self.uncommon_rejected_tags = []
 
 		if len(image_index_list) == 1:
 			self.update_review(self.db.images[image_index_list[0]].manually_reviewed)
@@ -770,7 +840,6 @@ class DatabaseViewBase(QWidget):
 			self.common_image = None
 			self.update_tags_view()
 		else:
-			parameters.log.info("Nothing")
 			all_images = [self.db.images[i] for i in image_index_list]
 			common_image = self.create_artificial_common_image(all_images)
 			self.current_images = image_index_list
@@ -787,25 +856,33 @@ class DatabaseViewBase(QWidget):
 							   sentence_len=self.db.images[self.current_images[0]].get_sentence_token_length())
 		elif len(self.current_images) > 1:
 			self.update_labels(tags_len=len(self.common_image.full_tags),
-							   token_len=self.common_image.get_token_length())
+							   token_len=self.common_image.get_token_length(),
+			                   image_path=f"{len(self.current_images)} images selected"
+			                   )
 
 
 	def create_artificial_common_image(self, all_images: list[ImageDatabase]):
 		artificial_image = ImageDatabase()
+
 		auto_tags = {}
 		for auto_tagger in all_images[0].auto_tags.keys():
 			auto_tags[auto_tagger] = [tag_tuple for tag_tuple in all_images[0].auto_tags[auto_tagger] if all([tag_tuple[0] in x.simple_auto_tags[auto_tagger] for x in all_images])]
+
 		external_tags = {}
 		for external_name in all_images[0].external_tags.keys():
 			external_tags[external_name] = [tag for tag in all_images[0].external_tags[external_name] if all(external_name in x.external_tags.keys() for x in all_images) and all([tag in x.external_tags[external_name] for x in all_images])]
+
 		common_manual = [tag for tag in all_images[0].manual_tags if all([tag in image.manual_tags for image in all_images])]
 		common_rejected_manual = [tag for tag in all_images[0].rejected_manual_tags if all([tag in image.rejected_manual_tags for image in all_images])]
+
 		common_score_label = ""
 		if all([all_images[0].score_label == image.score_label for image in all_images]):
 			common_score_label = all_images[0].score_label
+
 		common_classify_label = ""
 		if all([all_images[0].classify_label == image.classify_label for image in all_images]):
 			common_classify_label = all_images[0].classify_label
+
 		artificial_image.init_image_dict({
 			"auto_tags": auto_tags,
 			"external_tags": external_tags,
@@ -817,13 +894,29 @@ class DatabaseViewBase(QWidget):
 			"classify_label": common_classify_label,
 		})
 		artificial_image.filter()
-		artificial_image.update_full_tags()
+		artificial_image.get_full_tags()
+
+		uncommon_added_tags = []
+		uncommon_rejected_tags = []
+
+		for image in all_images:
+			uncommon_added_tags.extend([tag for tag in image.get_full_tags() if tag not in artificial_image.full_tags])
+			uncommon_rejected_tags.extend([tag for tag in image.rejected_tags if tag not in artificial_image.rejected_tags])
+
+		c = Counter()
+		c.update(uncommon_added_tags)
+		self.uncommon_added_tags = [(tag_tuple[0], tag_tuple[1]/len(all_images)) for tag_tuple in c.most_common()]
+
+		c = Counter()
+		c.update(uncommon_rejected_tags)
+		self.uncommon_rejected_tags = [(tag_tuple[0], tag_tuple[1] / len(all_images)) for tag_tuple in c.most_common()]
+
 		return artificial_image
 
 
 
-	def update_aesthetic_score(self):
-		current_score_label = self.get_current_image().score_label
+	def update_aesthetic_score(self, image: ImageDatabase):
+		current_score_label = image.score_label
 		if current_score_label and current_score_label in tag_categories.QUALITY_LABELS:
 			self.tags_view.comboBox_score_tags.setCurrentIndex(tag_categories.QUALITY_LABELS.index(current_score_label)+1)
 		else:
@@ -835,13 +928,13 @@ class DatabaseViewBase(QWidget):
 
 
 	def update_single_image_tags(self, image: ImageDatabase):
-		full_tags_model = UniqueTagsView(image.get_full_tags(), image, self.current_highlight_tag)
+		full_tags_model = UniqueTagsView(image.get_full_tags(), image, highlight_tags=self.current_highlight_tag, uncommon_tags=self.uncommon_added_tags)
 		#full_tags_model.sort_display_tags(lambda x: x)
-		rejected_tags_model = UniqueTagsView(image.rejected_tags, image, self.current_highlight_tag)
+		rejected_tags_model = UniqueTagsView(image.rejected_tags, image, highlight_tags=self.current_highlight_tag, uncommon_tags=self.uncommon_rejected_tags)
 		#rejected_tags_model.sort_display_tags(lambda x: x)
-		recommendation_tags_model = UniqueTagsView(image.get_recommendations(), image, self.current_highlight_tag)
+		recommendation_tags_model = UniqueTagsView(image.get_recommendations(), image, highlight_tags=self.current_highlight_tag)
 		#recommendation_tags_model.sort_display_tags(lambda x: x)
-		conflicts_tags_model = ConflictTagsView(image.get_unresolved_conflicts(), image, self.current_highlight_tag)
+		conflicts_tags_model = ConflictTagsView(image.get_unresolved_conflicts(), image, highlight_tags=self.current_highlight_tag)
 		self.tags_view.listView_tags.setModel(full_tags_model)
 		self.tags_view.listView_rejected.setModel(rejected_tags_model)
 		self.tags_view.listView_recommendations.setModel(recommendation_tags_model)
@@ -865,7 +958,7 @@ class DatabaseViewBase(QWidget):
 			self.tags_view.treeView_conflicts.hide()
 		else:
 			self.tags_view.treeView_conflicts.show()
-		self.update_aesthetic_score()
+		self.update_aesthetic_score(image)
 
 	def update_labels(self, *, tags_len=0, token_len=0, image_path="multiple_images", sentence_len=0):
 		self.tags_view.label_image_path.setText(f"{image_path}")
@@ -910,6 +1003,9 @@ class DatabaseViewBase(QWidget):
 		self.current_sort = get_sort_member(text)
 		if self.current_sort == SortType.SIMILARITY_GROUP:
 			self.db.find_similar_images()
+		# todo: highlight rare tags checkbox
+		if self.current_sort == SortType.RARE_TAGS_COUNT:
+			self.db.update_rare_tags()
 		self.update_sorting()
 		self.update_other_view()
 
@@ -1089,9 +1185,17 @@ class DatabaseViewBase(QWidget):
 
 	### Right Panel
 	def init_tools_view(self):
+		self.database_tools.pushButton_refresh_tags_frequency.clicked.connect(self.refresh_tags_frequency)
+		for category in ["ALL"]+list(tag_categories.TAG_CATEGORIES.keys()):
+			self.database_tools.comboBox_frequency_sort.addItem(category)
+		self.database_tools.comboBox_frequency_sort.currentTextChanged.connect(self.refresh_tags_frequency)
+		self.database_tools.pushButton_remove_tags_from_frequency_batch.clicked.connect(self.remove_tags_from_frequency)
+
 		self.database_tools.pushButton_save_database.clicked.connect(self.save_database_button)
 		self.database_tools.comboBox_selection.addItems(["Current Selection", "Visible Images", "Database"])
-		self.database_tools.comboBox_selection.setCurrentIndex(2)
+		self.database_tools.comboBox_selection.setCurrentIndex(0)
+		self.database_tools.comboBox_batch_selection_frequency.addItems(["Current Selection", "Visible Images", "Database"])
+		self.database_tools.comboBox_batch_selection_frequency.setCurrentIndex(0)
 		self.database_tools.pushButton_replace.clicked.connect(self.replace_tags)
 
 		# create the add button inside the view
@@ -1105,7 +1209,6 @@ class DatabaseViewBase(QWidget):
 		self.base_replace_layout.addWidget(remove_replace_line_button)
 		self.database_tools.scrollAreaWidgetContents.setLayout(self.base_replace_layout)
 
-		self.current_highlight_tag: list[str] = []
   
 		self.init_trigger_tags()
 		self.database_tools.lineEdit_main_trigger_tag.editingFinished.connect(self.save_trigger_tags)
@@ -1121,27 +1224,79 @@ class DatabaseViewBase(QWidget):
 		self.database_tools.pushButton_only_tag_characters.clicked.connect(self.batch_only_tag_characters)
 		self.database_tools.pushButton_export_images.clicked.connect(self.batch_export_images)
 		self.database_tools.pushButton_purge_manual.clicked.connect(self.batch_purge_manual)
+		self.database_tools.pushButton_cleanup_rejected_manual_tags.clicked.connect(self.batch_cleanup_rejected_manual_tags)
 		self.database_tools.pushButton_apply_filtering.clicked.connect(self.batch_apply_filtering)
 		self.database_tools.pushButton_apply_replacement_to_sentence.clicked.connect(self.batch_apply_replacement_to_sentence)
 		self.database_tools.pushButton_discard_image.clicked.connect(self.batch_discard_image)
 		self.database_tools.pushButton_open_in_default_program.clicked.connect(self.open_default_program)
 		self.database_tools.pushButton_popup_image.clicked.connect(self.pop_up_image)
-		self.database_tools.lineEdit_tag_highlight.editingFinished.connect(self.update_highlight_tags)
   
 	def update_highlight_tags(self):
-		split_text = [t.strip() for t in self.database_tools.lineEdit_tag_highlight.text().split(",")]
+		split_text = [t.strip() for t in self.tags_view.lineEdit_tag_highlight.text().split(",")]
 		self.current_highlight_tag = [t for t in split_text if t] # make sure tags are not blank strings
 		self.update_tags_view()
 
 	@Slot()
+	def refresh_tags_frequency(self):
+		frequency = self.db.get_frequency_of_all_tags()
+		category = self.database_tools.comboBox_frequency_sort.currentText()
+
+		if category != "ALL":
+			frequency = [tag_tuple for tag_tuple in frequency if any([tag_tuple[0] in tags["high"]+tags["low"]+tags["tags"] for sub_category, tags in tag_categories.TAG_CATEGORIES[category].items()])]
+
+		refresh_model = FrequencyTagsView(frequency)
+		self.database_tools.listView_tags_frequency.setModel(refresh_model)
+		self.database_tools.listView_tags_frequency.doubleClicked.connect(self.tag_from_tags_frequency_selected)
+
+	@Slot()
+	def tag_from_tags_frequency_selected(self, index):
+		if not index.isValid():
+			return False
+		tag = self.database_tools.listView_tags_frequency.model().data(index, QtGui.Qt.ItemDataRole.DisplayRole).split(':', maxsplit=1)[1].strip()
+		all_corresponding_images = [] # list of a tuple corresponding to (db_image_index, model_index)
+		for base_index in range(self.image_view.listView_groups.model().rowCount()):
+			index = self.image_view.listView_groups.model().index(base_index, 0)
+			db_index = int(self.image_view.listView_groups.model().itemData(index)[0])
+			if tag in self.db.images[db_index].get_full_tags():
+				all_corresponding_images.append((db_index, index))
+		if not all_corresponding_images:
+			parameters.log.info("No images in the groups view has this tag")
+			return False
+
+		self.apply_selection_gradient([x[1] for x in all_corresponding_images])
+		self.update_selected_images_changed([x[0] for x in all_corresponding_images])
+
+
+
+	@Slot()
 	def save_database_button(self):
 		self.save_current_images()
+		if self.db.get_saving_dict() == self.db_history[self.db_history_last_saved_index][0].get_saving_dict():
+			parameters.log.info("No changes detected in the database")
+			return False
 		self.db.save_database()
-
+		self.db_history_last_saved_index = len(self.db_history)-1
 
 	def get_selected_indexes_right_panel(self) -> list[int]:
 		result = []
 		match self.database_tools.comboBox_selection.currentText():
+			case "Current Selection":
+				return self.current_images
+			case "Visible Images":
+				for base_index in range(self.image_view.listView_groups.model().rowCount()):
+					try:
+						result.append(int(self.image_view.listView_groups.model().itemData(self.image_view.listView_groups.model().index(base_index, 0))[0]))
+					except KeyError:
+						return []
+				return result
+			case "Database":
+				result = [i for i in range(len(self.db.images))]
+				return result
+		parameters.log.error("Incorrect Combobox selected text")
+
+	def get_selected_indexes_frequency_tab(self) -> list[int]:
+		result = []
+		match self.database_tools.comboBox_batch_selection_frequency.currentText():
 			case "Current Selection":
 				return self.current_images
 			case "Visible Images":
@@ -1227,6 +1382,7 @@ class DatabaseViewBase(QWidget):
 		for image_index in images_index:
 			pool.submit(apply_replace, image_index)
 		pool.shutdown(wait=True)
+		self.add_db_to_history(f"{len(images_index)} images had their tags replaced with {len(self.replace_lines)} lines")
 		self.update_tags_view()
 
 
@@ -1268,7 +1424,6 @@ class DatabaseViewBase(QWidget):
 
 	@Slot()
 	def create_sample_toml(self):
-		# todo: improve the toml so that it prints it to a file
 		selected_resolution = self.database_tools.comboBox_toml_resolution.currentText()
 		resolution_dict = {
       		"SDXL":	(1024, 1024, 64), 
@@ -1287,6 +1442,24 @@ class DatabaseViewBase(QWidget):
 		self.db.create_sample_toml(res_info[0], res_info[1], res_info[2])
 
 	@Slot()
+	def remove_tags_from_frequency(self):
+		images_index = self.get_selected_indexes_frequency_tab()
+		if not images_index:
+			parameters.log.warning("No images were valid for batch modification")
+			return False
+		if not CustomWidgets.confirmation_dialog(self):
+			return False
+		tags_to_remove = [self.database_tools.listView_tags_frequency.model().data(self.database_tools.listView_tags_frequency.model().index(model_index),
+		                                                                           QtGui.Qt.ItemDataRole.DisplayRole).split(':', maxsplit=1)[1].strip()
+		                  for model_index in range(self.database_tools.listView_tags_frequency.model().rowCount())]
+		for index in images_index:
+			self.db.images[index].remove_manual_tags(tags_to_remove)
+			self.db.images[index].append_rejected_manual_tags(tags_to_remove)
+		self.add_db_to_history(f"{len(images_index)} images had {len(tags_to_remove)} tags removed in the frequency tab: {self.database_tools.comboBox_frequency_sort.currentText()}")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
+
+	@Slot()
 	def batch_auto_tags(self):
 		images_index = self.get_selected_indexes_right_panel()
 		if not images_index:
@@ -1295,7 +1468,9 @@ class DatabaseViewBase(QWidget):
 		if not CustomWidgets.confirmation_dialog(self):
 			return False
 		self.db.tag_images([self.db.images[i].path for i in images_index])
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images were auto-tagged")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def batch_auto_score(self):
@@ -1306,7 +1481,9 @@ class DatabaseViewBase(QWidget):
 		if not CustomWidgets.confirmation_dialog(self):
 			return False
 		self.db.score_images([self.db.images[i].path for i in images_index])
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images were auto-scored")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 	@Slot()
 	def batch_refresh_online_tags(self):
 		images_index = self.get_selected_indexes_right_panel()
@@ -1316,7 +1493,9 @@ class DatabaseViewBase(QWidget):
 		if not CustomWidgets.confirmation_dialog(self):
 			return False
 		self.db.refresh_unsafe_tags(images_index)
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images had their online tags refreshed")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def batch_reset_manual_score(self):
@@ -1328,7 +1507,9 @@ class DatabaseViewBase(QWidget):
 			return False
 		for i in images_index:
 			self.db.images[i].reset_score()
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images had their manual score reset")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def batch_auto_classify(self):
@@ -1339,7 +1520,9 @@ class DatabaseViewBase(QWidget):
 		if not CustomWidgets.confirmation_dialog(self):
 			return False
 		self.db.classify_images([self.db.images[i].path for i in images_index])
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images were reclassified")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def batch_only_tag_characters(self):
@@ -1350,7 +1533,9 @@ class DatabaseViewBase(QWidget):
 		if not CustomWidgets.confirmation_dialog(self):
 			return False
 		self.db.character_only_tag_images([self.db.images[i].path for i in images_index])
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images were only characters auto-tagged")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def batch_purge_manual(self):
@@ -1361,7 +1546,20 @@ class DatabaseViewBase(QWidget):
 		if not CustomWidgets.confirmation_dialog(self):
 			return False
 		self.db.purge_manual_tags(images_index)
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images had their manual data purged")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
+
+	@Slot()
+	def batch_cleanup_rejected_manual_tags(self):
+		images_index = self.get_selected_indexes_right_panel()
+		if not images_index:
+			parameters.log.warning("No images were valid for batch modification")
+			return
+		self.db.cleanup_images_rejected_tags(images_index)
+		self.add_db_to_history(f"{len(images_index)} images had their rejected manual tags cleaned-up")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def batch_export_images(self):
@@ -1371,7 +1569,7 @@ class DatabaseViewBase(QWidget):
 			return False
 
 		export_path_dialog = InputDialog()
-		export_path_dialog.setWindowTitle("Input folder name")
+		export_path_dialog.setWindowTitle(f"Input path to export {len(images_index)} images")
 		export_path_dialog.setToolTip("This is the folder where the images will be put.")
 		if export_path_dialog.exec() == QDialog.DialogCode.Accepted:
 			path_input = export_path_dialog.input_field.text()
@@ -1401,7 +1599,9 @@ class DatabaseViewBase(QWidget):
 			self.db.filter_all()
 		else:
 			[self.db.images[i].filter() for i in images_index]
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images had filtering applied")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def batch_apply_replacement_to_sentence(self):
@@ -1414,7 +1614,9 @@ class DatabaseViewBase(QWidget):
 			self.db.filter_sentence_all()
 		else:
 			[self.db.images[i].filter_sentence() for i in images_index]
-		self.init_tags_view(self.current_images)
+		self.add_db_to_history(f"{len(images_index)} images had their sentence filtered")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def batch_discard_image(self):
@@ -1425,8 +1627,9 @@ class DatabaseViewBase(QWidget):
 		if len(images_index)>1:
 			if not CustomWidgets.confirmation_dialog(self, f"You selected {len(images_index)} images to discard.\nAre you sure you want to discard them ?\n\nTip: This button is affected by the 'apply to:' setting at the top right of the window."):
 				return False
-		files.export_images([self.db.images[i].path for i in images_index if os.path.exists(self.db.images[i].path)], self.db.folder)
-		self.init_tags_view(self.current_images)
+		files.export_images([self.db.images[i].path for i in images_index if os.path.exists(self.db.images[i].path)], self.db.folder, "TEMP_DISCARDED")
+		if self.current_images:
+			self.init_tags_view(self.current_images)
 
 	@Slot()
 	def open_default_program(self):
@@ -1456,6 +1659,104 @@ class DatabaseViewBase(QWidget):
 		else:
 			super().keyPressEvent(event)
 
+	def keyPressEvent(self, event):
+		# CTRL+S: save database, maybe use '&' for the keyboard modifier
+		if event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier and event.key() == QtCore.Qt.Key.Key_S:
+			self.save_database_button()
+		# LEFT: go previous image
+		elif event.key() == QtCore.Qt.Key.Key_Left and self.stacked_widget.currentIndex() == 1:
+			self.clicked_go_left_button()
+		# RIGHT: go previous image
+		elif event.key() == QtCore.Qt.Key.Key_Right and self.stacked_widget.currentIndex() == 1:
+			self.clicked_go_right_button()
+		else:
+			super().keyPressEvent(event)
+
+	def add_db_to_history(self, short_description="default name"):
+		"""if self.history_buttons.checkedId() != 0:
+			current_id = self.history_buttons.checkedId()
+			parameters.log.info("before remove history from")
+			self.remove_history_starting_from(current_id)
+			parameters.log.info("after remove history from")
+			self.history_buttons.button(0).setChecked(True)
+			self.database_tools.scrollAreaWidgetContents_history.update()
+			parameters.log.info("after update")
+		self.db_history.append((copy.deepcopy(self.db), short_description))
+		self.add_history_view(len(self.db_history))"""
+
+	def init_history_view(self):
+		self.history_buttons = QButtonGroup()
+		self.history_buttons.addButton(QRadioButton(f"Most Recent"), id=0)
+		self.history_buttons.button(0).setChecked(True)
+		self.history_buttons.idClicked.connect(self.change_to_history)
+		self.database_tools.scrollAreaWidgetContents_history.layout().addWidget(self.history_buttons.button(0))
+		self.add_history_view(1)
+		self.database_tools.tabWidget.setTabEnabled(4, False)
+
+	def add_history_view(self, history_index):
+		#parameters.log.info(f"history_index: {history_index}")
+		#parameters.log.info(f"history_buttons_len: {len(self.history_buttons.buttons())}")
+		self.history_buttons.addButton(QRadioButton(f"{history_index}: {self.db_history[history_index-1][1]}"), id=history_index)
+		self.database_tools.scrollAreaWidgetContents_history.layout().insertWidget(history_index,self.history_buttons.button(history_index))
+		#parameters.log.info(f"history_buttons_len: {len(self.history_buttons.buttons())}")
+
+	def remove_history_starting_from(self, history_index):
+		"""
+		Remove all buttons and reference in the history to the database with specified index
+		Args:
+			history_index:
+
+		Returns:
+
+		"""
+		for button in self.history_buttons.buttons():
+			if self.history_buttons.id(button) > history_index:
+				self.database_tools.scrollAreaWidgetContents_history.layout().removeWidget(button)
+				self.history_buttons.removeButton(button)
+				button.hide()
+				button.destroy()
+		for k in reversed(range(history_index, len(self.db_history))):
+			#self.db_history = self.db_history[:history_index+1]
+			del self.db_history[k]
+		parameters.log.info("Len of the db_history: "+str(len(self.db_history)))
+		parameters.log.info("Len of the button_group: "+str(len(self.history_buttons.buttons())))
+
+	@Slot()
+	def change_to_history(self, history_index):
+		parameters.log.info(history_index)
+		if history_index <= 0: #
+			self.db = self.saved_recent_db
+			self.clear_all()
+			return
+		self.clear_all()
+		self.saved_recent_db = self.db
+		self.db = self.db_history[history_index-1][0]
+
+
+	def clear_all(self):
+		self.clear_left_panel()
+		self.clear_tags_panel()
+
+	def clear_left_panel(self):
+		self.image_view.comboBox_group_name.setCurrentIndex(0)
+		self.stacked_widget.setCurrentIndex(0)
+		self.image_view.checkBox_single_selection_mode.setChecked(False)
+
+	def clear_tags_panel(self):
+		self.current_images: list[int] = []
+		self.common_image: ImageDatabase = None
+		self.uncommon_added_tags: list[tuple[str, float]] = []
+		self.uncommon_rejected_tags: list[tuple[str, float]] = []
+
+		self.update_review(False)
+		self.update_labels(tags_len= 0,
+                  token_len = 0,
+                  image_path= "",
+                  sentence_len= 0)
+		self.update_single_image_tags(ImageDatabase())
+
+
+
 	@Slot()
 	def pop_up_image(self):
 		if not self.current_images:
@@ -1473,12 +1774,20 @@ class DatabaseViewBase(QWidget):
 		self.popup_window = CustomWidgets.ImageWindow(self.db.images[self.current_images[0]].path)
 		self.popup_window.show()
 
-	def update_pop_up_image(self):
-		if not self.current_images:
+	def update_pop_up_image(self, selected_indexes):
+		if isinstance(self.popup_window, bool):
 			return False
-		if not isinstance(self.popup_window, bool):
-			if self.popup_window.isHidden():
-				return False
-			self.popup_window.update_image(self.db.images[self.current_images[0]].path)
+		if self.popup_window.isHidden():
+			return False
+		if not selected_indexes:
+			return False
+
+		if len(selected_indexes) == 1:
+			self.popup_window.update_image(self.db.images[selected_indexes[0]].path)
+		elif any([x not in self.current_images for x in selected_indexes]):
+			new_indexes = [x for x in selected_indexes if x not in self.current_images]
+			self.popup_window.update_image(self.db.images[new_indexes[-1]].path)
+		elif any([x not in selected_indexes for x in self.current_images]):
+			self.popup_window.update_image(self.db.images[selected_indexes[0]].path)
 
 
