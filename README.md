@@ -1,6 +1,5 @@
 # Introduction
-Most of our models, LORAs and the eclispeXL checkpoint (https://civitai.com/models/486131/eclipse-xl) were made using this tool.
-Here is a link to the release article on civitai: https://civitai.com/articles/5751/hw-tagger-release
+This application is tool to help people who train loras for stable diffusion. Its goal is to facilitate automatically tagging and editing the tags manually, while offering the ability to quickly share databases between users of the app.
 
 A changelog is available at the bottom of this page
 
