@@ -1,4 +1,6 @@
 import os, csv
+from collections import defaultdict
+
 from resources import parameters
 REJECTED_TAGS = {
     # globally rejected tags, we also reject depreciated tags from danbooru
@@ -47,7 +49,7 @@ REJECTED_TAGS = {
     "zenra", "weight conscious", "breast conscious","expressions", "out of character", 
     
     # ambiguous tags on danbooru
-    "hidden eyes","hidden face", "baton", "comparison", "too many","pot",
+    "hidden eyes","hidden face", "baton", "comparison", "too many","pot", "bad end",
     
     "youtube", "biribiri",'virtual youtuber',"deviantart","utaite", "shindan maker","self-upload","original","mmorpg","vtuber",
     "wallpaper","artist self-insert", "self-insert", "self upload",  "real life insert","voice actor","k-pop","animated",'photoshop (medium)', 
@@ -117,7 +119,8 @@ REJECTED_TAGS = {
     "group", "functionally nude male", "functionally nude female","gay","lesbian", "light-skinned femboy", "light-skinned male",
     "light-skinned futanari","light-skinned female", "pale-skinned femboy", "pale-skinned male", "male/female",
     "pale-skinned futanari","pale-skinned female","better than girls", "female with femboy", "female with female", 
-    "female with face unlike mammal", "female with feral", "older","twink", "teen boy", "teen girl",
+    "female with face unlike mammal", "female with feral", "older","twink", "teen boy", "teen girl", "wife and wife and wife",
+    "married", "swinging (relationship)", "inseki",
     
     # races
     "mithra (ff11)","warrior of light (ff14)","lalafell",
@@ -567,13 +570,18 @@ def make_tag_colors_dict():
     # black = (0,0,0, 255)
     color_dict = dict()
     category_to_tags_dict = {c:[] for c in COLOR_CATEGORIES.keys()}
+    priority_dict = defaultdict(lambda: 0)
+    tag2category = defaultdict(lambda: set()) # TAG --> list[CATEGORIES]
     for main_category, value in TAG_CATEGORIES.items():
         for sub_category, descriptions in value.items():
             if sub_category in COLOR_CATEGORIES: # sub category takes priority
                 red, green, blue = COLOR_CATEGORIES[sub_category]
                 for tag in descriptions["tags"]+descriptions["low"]+descriptions["high"]:
                     color_dict[tag] = (red, green, blue, alphas)
-                
+
+                    if tag not in priority_dict.keys():
+                        priority_dict[tag] = COLOR_DICT_ORDER.index(sub_category)
+
                 category_to_tags_dict[sub_category] = descriptions["tags"]+descriptions["low"]+descriptions["high"]
              
             elif main_category in COLOR_CATEGORIES:
@@ -581,6 +589,9 @@ def make_tag_colors_dict():
                 for tag in descriptions["tags"]+descriptions["high"]:
                     if tag not in color_dict:
                         color_dict[tag] = (red, green, blue, alphas)
+
+                        if tag not in priority_dict.keys():
+                            priority_dict[tag] = COLOR_DICT_ORDER.index(main_category)
                 category_to_tags_dict[main_category].extend(descriptions["tags"]+descriptions["high"]+descriptions["low"])
                 #category_to_tags_dict[main_category].extend([t for t in descriptions["low"] if tag not in color_dict]) 
                 
@@ -588,10 +599,14 @@ def make_tag_colors_dict():
                     if tag not in color_dict:
                         color_dict[tag] = (red, green, blue, alphas)
 
+                        if tag not in priority_dict.keys():
+                            priority_dict[tag] = COLOR_DICT_ORDER.index(main_category)
+            for tag in descriptions["tags"]+descriptions["high"]+descriptions["low"]:
+                tag2category[tag].add(main_category)
     for k, v in category_to_tags_dict.items():
         category_to_tags_dict[k] = sorted(set(v))
     
-    return color_dict, category_to_tags_dict
+    return color_dict, category_to_tags_dict, priority_dict, tag2category
 
 
 def get_tag_categories_belonging():
@@ -603,6 +618,7 @@ def get_tag_categories_belonging():
     tag2high = {} # TAG --> [list of HIGH tags it should be converted to, usually only 1]
     exclusive_high2tags = {} # HIGH --> TAGS
     low2tags = {} # LOW --> TAGS
+    tag2subcategory_exclusive = defaultdict(lambda: []) # TAG --> list[SUB_CATEGORIES]
     for category_name, category in TAG_CATEGORIES.items():
         for subcat_name, subcat in category.items():
             # this if-elif handles the tag replacements
@@ -620,11 +636,14 @@ def get_tag_categories_belonging():
             
             # Code below handles the categories
             if subcat["exclusive"]:
-                category_exclusive[subcat_name] = set(subcat["high"]+subcat["low"]+subcat["tags"])
+                tags_set = set(subcat["high"]+subcat["low"]+subcat["tags"])
+                category_exclusive[subcat_name] = tags_set
+                for tag in tags_set:
+                    tag2subcategory_exclusive[tag].append(subcat_name)
             else:
                 category_nonexclusive[subcat_name] = subcat["high"]+subcat["low"]+subcat["tags"]
 
-    return category_exclusive, category_nonexclusive, tag2high, exclusive_high2tags, low2tags
+    return category_exclusive, category_nonexclusive, tag2high, exclusive_high2tags, low2tags, tag2subcategory_exclusive
 
 
 
@@ -680,24 +699,26 @@ def csv_get_type():
 # note, tag_category_exclusive is a dict of sets
 # we make a set just for the keys because we often check for inclusions
 DESCRIPTION_TAGS, DESCRIPTION_TAGS_FREQUENCY, ARTISTS_TAGS, SERIES_TAGS, CHARACTERS_TAG, CHARACTERS_TAG_FREQUENCY, METADATA_TAGS = {}, {},{}, {},{}, {},{}
-TAG_CATEGORIES_EXCLUSIVE, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS = None, None, None, None
+TAG_CATEGORIES_EXCLUSIVE, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG2SUB_CATEGORY_EXCLUSIVE = None, None, None, None, None
 TAG_CATEGORIES = {}
 TAGS_RECOMMENDATIONS = {}
 TAG2HIGH_KEYSET = set()
 LOW2TAGS_KEYSET = set()
 COLOR_DICT = {}
+PRIORITY_DICT = {}
+TAG2CATEGORY = {}
 CATEGORY_TAG_DICT = {}
 TAG_DEFINITION = {}
 
 
 def tag_categories_init():
     global COLOR_DICT, CATEGORY_TAG_DICT, TAG_DEFINITION, TAG2HIGH_KEYSET, LOW2TAGS_KEYSET, TAG_CATEGORIES_EXCLUSIVE, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG_CATEGORIES, TAGS_RECOMMENDATIONS
-    global DESCRIPTION_TAGS, DESCRIPTION_TAGS_FREQUENCY, ARTISTS_TAGS, SERIES_TAGS, CHARACTERS_TAG, CHARACTERS_TAG_FREQUENCY, METADATA_TAGS
+    global DESCRIPTION_TAGS, DESCRIPTION_TAGS_FREQUENCY, ARTISTS_TAGS, SERIES_TAGS, CHARACTERS_TAG, CHARACTERS_TAG_FREQUENCY, METADATA_TAGS, TAG2SUB_CATEGORY_EXCLUSIVE, PRIORITY_DICT, TAG2CATEGORY
     DESCRIPTION_TAGS, DESCRIPTION_TAGS_FREQUENCY, ARTISTS_TAGS, SERIES_TAGS, CHARACTERS_TAG, CHARACTERS_TAG_FREQUENCY, METADATA_TAGS, DANBOORU_LOW2TAGS, DANBOORU_TAG2HIGH = csv_get_type()
     TAG_CATEGORIES = get_tag_categories_from_csv()
     TAGS_RECOMMENDATIONS = get_recommendations_from_csv()
-    COLOR_DICT, CATEGORY_TAG_DICT = make_tag_colors_dict()
-    TAG_CATEGORIES_EXCLUSIVE, _, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS = get_tag_categories_belonging()
+    COLOR_DICT, CATEGORY_TAG_DICT,PRIORITY_DICT, TAG2CATEGORY = make_tag_colors_dict()
+    TAG_CATEGORIES_EXCLUSIVE, _, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG2SUB_CATEGORY_EXCLUSIVE = get_tag_categories_belonging()
 
     TAG_DEFINITION = get_tag_definition()
     """

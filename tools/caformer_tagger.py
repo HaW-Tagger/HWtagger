@@ -204,23 +204,14 @@ class Demo:
 
 
 #python caformer_tagger.py --data imgs/t1.jpg --model_name caformer_m36 --ckpt ckpt/ml_caformer_m36_dec-5-97527.ckpt --thr 0.7 --image_size 448
-def main(data, ckpt, class_map, bs):
-    
-    args = FictionnalArgs(data, ckpt, class_map, bs)
+def caformer_tagging(data, model_folder):
+    model_dir = os.path.join(model_folder, "model.ckpt")
+    model_json_dir = os.path.join(model_folder, "class.json")
+    batch_size = parameters.PARAMETERS["max_batch_size"]
+    args = FictionnalArgs(data, model_dir, model_json_dir, batch_size)
     demo = Demo(args)
     if args.bs>1:
         tag_dict = demo.infer_batch(args.data, args.bs)
     else:
         tag_dict = demo.infer(args.data)
     return tag_dict
-
-
-if __name__ == '__main__':
-    args = make_args()
-    demo = Demo(args)
-    if args.bs>1:
-        tag_dict = demo.infer_batch(args.data, args.bs)
-    else:
-        tag_dict = demo.infer(args.data)
-
-    parameters.log.info(tag_dict)

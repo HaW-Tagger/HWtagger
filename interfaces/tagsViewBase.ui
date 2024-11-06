@@ -6,23 +6,49 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
-    <height>847</height>
+    <width>550</width>
+    <height>823</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
    <item>
-    <widget class="QLineEdit" name="lineEdit_tag_highlight">
-     <property name="toolTip">
-      <string>Enter any word and it'll be highlighted in the tag view, separate multiple tags with comma</string>
-     </property>
-     <property name="placeholderText">
-      <string>Enter text to highlight in tag view</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_11">
+     <item>
+      <widget class="QLineEdit" name="lineEdit_tag_highlight">
+       <property name="toolTip">
+        <string>Enter any word and it'll be highlighted in the tag view, separate multiple tags with comma</string>
+       </property>
+       <property name="placeholderText">
+        <string>Enter text to highlight in tag view</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_highligh_rare_tags">
+       <property name="text">
+        <string>Highlight rare tags</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QLabel" name="label_image_path">
@@ -47,7 +73,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
       <widget class="QLabel" name="label_tags_len">
        <property name="toolTip">
@@ -91,7 +117,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
       <widget class="QComboBox" name="comboBox_score_tags">
        <property name="toolTip">
@@ -153,7 +179,7 @@
    </item>
    <item>
     <widget class="QWidget" name="widget_2" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -208,6 +234,50 @@
     </widget>
    </item>
    <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_add_tags">
+        <property name="toolTip">
+         <string>add tags to this image, tags are separated by commas, press enter to validate the addition</string>
+        </property>
+        <property name="placeholderText">
+         <string>Enter Tags to Add (Press Enter to add tag)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_clear_on_add">
+        <property name="toolTip">
+         <string>if checked, will clear the tags to add when entered</string>
+        </property>
+        <property name="text">
+         <string>Clear on add</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QListView" name="listView_tags">
      <property name="toolTip">
       <string>the tags that will be outputed by the tagger, bold tags are manually added tags, click on tag to add it to the rejected, select a tag and click on w to go the tag danbooru wiki</string>
@@ -252,6 +322,9 @@
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectItems</enum>
      </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
     </widget>
    </item>
    <item>
@@ -265,50 +338,6 @@
      <property name="defaultDropAction">
       <enum>Qt::IgnoreAction</enum>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QWidget" name="widget" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="spacing">
-       <number>6</number>
-      </property>
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLineEdit" name="lineEdit_add_tags">
-        <property name="toolTip">
-         <string>add tags to this image, tags are separated by commas, press enter to validate the addition</string>
-        </property>
-        <property name="placeholderText">
-         <string>Enter Tags to Add (Press Enter to add tag)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBox_clear_on_add">
-        <property name="toolTip">
-         <string>if checked, will clear the tags to add when entered</string>
-        </property>
-        <property name="text">
-         <string>Clear on add</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

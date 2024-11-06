@@ -14,28 +14,6 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="7" column="0">
-    <widget class="QPushButton" name="pushButton_popup_image">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>50</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Display the selected image in a separate window</string>
-     </property>
-     <property name="text">
-      <string>Pop-up image</string>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="0">
     <widget class="QPushButton" name="pushButton_save_database">
      <property name="sizePolicy">
@@ -58,20 +36,42 @@
      </property>
     </widget>
    </item>
+   <item row="7" column="0">
+    <widget class="QPushButton" name="pushButton_popup_image">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Display the selected image in a separate window</string>
+     </property>
+     <property name="text">
+      <string>Pop-up image</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="tabPosition">
       <enum>QTabWidget::East</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabWidgetPage1">
       <attribute name="title">
        <string>Batch Operations</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="18" column="0" colspan="2">
+       <item row="19" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_purge_manual">
          <property name="toolTip">
           <string>remove all manually edited tags and reviewed conflicts</string>
@@ -81,7 +81,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="2">
+       <item row="7" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_auto_tag">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -103,7 +103,7 @@
          </property>
         </widget>
        </item>
-       <item row="22" column="0" colspan="2">
+       <item row="23" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_discard_image">
          <property name="toolTip">
           <string>discard the selected images by moving it to the discarded folder</string>
@@ -113,7 +113,7 @@
          </property>
         </widget>
        </item>
-       <item row="16" column="0" colspan="2">
+       <item row="17" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_reset_manual_score">
          <property name="toolTip">
           <string>reset all scores that were changed, and if the threshold are changed, will change the scores, without needing to restart the scorer</string>
@@ -123,7 +123,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item row="6" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_apply_replacement_to_sentence">
          <property name="toolTip">
           <string>Currently doesn't do anything, will be implemented later</string>
@@ -133,7 +133,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="8" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_only_tag_characters">
          <property name="toolTip">
           <string>Use the Swinv2-3 tagger and only extract identified characters</string>
@@ -143,13 +143,13 @@
          </property>
         </widget>
        </item>
-       <item row="23" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_open_in_default_program">
+       <item row="22" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_export_images">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;open the images in the default program or the specified program in the settings&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will export the selection (check the apply to section above) to a new directory.&lt;br/&gt;&lt;br/&gt;A pop up will show up and ask for a directory and a group name&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database doesn't exist in the output location, then a new database is created with the same tags.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database exists, then the images are exported, and the tags are automatically added to the previously exisiting database under the entered group name.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Open in default program</string>
+          <string>Export Images</string>
          </property>
         </widget>
        </item>
@@ -166,21 +166,11 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>388</width>
-            <height>264</height>
+            <width>406</width>
+            <height>406</height>
            </rect>
           </property>
          </widget>
-        </widget>
-       </item>
-       <item row="21" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_export_images">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will export the selection (check the apply to section above) to a new directory.&lt;br/&gt;&lt;br/&gt;A pop up will show up and ask for a directory and a group name&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database doesn't exist in the output location, then a new database is created with the same tags.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database exists, then the images are exported, and the tags are automatically added to the previously exisiting database under the entered group name.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Export Images</string>
-         </property>
         </widget>
        </item>
        <item row="3" column="0" colspan="2">
@@ -190,31 +180,24 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_auto_classify">
+       <item row="24" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_open_in_default_program">
          <property name="toolTip">
-          <string>Use the classifer model and some images will have additional tags for sources if the confidence is high</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;open the images in the default program or the specified program in the settings&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Auto-classifier</string>
+          <string>Open in default program</string>
          </property>
         </widget>
        </item>
-       <item row="13" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_refresh_tags_from_gelbooru_and_rule34">
-         <property name="text">
-          <string>Refresh Tags from rule34 and gelbooru</string>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="comboBox_selection">
+         <property name="toolTip">
+          <string>Apply to most of the buttons below</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Apply to:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_apply_filtering">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -236,7 +219,21 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0" colspan="2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Apply to:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_refresh_tags_from_gelbooru_and_rule34">
+         <property name="text">
+          <string>Refresh Tags from rule34 and gelbooru</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_auto_score">
          <property name="toolTip">
           <string>use an auto scorer for scoring the image using your preferred scoring method</string>
@@ -246,10 +243,13 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="comboBox_selection">
+       <item row="10" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_auto_classify">
          <property name="toolTip">
-          <string>Apply to most of the buttons below</string>
+          <string>Use the classifer model and some images will have additional tags for sources if the confidence is high</string>
+         </property>
+         <property name="text">
+          <string>Auto-classifier</string>
          </property>
         </widget>
        </item>
@@ -263,13 +263,20 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0" colspan="2">
+       <item row="11" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_cleanup_rejected_manual_tags">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Can always be used without causing issues, should be used when you want to remove rejected manual tags that are useless.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Cleanup Rejected manual tags</string>
+         </property>
+        </widget>
+       </item>
+       <item row="25" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_flip_horizontally">
+         <property name="text">
+          <string>Flip Horizontally</string>
          </property>
         </widget>
        </item>
@@ -281,230 +288,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QCheckBox" name="checkBox_sentence_separator">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Place sentence (caption) infront of the token separator.&lt;/p&gt;&lt;p&gt;Useful if you want natural language in the front of the tags&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Sentence in Token Separator</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_remove_tags_in_sentence">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable this to remove tags that are included in the sentence. This is to reduce potential duplicates in both the caption and tags.&lt;br/&gt;Example: &lt;br/&gt;caption: &amp;quot;1girl sitting on a chair thinking and contemplating life&amp;quot;&lt;br/&gt;tag: &amp;quot;1girl, solo, chair, sitting, red hair, green eyes, blue shirt&amp;quot;&lt;br/&gt;--&amp;gt; &lt;/p&gt;&lt;p&gt;caption and a shorter tag list is exported: caption + &amp;quot;solo, red hair, green eyes, blue shirt&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Remove tag if included in sentence</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_use_separator">
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use the token separator set in the setting. &lt;br/&gt;&lt;br/&gt;Useful for separating the trigger words (Kohya based trainers have a &amp;quot;use token separator&amp;quot; option). This allows you to have a variable length trigger word.&lt;br/&gt;&lt;br/&gt;if this is enabled, tags in the main and secondary are placed in front of the tags and the token separator is placed to separate it from the rest of the tag.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The tag order in main trigger tag(s) are unshuffled&lt;br/&gt;The tag order in secondary trigger tag(s) is shuffled&lt;br/&gt;The other tags are shuffled.&lt;br/&gt;&lt;br/&gt;Here's an example with &amp;quot;|||&amp;quot; as token separator, 1 main trigger word, and 3 secondary trigger word:  main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, |||, rest of the tags, ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Token Separator</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_use_sentence">
-         <property name="toolTip">
-          <string>include any sentences/caption in the export.  If no captions were set, they're not added to the exported file(s)</string>
-         </property>
-         <property name="text">
-          <string>Sentence</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
-         <property name="toolTip">
-          <string>Include the quality tags from the aesthetic scores and place them into the main trigger tag section.</string>
-         </property>
-         <property name="text">
-          <string>Aesthetic scores in token separator</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_export_aesthetic_score">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lookup what aesthetic score values map to any quality tags, then export the aesthetic/quality tag with the other tags.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Aesthetic scores</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_main_trigger_tag">
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.&lt;/p&gt;&lt;p&gt;You can add a * to a tag and it will add all variants to the selection. Example: hole* will add black hole, white hole, sinkhole, whole grain, ...&lt;/p&gt;&lt;p&gt;The tag order in main trigger tag(s) are unshuffled&lt;/p&gt;&lt;p&gt;The tag order in secondary trigger tag(s) is shuffled&lt;/p&gt;&lt;p&gt;The other tags are shuffled.&lt;/p&gt;&lt;p&gt;Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="placeholderText">
-          <string>Main Trigger Tag(s), Separate with &quot;,&quot;</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPlainTextEdit" name="plainTextEdit_secondary_trigger_tags">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can add a * to a tag and it will add all variants to the selection. Example: hole* will add black hole, white hole, sinkhole, whole grain, ...&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The tag order in main trigger tag(s) are unshuffled&lt;/p&gt;&lt;p&gt;The tag order in secondary trigger tag(s) is shuffled&lt;/p&gt;&lt;p&gt;The other tags are shuffled.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustIgnored</enum>
-         </property>
-         <property name="backgroundVisible">
-          <bool>false</bool>
-         </property>
-         <property name="placeholderText">
-          <string>Secondary Tag(s), Separated with &quot;,&quot;</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_txt_file">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>create a txt file containing the full tags, same as the first tab</string>
-         </property>
-         <property name="text">
-          <string>Create TXT files</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_json_tags_file">
-         <property name="toolTip">
-          <string>useful for checkpoints, makes a .json with the captions and tags. Exports like the meta_cap.json in Kohya.  You can run the meta_lat creator from Kohya directly on this exported json</string>
-         </property>
-         <property name="text">
-          <string>Create .json tag file</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="gridLayout_6">
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QPushButton" name="pushButton_make_sample_toml">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on this button to generate a toml that can be used by the trainer to generate the samples. It does some calculations to make a distribution weighted by the &amp;quot;complexity&amp;quot; of the image, and then it samples tags from some images until it fills the sample size (default is 10)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Generate sample TOML</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="comboBox_toml_resolution">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;this defines the base output resolution in the toml (using buckets)&lt;/p&gt;&lt;p&gt;SDXL: (1024, 1024)&lt;/p&gt;&lt;p&gt;SD1.5: (768, 768)&lt;/p&gt;&lt;p&gt;SD1.0: (512, 512)&lt;/p&gt;&lt;p&gt;Custom Resolution: (modify in setting)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>SDXL</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>SD1.5</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>SD1.0</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Custom</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBox_restrictive_candidates">
-           <property name="text">
-            <string>Use more restrictive conditions</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="OutputWidget" name="widget_to_output" native="true"/>
        </item>
        <item>
         <spacer name="verticalSpacer">
@@ -575,13 +359,6 @@
           <string/>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_batch_selection_frequency">
-            <property name="toolTip">
-             <string>Apply to most of the buttons below</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
@@ -589,10 +366,34 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
+          <item row="0" column="1">
+           <widget class="QComboBox" name="comboBox_batch_selection_frequency">
+            <property name="toolTip">
+             <string>Apply to most of the buttons below</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
            <widget class="QPushButton" name="pushButton_remove_tags_from_frequency_batch">
             <property name="text">
              <string>Remove all tags from frequency</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_tag_frequency_search">
+            <property name="toolTip">
+             <string>Enter text to filter down your results, does fuzzy search on each tags listed below</string>
+            </property>
+            <property name="placeholderText">
+             <string>Enter text to search</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Search:</string>
             </property>
            </widget>
           </item>
@@ -633,12 +434,19 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>63</width>
-            <height>18</height>
+            <width>86</width>
+            <height>16</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2"/>
          </widget>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pushButton_clean_history">
+         <property name="text">
+          <string>Clean History</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -647,6 +455,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>OutputWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">CustomWidgets</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1170</width>
+    <width>706</width>
     <height>640</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <widget class="QLineEdit" name="lineEdit_path">
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The first step in making a database, enter a directory that contains images or contains subdirectories with images. Then select the method of tagging you want to enable (loading tags from an external file, via API, or autotagging), then create the database.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -24,7 +24,82 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="0" column="1">
+    <widget class="QPushButton" name="pushButton_open_path">
+     <property name="text">
+      <string>Open</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="1" column="0" colspan="2">
+      <widget class="QPushButton" name="pushButton_reapply_to_database">
+       <property name="toolTip">
+        <string>Re-applies the tagging/processes below to images currently in the database.</string>
+       </property>
+       <property name="text">
+        <string>Re-Apply to Database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="pushButton_add_new_images">
+       <property name="toolTip">
+        <string>Use this to add new images to a pre-existing database.  Load a database and select the tagging criterions and click on this.</string>
+       </property>
+       <property name="text">
+        <string>Add New Images</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="QPushButton" name="pushButton_create_database">
+       <property name="toolTip">
+        <string>Create a database using the enabled settng below.  If nothing is enabled it'll just make a database with the images with no tag/caption assigned to them.</string>
+       </property>
+       <property name="text">
+        <string>Create Database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="pushButton_load_database">
+       <property name="toolTip">
+        <string>Enter a database directory, and this will load any database in the folder.</string>
+       </property>
+       <property name="text">
+        <string>Load Database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QPushButton" name="pushButton_save_database">
+       <property name="toolTip">
+        <string>Saves the created or loaded database.</string>
+       </property>
+       <property name="text">
+        <string>Save Database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="Line" name="line_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="2">
+      <widget class="Line" name="line_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -255,6 +330,46 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_use_completeness">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use an additional img completeness classifier and add tags like &amp;quot;rough art&amp;quot; to imgs above a threshold, useful for checkpoints and identifying completed works vs a quick drawing that's better than a sketch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Use completeness identifier</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="title">
+          <string>Object detection options</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QCheckBox" name="checkBox_detect_people">
+            <property name="text">
+             <string>Detect people(s)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_detect_head">
+            <property name="text">
+             <string>Detect head(s)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_detect_hand">
+            <property name="text">
+             <string>Detect hand(s)</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -267,7 +382,7 @@
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Pre&amp;Post tagging options</string>
+          <string>Pre &amp; Post tagging options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="3" column="0" colspan="2">
@@ -334,74 +449,6 @@
         </spacer>
        </item>
       </layout>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
-    <layout class="QGridLayout" name="gridLayout_4">
-     <item row="1" column="0" colspan="2">
-      <widget class="QPushButton" name="pushButton_reapply_to_database">
-       <property name="toolTip">
-        <string>Re-applies the tagging/processes below to images currently in the database.</string>
-       </property>
-       <property name="text">
-        <string>Re-Apply to Database</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="pushButton_add_new_images">
-       <property name="toolTip">
-        <string>Use this to add new images to a pre-existing database.  Load a database and select the tagging criterions and click on this.</string>
-       </property>
-       <property name="text">
-        <string>Add New Images</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="2">
-      <widget class="QPushButton" name="pushButton_create_database">
-       <property name="toolTip">
-        <string>Create a database using the enabled settng below.  If nothing is enabled it'll just make a database with the images with no tag/caption assigned to them.</string>
-       </property>
-       <property name="text">
-        <string>Create Database</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="pushButton_load_database">
-       <property name="toolTip">
-        <string>Enter a database directory, and this will load any database in the folder.</string>
-       </property>
-       <property name="text">
-        <string>Load Database</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" colspan="2">
-      <widget class="QPushButton" name="pushButton_save_database">
-       <property name="toolTip">
-        <string>Saves the created or loaded database.</string>
-       </property>
-       <property name="text">
-        <string>Save Database</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="Line" name="line_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="2">
-      <widget class="Line" name="line_5">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>

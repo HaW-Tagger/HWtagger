@@ -17,3 +17,13 @@ def open_safetensor(filename):
     parameters.log.info(header)  # should be a dict that contains what you need
 
     # idk how to save a new header.  # do it later
+    
+    
+    
+def inspect_safetensor(filename):
+    with open(filename, "rb") as f:
+        length_of_header = struct.unpack('<Q', f.read(8))[0]
+        header_data = f.read(length_of_header)
+        header = json.loads(header_data)
+    parameters.log.info(header)
+        

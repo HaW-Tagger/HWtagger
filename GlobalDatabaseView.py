@@ -2,17 +2,17 @@ import json
 import os
 import shutil
 
-from PySide6 import QtCore
-from PySide6.QtCore import Slot, Signal, Qt
-from PySide6.QtGui import QStandardItemModel, QStandardItem, Qt
+from PySide6.QtCore import Qt
+from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 from tqdm import tqdm
 
-from resources import tag_categories, parameters
 import CustomWidgets
+from classes.class_database import Database
+from classes.class_elements import GroupElement
 from classes.class_image import ImageDatabase
 from interfaces import global_database_view
-from classes.class_database import Database
+from resources import tag_categories, parameters
 from tools import files
 
 
@@ -81,7 +81,7 @@ class GlobalDatabaseFrame(QWidget, global_database_view.Ui_Form):
                 if group == "ungrouped":
                     self.validated_images[relative_folder].extend([db.images[x] for x in db.get_ungrouped_images() if (not restricted) or db.images[x] in tag_categories.QUALITY_LABELS[-3:]])
                 else:
-                    images_md5 = db.index_of_images_by_md5(db.groups[group]["images"])
+                    images_md5 = db.index_of_images_by_md5(db.groups[group].md5s)
                     self.validated_images[relative_folder].extend([db.images[x] for x in images_md5 if db.images[x] not in self.validated_images[relative_folder] and ((not restricted) or db.images[x] in tag_categories.QUALITY_LABELS[-3:])])
 
     def images_existence_button(self):
@@ -115,9 +115,8 @@ class GlobalDatabaseFrame(QWidget, global_database_view.Ui_Form):
                 merged_database.images.append(image)
                 if save_database_as_group:
                     if group not in merged_database.groups.keys():
-                        merged_database.groups[group] = {}
-                        merged_database.groups[group]["images"] = []
-                    merged_database.groups[group]["images"].append(image.md5)
+                        merged_database.groups[group] = GroupElement(group_name=group, md5s=[])
+                    merged_database.groups[group].append(image.md5)
         merged_database.save_database()
 
         if self.checkBox_reorganize_folder.isChecked():
@@ -129,17 +128,17 @@ class GlobalDatabaseFrame(QWidget, global_database_view.Ui_Form):
 
             md5_groups_link: dict[str: str] = {}
             if merged_database.groups:
-                for group in merged_database.groups.keys():
-                    os.makedirs(os.path.join(self.search_path, group.replace('\\', '_')))
-                    for image_md5 in merged_database.groups[group]["images"]:
-                        md5_groups_link[image_md5] = group
+                for group in merged_database.groups.values():
+                    os.makedirs(os.path.join(self.search_path, group.group_name.replace('\\', '_')))
+                    for image_md5 in merged_database.groups[group.group_name].md5s:
+                        md5_groups_link[image_md5] = group.group_name
 
             for image in tqdm(merged_database.images):
                 src_path = os.path.join(backup_path, os.path.relpath(image.path, start=self.search_path))
                 new_md5 = files.get_md5(src_path)
                 new_basename = new_md5 + os.path.splitext(os.path.basename(image.path))[1]
                 if image.md5 in md5_groups_link.keys():
-                    merged_database.groups[md5_groups_link[image.md5]]["images"][merged_database.groups[md5_groups_link[image.md5]]["images"].index(image.md5)] = new_md5
+                    merged_database.groups[md5_groups_link[image.md5]][image.md5] = new_md5
                     dst_path = os.path.join(self.search_path,  md5_groups_link[image.md5].replace('\\', '_'), new_basename)
                     shutil.copy2(src=src_path, dst=dst_path)
                     image.path = dst_path
@@ -163,16 +162,16 @@ class GlobalDatabaseFrame(QWidget, global_database_view.Ui_Form):
         image_dict = {}
         for group in self.validated_images.keys():
             for image in self.validated_images[group]:
-                to_write = image.create_txt_file(add_backslash_before_parenthesis=False,
-                                                 keep_tokens_separator=False,
-                                                 main_tags=[],
-                                                 secondary_tags=[],
-                                                 use_aesthetic_score=True,
-                                                 score_trigger=True,
-                                                 use_sentence=False,
-                                                 sentence_in_trigger=False,
-                                                 remove_tags_in_sentence=False
-                                                 )
+                to_write = image.create_output(add_backslash_before_parenthesis=False,
+                                               keep_tokens_separator=False,
+                                               main_tags=[],
+                                               secondary_tags=[],
+                                               use_aesthetic_score=True,
+                                               score_trigger=True,
+                                               use_sentence=False,
+                                               sentence_in_trigger=False,
+                                               remove_tags_in_sentence=False
+                                               )
                 image_dict[image.path] = {}
                 image_dict[image.path]["tags"] = to_write
         with open(os.path.join(self.search_path, "meta_cap.json"), 'w') as f:

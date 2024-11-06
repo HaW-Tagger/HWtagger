@@ -1,21 +1,28 @@
-import DatabaseCreationView
+import os
+import sys
 
-
+os.environ["XFORMERS_FORCE_DISABLE_TRITON"] = "1"
 def _ignore_xformers_triton_message_on_windows():
     import logging
     logging.getLogger("xformers").addFilter(
         lambda record: 'triton is not available' not in record.getMessage())
-
+    # the following didn't work, but it's the right warning message
+    class TritonFilter(logging.Filter):
+        def filter(self, record):
+            if record.levelname == 'WARNING' and "Triton is not available, some optimizations will not be enabled." in record.getMessage():
+                return False
+            return True
+    #logger = logging.getLogger("xformers")
+    #logger.addFilter(TritonFilter())
 # In order to be effective, this needs to happen before anything could possibly import xformers.
 _ignore_xformers_triton_message_on_windows()
 
-
-
+import DatabaseCreationView
+from classes.class_elements import GroupElement
 
 import concurrent.futures
-import os, sys
 import time
-os.environ["XFORMERS_FORCE_DISABLE_TRITON"] = "1"
+
 import CustomWidgets
 from resources import parameters, tag_categories
 tag_categories.check_categories()
@@ -26,11 +33,11 @@ import StatisticsTab
 import DatabaseViewBase
 import ImageTools
 from interfaces import interface
-from tools import files, images, main
+from tools import files, safetensors_metadata
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QSpinBox
-from PySide6.QtCore import Slot, Qt
-from PySide6.QtGui import QFont, QPalette, QColor, Qt
+from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import Slot
+from PySide6.QtGui import QFont
 
 from classes.class_database import Database
 import qdarkstyle
@@ -40,7 +47,8 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
     def __init__(self):
         super(AddTags, self).__init__()
         self.setupUi(self)
-        #with open("metdata.txt", 'w') as file:
+
+        #with open("metadata.txt", 'w') as file:
         #    file.write(','.join([x for x in tag_categories.METADATA_TAGS.keys()]))
 
         #############################
@@ -49,10 +57,22 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.checkpoint_database: Database = None
 
         #############################
+        # Setup Output
+
+        self.widget_to_output.createTxtFiles.connect(self.create_txt_files_button)
+        self.widget_to_output.createJsonTagFile.connect(self.create_meta_cap_button)
+        self.widget_to_output.createSampleToml.connect(self.create_sample_toml_button)
+        self.widget_to_output.createJsonLFile.connect(self.create_jsonL)
+
+        self.widget_to_output.editedMainTriggerTag.connect(self.update_main_trigger_tags)
+        self.widget_to_output.editedSecondaryTriggerTag.connect(self.update_secondary_trigger_tags)
+
+        #############################
         # DATABASE TOOLS
 
         # TOP BAR:
         self.pushButton_load_database.clicked.connect(self.load_database_button)
+        self.pushButton_open_path_edit.clicked.connect(self.open_path_edit_button)
         self.pushButton_save_database.clicked.connect(self.save_database_button)
 
         # LEFT:
@@ -68,6 +88,9 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.pushButton_rescores.clicked.connect(self.rescore_button)
         self.pushButton_reclassify.clicked.connect(self.reclassify_button)
         self.pushButton_rehash.clicked.connect(self.rehash_button)
+        self.pushButton_redetect_person.clicked.connect(self.redetect_person)
+        self.pushButton_redetect_head.clicked.connect(self.redetect_head)
+        self.pushButton_redetect_hand.clicked.connect(self.redetect_hand)
         
         # Group Management Tools
         self.pushButton_move_files_groupings.clicked.connect(self.move_files_groupings_button)
@@ -76,15 +99,18 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.pushButton_load_and_merge_secondary.clicked.connect(self.merge_secondary_database)
         
         # RIGHT:
-        self.pushButton_create_txt_files.clicked.connect(self.create_txt_files_button)
-        self.pushButton_create_sample_toml.clicked.connect(self.create_sample_toml_button)
         self.pushButton_print_unknown_tags.clicked.connect(self.print_unknown_tags_button)
         
 
-        # checkpoint TOOLS TAB
+        # checkpoint and misc TOOLS TAB
         self.pushButton_rename_all.clicked.connect(self.rename_bad_names_to_md5)
-        self.pushButton_create_meta_cap.clicked.connect(self.create_meta_cap_button)
+        self.pushButton_open_path_tools.clicked.connect(self.open_path_tools_button)
         self.pushButton_export_npz.clicked.connect(self.export_for_checkpoint)
+        
+        
+        self.pushButton_open_safetensor.clicked.connect(self.open_path_safetensor_button)
+        self.pushButton_inspect_safetensor.clicked.connect(self.inspect_safetensor)
+        self.pushButton_remove_files_button.clicked.connect(self.remove_file_type)
 
         #############################
         # DATABASE CREATION TAB
@@ -95,6 +121,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         #############################
         # VIEW DATABASE TAB
         self.pushButton_view_database.clicked.connect(self.view_database_button)
+        self.pushButton_open_view_database_path.clicked.connect(self.open_view_database_path_button)
         self.databaseTabWidget.tabCloseRequested.connect(self.view_database_close_requested)
 
 
@@ -112,7 +139,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         # LORA TOOLS
 
         ##############################
-        # DATASET CLEANING TAB
+        # STATISTICS TAB
         self.statistics_tab = StatisticsTab.StatisticsView()
         self.tabWidget.insertTab(4, self.statistics_tab, "Statistics")
 
@@ -127,124 +154,50 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
 
 
 
+   
+    # button functions used in multiple sections:
     @Slot()
-    def load_database_button(self):
-        if not os.path.exists(os.path.join(self.lineEdit_database_folder.text(), parameters.DATABASE_FILE_NAME)):
-            parameters.log.error(f"Database doesn't exist in {self.lineEdit_database_folder.text()}")
-            return
-        parameters.log.info("Loading Database")
-        self.basic_database = Database(self.lineEdit_database_folder.text())
-        self.lineEdit_main_trigger_tags.setText(", ".join(self.basic_database.trigger_tags["main_tags"]))
-        self.plainTextEdit_secondary_trigger_tags.setPlainText(", ".join(self.basic_database.trigger_tags["secondary_tags"]))
-        parameters.log.info(f"Loaded Database with {len(self.basic_database.images)} images")
+    def open_path_edit_button(self):
+        path = CustomWidgets.path_input_dialog(self)
+        self.lineEdit_database_folder.setText(path)
 
-    @Slot()
-    def save_database_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        self.basic_database.save_database()
-
-    @Slot()
-    def create_database_button(self):
-        parameters.log.info("Creating database")
-        database_folder = self.lineEdit_database_folder.text()
-        if self.checkBox_convert_to_png.isChecked():
-            if not self.convert_images_to_png_button(folder=database_folder):
-                return False
-        if self.settings_is_rename_all_files_to_md5.isChecked():
-            if not self.rename_images_md5_button(folder=database_folder):
-                return False
-
-        self.basic_database = Database(database_folder)
-        self.basic_database.add_images_to_db(files.get_all_images_in_folder(database_folder),
-                                            autotag=self.checkBox_auto_tag.isChecked(),
-                                            score=self.checkBox_auto_score.isChecked(),
-                                            classify=self.checkBox_auto_classification.isChecked(),
-                                            from_txt=self.checkBox_tags_from_txt.isChecked(),
-                                            grouping_from_path=self.checkBox_group_add.isChecked(),
-                                            move_dupes=self.checkBox_remove_duplicates.isChecked()
-                                            )
-        if self.checkBox_apply_filtering.isChecked():
-            self.basic_database.filter_all()
-        self.lineEdit_main_trigger_tags.setText(", ".join(self.basic_database.trigger_tags["main_tags"]))
-        self.plainTextEdit_secondary_trigger_tags.setPlainText(", ".join(self.basic_database.trigger_tags["secondary_tags"]))
-        parameters.log.info("Created database")
-
-    @Slot()
-    def add_new_images_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        existing_paths = [x.path for x in self.basic_database.images]
-        images_paths = [x for x in files.get_all_images_in_folder(self.lineEdit_database_folder.text()) if x not in existing_paths]
-        if self.checkBox_convert_to_png.isChecked():
-            parameters.log.info("Converting images to .png format")
-            start_time = time.time()
-            pool = concurrent.futures.ThreadPoolExecutor(max_workers=parameters.PARAMETERS["max_images_loader_thread"])
-            files.to_png_from_images_paths(images_paths, pool)
-            pool.shutdown(wait=True)
-            parameters.log.info(f"Images loaded in {round(time.time() - start_time, 3)} seconds")
-        if self.settings_is_rename_all_files_to_md5.isChecked():
-            parameters.log.info("Converting images to MD5 filename.")
-            files.to_md5_from_images_paths(images_paths)
-        self.basic_database.add_images_to_db([x for x in files.get_all_images_in_folder(self.lineEdit_database_folder.text()) if x not in existing_paths],
-                                            autotag=self.checkBox_auto_tag.isChecked(),
-                                            score=self.checkBox_auto_score.isChecked(),
-                                            classify=self.checkBox_auto_classification.isChecked(),
-                                            from_txt=self.checkBox_tags_from_txt.isChecked(),
-                                            grouping_from_path=self.checkBox_group_add.isChecked()
-                                            )
-        if self.checkBox_apply_filtering.isChecked():
-            self.basic_database.filter_all()
-        parameters.log.info("Added new images to database")
-
+    # Setup Output functions:
     @Slot()
     def create_txt_files_button(self):
         if not self.basic_database:
             parameters.log.error("Database not loaded")
             return False
-        self.basic_database.trigger_tags["main_tags"] = [x.strip() for x in self.lineEdit_main_trigger_tags.text().split(",")]
-        self.basic_database.trigger_tags["secondary_tags"] = [x.strip() for x in self.plainTextEdit_secondary_trigger_tags.toPlainText().split(",")]
         self.basic_database.create_txt_files(
-            use_trigger_tags=self.checkBox_trigger_tags.isChecked(),
-            token_separator=self.checkBox_token_separator.isChecked(),
-            use_aesthetic_score=self.checkBox_aesthetic_score.isChecked(),
-            use_sentence=self.checkBox_sentence.isChecked(),
-            sentence_in_trigger=self.checkBox_sentence_in_token_separator.isChecked(),
-            remove_tags_in_sentence=self.checkBox_remove_tag_in_sentence.isChecked(),
+            use_trigger_tags=self.widget_to_output.use_trigger_tags(),
+            token_separator=self.widget_to_output.use_token_separator(),
+            use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
+            use_sentence=self.widget_to_output.use_sentence(),
+            sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
+            remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
             )
 
     @Slot()
     def create_meta_cap_button(self):
-        if not self.checkpoint_database:
-            parameters.log.error("Database not loaded, attempting to load it")
-            if self.lineEdit_dataset_folder.text():
-                parameters.log.info("Using database folder to load database")
-                self.checkpoint_database = Database(self.lineEdit_dataset_folder.text())
-            else:
-                parameters.log.error("Attempt failed, aborting process")
-        if self.checkpoint_database:
-            self.checkpoint_database.create_json_file(
-                use_trigger_tags=self.checkBox_trigger_tags.isChecked(),
-                token_separator=self.checkBox_token_separator.isChecked(),
-                use_aesthetic_score=self.checkBox_aesthetic_score.isChecked(),
-                use_sentence=self.checkBox_sentence.isChecked(),
-                sentence_in_trigger=self.checkBox_sentence_in_token_separator.isChecked(),
-                remove_tags_in_sentence=self.checkBox_remove_tag_in_sentence.isChecked(),
-                )
-        else:
-            parameters.log.error("Database not loaded, aborting process, meta_cap.json not generated")
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return False
+        self.basic_database.create_json_file(
+            use_trigger_tags=self.widget_to_output.use_trigger_tags(),
+            token_separator=self.widget_to_output.use_token_separator(),
+            use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
+            use_sentence=self.widget_to_output.use_sentence(),
+            sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
+            remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+            )
 
     @Slot()
     def create_sample_toml_button(self):
         if not self.basic_database:
             parameters.log.error("Database not loaded")
             return False
-        self.basic_database.trigger_tags["main_tags"] = [x.strip() for x in self.lineEdit_main_trigger_tags.text().split(",")]
-        self.basic_database.trigger_tags["secondary_tags"] = [x.strip() for x in self.plainTextEdit_secondary_trigger_tags.toPlainText().split(",")]
-        
-        selected_resolution = self.comboBox_toml_resolution.currentText()
+        selected_resolution = self.widget_to_output.toml_resolution()
         resolution_dict = {
       		"SDXL":	(1024, 1024, 64), 
 			"SD1.5":(768, 768, 64), 
@@ -262,108 +215,58 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.basic_database.create_sample_toml(res_info[0], res_info[1], res_info[2])    
 
     @Slot()
-    def images_existence_button(self):
+    def create_jsonL(self):
         if not self.basic_database:
             parameters.log.error("Database not loaded")
-            return
-        self.basic_database.check_existence_images()
+            return False
+        self.basic_database.create_jsonL_file(
+            use_trigger_tags=self.widget_to_output.use_trigger_tags(),
+            token_separator=self.widget_to_output.use_token_separator(),
+            use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
+            use_sentence=self.widget_to_output.use_sentence(),
+            sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
+            remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+            )
 
-    @Slot()
-    def filter_images_button(self):
+    @Slot(str)
+    def update_main_trigger_tags(self, text: str):
         if not self.basic_database:
             parameters.log.error("Database not loaded")
-            return
-        self.basic_database.filter_all()
+            return False
+        tags = [tag.strip() for tag in text.split(",")]
+        self.basic_database.trigger_tags["main_tags"] = tags
 
-    @Slot()
-    def reautotags_button(self):
+    @Slot(str)
+    def update_secondary_trigger_tags(self, text: str):
         if not self.basic_database:
             parameters.log.error("Database not loaded")
-            return
-        self.basic_database.retag_images()
+            return False
+        tags = [tag.strip() for tag in text.split(",")]
+        self.basic_database.trigger_tags["secondary_tags"] = tags
 
+    #############################
+    # DATABASE TOOLS
+    # TOP BAR button functions:
     @Slot()
-    def rescore_button(self):
+    def load_database_button(self):
+        if not os.path.exists(os.path.join(self.lineEdit_database_folder.text(), parameters.DATABASE_FILE_NAME)):
+            parameters.log.error(f"Database doesn't exist in {self.lineEdit_database_folder.text()}")
+            return
+        parameters.log.info("Loading Database")
+        self.basic_database = Database(self.lineEdit_database_folder.text())
+        self.widget_to_output.set_trigger_tags(", ".join(self.basic_database.trigger_tags["main_tags"]), ", ".join(self.basic_database.trigger_tags["secondary_tags"]))
+        parameters.log.info(f"Loaded Database with {len(self.basic_database.images)} images")
+    
+    @Slot()
+    def save_database_button(self):
         if not self.basic_database:
             parameters.log.error("Database not loaded")
-            return
-        self.basic_database.rescore_images()
-
-    @Slot()
-    def reclassify_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.reclassify_images()
-
-    @Slot()
-    def move_files_groupings_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.organise_image_paths_groups()
-
-    @Slot()
-    def rebuild_groups_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.remove_groups()
-        self.basic_database.add_image_to_groups_by_path([x.path for x in self.basic_database.images])
-        parameters.log.info("Groups are rebuilt based on the path")
-
-    @Slot()
-    def rehash_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.reapply_md5()
-        parameters.log.info("Updated MD5 of images")
-
-    @Slot()
-    def move_files_groupings_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.organise_image_paths_groups()
-
-    @Slot()
-    def print_unknown_tags_button(self):
-        unk_tags = []
-        known_tags = set(tag_categories.COLOR_DICT.keys()).union(tag_categories.REJECTED_TAGS)
-
-        import numpy as np
-        from resources.tag_categories import KAOMOJI
-
-        
-        ca_dict = files.get_caformer_tags()
-        
-        ca_list = [ca_dict[str(k)].replace("_", " ") if len(ca_dict[str(k)]) > 3 else ca_dict[str(k)] for k in
-                   range(12546 + 1)]
-        ca_list = [ca for ca in ca_list if ca not in known_tags]
-        ca_set = set(ca_list)
-        
-        
-        tags_df = files.get_pd_swinbooru_tag_frequency()
-        
-        tags_df = tags_df.sort_values(by=['count'], ascending=False)
-        name_series = tags_df["name"]
-        name_series = name_series.map(lambda x: x.replace("_", " ") if len(x) > 3 and x not in KAOMOJI else x)
-        tag_names = name_series.tolist()
-        general_indexes = list(np.where(tags_df["category"] == 0)[0])
-        general_tag = [tag_names[i] for i in general_indexes]
-        gt_list = [gt for gt in general_tag if gt not in known_tags]
-
-        parameters.log.info(", ".join(ca_list))
-        parameters.log.info(", ".join([gt for gt in gt_list if gt not in ca_set]))
-
-        if self.basic_database:
-            for image in self.basic_database.images:
-                for tag in image.get_full_tags():
-                    if tag not in known_tags and tag not in unk_tags:
-                        unk_tags.append(tag)
-            parameters.log.info(unk_tags)
-
+            return False
+        self.basic_database.save_database()
+    
+    # LEFT:  
+    # Preprocessing tools
     @Slot()
     def convert_images_to_png_button(self,*, folder: str="", images_paths: list[str]=None) -> bool:
         if images_paths:
@@ -400,6 +303,88 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.log.info(f"Images converted to md5 filename in {round(time.time() - start_time, 3)} seconds")
         return True
 
+    # Database validation tools
+    @Slot()
+    def images_existence_button(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        parameters.log.info("checking image existance, updating path if necessaryß")
+        self.basic_database.check_existence_images()
+
+    @Slot()
+    def filter_images_button(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.filter_all()
+
+    @Slot()
+    def reautotags_button(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.re_call_models(tag_images=True)
+
+    @Slot()
+    def rescore_button(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.re_call_models(score_images=True)
+
+    @Slot()
+    def reclassify_button(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.re_call_models(classify_images=True)
+
+    @Slot()
+    def rehash_button(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.reapply_md5()
+        parameters.log.info("Updated MD5 of images")
+
+    @Slot()
+    def redetect_person(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.re_call_models(detect_people=True)
+    
+    @Slot()
+    def redetect_head(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.re_call_models(detect_head=True)
+
+    @Slot()
+    def redetect_hand(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.re_call_models(detect_hand=True)
+
+    # Group Management Tools
+    @Slot()
+    def move_files_groupings_button(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.organise_image_paths_groups()
+
+    @Slot()
+    def rebuild_groups_button(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return
+        self.basic_database.remove_groups()
+        self.basic_database.add_image_to_groups_by_path([x.path for x in self.basic_database.images])
+        parameters.log.info("Groups are rebuilt based on the path")
 
     def merge_secondary_database(self): # load and merge database method
         # load old db and transfer data for files with matching md5
@@ -424,7 +409,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         
         # notify user if secondary database has trigger tags that they might want to know.
         if sec_db.trigger_tags["main_tags"] or sec_db.trigger_tags["secondary_tags"]:
-            parameters.log.info("Secondary database had the following trigger tags, but they're merged as regualar tags, update primary database's trigger tags if needed")
+            parameters.log.info("Secondary database had the following trigger tags, but they're merged as regular tags, update primary database's trigger tags if needed")
             parameters.log.info(f"PRIMARY: {sec_db.trigger_tags['main_tags']}, SECONDARY: {sec_db.trigger_tags['secondary_tags']}")
             
 
@@ -436,18 +421,18 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         if self.basic_database.groups:
             # check if primary db has the database and get a list of md5s that has a group
             for group_name, group_content in self.basic_database.groups.items():
-                md5_preassigned_to_group += [md5_hash for md5_hash in group_content["images"] if md5_hash in md5_intersect]
+                md5_preassigned_to_group += [md5_hash for md5_hash in group_content.md5s if md5_hash in md5_intersect]
         md5_preassigned_to_group = set(md5_preassigned_to_group) # making a set for faster check
         md5_not_assigned = [m for m in md5_intersect if m not in md5_preassigned_to_group]
         
         if md5_not_assigned and sec_db.groups: # if any md5 is unassigned and groups exists in secondary db
             for group_name, group_content in sec_db.groups.items():
-                if group_content["images"]: #check if this secondary group is not empty
+                if group_content.md5s: #check if this secondary group is not empty
                     
                     if not group_name in self.basic_database.groups.keys(): # check if the group name exists
-                        self.basic_database.groups[group_name] =  {"images": []}
+                        self.basic_database.groups[group_name] =  GroupElement(group_name=group_name)
                         
-                    self.basic_database.groups[group_name]["images"]+= [m for m in group_content["images"] if m in md5_not_assigned]
+                    self.basic_database.groups[group_name].md5s += [m for m in group_content.md5s if m in md5_not_assigned]
              
         if md5_intersect:
             parameters.log.info(f"starting tag transfering for {len(md5_intersect)}")
@@ -470,15 +455,17 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             primary_score_label = self.basic_database.images[i].score_label
             primary_class_value = self.basic_database.images[i].classify_label
             primary_class_label = self.basic_database.images[i].classify_value
+            primary_completeness_label = self.basic_database.images[i].completeness_label
+            primary_completeness_value = self.basic_database.images[i].completeness_value
           
             # temp original md5 and bool if it's the same with the base md5
             primary_original_md5 = self.basic_database.images[i].original_md5
             primary_two_md5 = self.basic_database.images[i].md5 != primary_original_md5
             
             data_dict = sec_db.images[sec_i].get_saving_dict()
-            print(data_dict)
+            #print(data_dict)
             # update non-tags
-            self.basic_database.images[i].init_image_dict(data_dict, fast_load=True)
+            self.basic_database.images[i].init_image_dict(data_dict)
             
             # at this stage basic database has the new values from the secondary database
             
@@ -500,6 +487,10 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                 self.basic_database.images[i].classify_label = primary_class_value
                 self.basic_database.images[i].classify_value = primary_class_label 
 
+            if primary_completeness_label and not self.basic_database.image[i].completeness_label:
+                self.basic_database.images[i].completeness_label = primary_completeness_label
+                self.basic_database.images[i].completeness_value = primary_completeness_value
+                
             # update md5 if necessary, very rare, but if primary has older md5 and secondary doesn't have older md5
             if primary_two_md5 and self.basic_database.images[i].original_md5 == self.basic_database.images[i].md5:
                 self.basic_database.images[i].original_md5 = primary_original_md5
@@ -511,9 +502,141 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
      
             
             update_counter+=1
+        
         parameters.log.info(f"Updated {update_counter} images in primary database from secondary database")
 
+    # RIGHT:
+    @Slot()
+    def print_unknown_tags_button(self):
+        unk_tags = []
+        known_tags = set(tag_categories.COLOR_DICT.keys()).union(tag_categories.REJECTED_TAGS)
+
+        import numpy as np
+        from resources.tag_categories import KAOMOJI
+
+        
+        #ca_dict = files.get_caformer_tags()
+        
+        #ca_list = [ca_dict[str(k)].replace("_", " ") if len(ca_dict[str(k)]) > 3 else ca_dict[str(k)] for k in
+        #           range(12546 + 1)]
+        #ca_list = [ca for ca in ca_list if ca not in known_tags]
+        #ca_set = set(ca_list)
+        
+        
+        tags_df = files.get_pd_swinbooru_tag_frequency()
+        
+        tags_df = tags_df.sort_values(by=['count'], ascending=False)
+        name_series = tags_df["name"]
+        name_series = name_series.map(lambda x: x.replace("_", " ") if len(x) > 3 and x not in KAOMOJI else x)
+        tag_names = name_series.tolist()
+        general_indexes = list(np.where(tags_df["category"] == 0)[0])
+        general_tag = [tag_names[i] for i in general_indexes]
+        gt_list = [gt for gt in general_tag if gt not in known_tags]
+
+        #parameters.log.info(", ".join(ca_list))
+        #parameters.log.info(", ".join([gt for gt in gt_list if gt not in ca_set]))
+
+        if self.basic_database:
+            for image in self.basic_database.images:
+                for tag in image.get_full_tags():
+                    if tag not in known_tags and tag not in unk_tags:
+                        unk_tags.append(tag)
+            parameters.log.info(unk_tags)
+
+    # checkpoint and misc TOOLS TAB
+    def rename_bad_names_to_md5(self):
+        confirmation = CustomWidgets.confirmation_dialog(self, text="Do you wish to convert all file names to their MD5 Hash (and update related json)?\nMake sure MD5 didn't update")
+        db_folder = self.lineEdit_database_folder.text()
+        db_exists = os.path.exists(os.path.join(db_folder, parameters.DATABASE_FILE_NAME))
+        if not db_exists:
+            parameters.log.error("No database found, exiting procedure")
+        if confirmation and db_exists:
+            #files.to_md5(db_folder)
+            if not self.checkpoint_database:
+                self.checkpoint_database = Database(db_folder)
+            else: #if a different database is in the textfield
+                if self.checkpoint_database.folder != db_folder:
+                    parameters.log.info("Using database in the text field")
+                    self.checkpoint_database = Database(db_folder)
+            
+            def has_special_char(text: str) -> bool: # this checks for non alpha numeric and ignores whitespace
+                return any(char for char in text if not (char.isascii() and (char.isalnum() or char in "_-( )")))
+            
+            renamed_pair = []
+            for img_path in self.checkpoint_database.get_all_paths():
+                # get directory, filename, and img extension
+                dir_name = os.path.dirname(img_path)
+                f_name, f_ext = os.path.splitext(os.path.basename(img_path))
+                sp_char = has_special_char(f_name)
+                if sp_char:
+                    md5_hash = files.get_md5(img_path)
+                    old_dir_f_name = os.path.join(dir_name, f_name)
+                    new_dir_f_name = os.path.join(dir_name, md5_hash)
+                    parameters.log.info((sp_char, img_path))
+                    
+                    db_i = self.checkpoint_database.index_of_image_by_image_path(img_path)
+                    old_path = old_dir_f_name+f_ext
+                    new_path = new_dir_f_name+f_ext
+                    
+                    self.checkpoint_database.images[db_i].path = new_path
+                
+                    # update file
+                    os.rename(old_path, new_path)
+                    
+                    # update npz (only if in same directory)
+                    if os.path.exists(old_dir_f_name+".npz"):
+                        os.rename(old_dir_f_name+".npz", new_dir_f_name+".npz")
+                    
+                    # update txt file (only if in same directory)
+                    if os.path.exists(old_dir_f_name+".txt"):
+                        os.rename(old_dir_f_name+".txt", new_dir_f_name+".txt")
+                    
+                    renamed_pair.append((old_path, new_path))
+            
+            if True: # if any file names were updated, save db and update other json
+                self.checkpoint_database.save_database()
+                import json
+                
+                def update_kohya_json(renamed_pair, json_path):
+                    if os.path.exists(json_path):
+                        parameters.log.info(f"Modifying filenames stored in {json_path}")
+                        with open(json_path, 'r') as f:
+                            old_db = json.load(f)
+                        old_len = len(old_db)
+                        bad_folder = 0
+                        updated_db = {}
+                        renamed_file_dict = dict(renamed_pair)
+                        
+                        old_keys = old_db.keys()
+                        for old_k in old_keys:
+                            if "DISCARDED" in old_k:
+                                parameters.log.info(old_k)
+                            if all(bad_folders not in old_k for bad_folders in parameters.PARAMETERS["discard_folder_name_from_search"]):
+                                if old_k in renamed_file_dict:
+                                    updated_db[renamed_file_dict[old_k]] = old_db[old_k]                     
+                                else:
+                                    updated_db[old_k] = old_db[old_k]
+                            else:
+                                bad_folder+=1
+
+                        updated_len = len(updated_db)
+                        if old_len!=updated_len:
+                            parameters.log.error(f"Different output len {old_len} --> {updated_len}, diff {bad_folder}")
+                        with open(json_path, 'w') as f:
+                            json.dump(updated_db, f, indent=4)
+                    else:
+                        parameters.log.info(f"Skipping {json_path}")
+                
+                for json_name in ["meta_cap.json", "meta_lat.json"]:
+                    update_kohya_json(renamed_pair, os.path.join(db_folder, json_name))
+
+    @Slot()
+    def open_path_tools_button(self):
+        path = CustomWidgets.path_input_dialog(self)
+        self.lineEdit_dataset_folder.setText(path)
+                    
     def export_for_checkpoint(self):
+        # used to convert dataset for paperspace
         default_name = "meta_lat.json"
         new_head_path = "dataset" # previously was ""
         export_for_linux = True
@@ -583,98 +706,65 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         else:
             parameters.log.error("No work for exporting for checkpoint")
 
+    @Slot()
+    def open_path_safetensor_button(self):
+        path_tuple = CustomWidgets.file_input_dialog(self)
+        path = path_tuple[0] # path tuple stores the file name and the selected option
+        self.lineEdit_safetensor_path.setText(path)
 
-    def rename_bad_names_to_md5(self):
-        confirmation = CustomWidgets.confirmation_dialog(self, text="Do you wish to convert all file names to their MD5 Hash (and update related json)?\nMake sure MD5 didn't update")
-        db_folder = self.lineEdit_database_folder.text()
-        db_exists = os.path.exists(os.path.join(db_folder, parameters.DATABASE_FILE_NAME))
-        if not db_exists:
-            parameters.log.error("No database found, exiting procedure")
-        if confirmation and db_exists:
-            #files.to_md5(db_folder)
-            if not self.checkpoint_database:
-                self.checkpoint_database = Database(db_folder)
-            else: #if a different database is in the textfield
-                if self.checkpoint_database.folder != db_folder:
-                    parameters.log.info("Using database in the text field")
-                    self.checkpoint_database = Database(db_folder)
-                    
-            all_img_paths = self.checkpoint_database.get_all_paths()
+    def inspect_safetensor(self):
+        path = self.lineEdit_safetensor_path.text()
+        if path and path.endswith(".safetensors"):
+            safetensors_metadata.print_metadata2(path)
+        else:
+            parameters.log.error("No file found")
+   
+    def remove_file_type(self):
+        ftypes = self.lineEdit_remove_files_type.text()
+        ftype = [t.strip().lower() for t in ftypes.split(",")]
+        accepted_values = [".txt", "txt", ".npz", "npz"]
+        type_check = all([f in accepted_values for f in ftype])
+        db_folder = self.lineEdit_dataset_folder.text().strip()
+        
+        # check for errors
+        if not type_check:
+            parameters.log.error(f"entered wrong values, we only accept the following values: {accepted_values}")
+            return
+        if not db_folder:
+            parameters.log.error("no folder selected, enter a folder in the checkpoint section")
+            return
+        
+        
+        remove_files = []
+        for f in ftype:
+            if f in ["txt", ".txt"]:
+                remove_files.extend(files.get_all_images_in_folder(db_folder, image_ext=(".txt")))
+            elif f in [".npz", "npz"]:
+                remove_files.extend(files.get_all_images_in_folder(db_folder, image_ext=(".npz")))
+        
+        if remove_files:
+            message = f"This will delete {len(remove_files)} files, are you sure?"
+            confirmation = CustomWidgets.confirmation_dialog(self, message)
+            if confirmation:
+                parameters.log.info(f"Deleting {len(remove_files)} files")
+                for p in remove_files:
+                    os.remove(p)
+                parameters.log.info("Finished deleting files")
+        else:
+            parameters.log.error("No files to delete")
             
-            def has_special_char(text: str) -> bool: # this checks for non alpha numeric and ignores whitespace
-                return any(char for char in text if not (char.isascii() and (char.isalnum() or char in "_-( )")))
+        
             
-            renamed_pair = []
-            for img_path in all_img_paths:
-                # get directory, filename, and img extension
-                dir_name = os.path.dirname(img_path)
-                f_name, f_ext = os.path.splitext(os.path.basename(img_path))
-                sp_char = has_special_char(f_name)
-                if sp_char:
-                    md5_hash = files.get_md5(img_path)
-                    old_dir_f_name = os.path.join(dir_name, f_name)
-                    new_dir_f_name = os.path.join(dir_name, md5_hash)
-                    parameters.log.info((sp_char, img_path))
-                    
-                    db_i = self.checkpoint_database.index_of_image_by_image_path(img_path)
-                    old_path = old_dir_f_name+f_ext
-                    new_path = new_dir_f_name+f_ext
-                    
-                    self.checkpoint_database.images[db_i].path = new_path
-                
-                    # update file
-                    os.rename(old_path, new_path)
-                    
-                    # update npz (only if in same directory)
-                    if os.path.exists(old_dir_f_name+".npz"):
-                        os.rename(old_dir_f_name+".npz", new_dir_f_name+".npz")
-                    
-                    # update txt file (only if in same directory)
-                    if os.path.exists(old_dir_f_name+".txt"):
-                        os.rename(old_dir_f_name+".txt", new_dir_f_name+".txt")
-                    
-                    renamed_pair.append((old_path, new_path))
             
-            if True: # if any file names were updated, save db and update other json
-                self.checkpoint_database.save_database()
-                import json
-                
-                def update_kohya_json(renamed_pair, json_path):
-                    if os.path.exists(json_path):
-                        parameters.log.info(f"Modifying filenames stored in {json_path}")
-                        with open(json_path, 'r') as f:
-                            old_db = json.load(f)
-                        old_len = len(old_db)
-                        bad_folder = 0
-                        updated_db = {}
-                        renamed_file_dict = dict(renamed_pair)
-                        
-                        old_keys = old_db.keys()
-                        for old_k in old_keys:
-                            if "DISCARDED" in old_k:
-                                parameters.log.info(old_k)
-                            if all(bad_folders not in old_k for bad_folders in parameters.PARAMETERS["discard_folder_name_from_search"]):
-                                if old_k in renamed_file_dict:
-                                    updated_db[renamed_file_dict[old_k]] = old_db[old_k]                     
-                                else:
-                                    updated_db[old_k] = old_db[old_k]
-                            else:
-                                bad_folder+=1
-
-                        updated_len = len(updated_db)
-                        if old_len!=updated_len:
-                            parameters.log.error(f"Different output len {old_len} --> {updated_len}, diff {bad_folder}")
-                        with open(json_path, 'w') as f:
-                            json.dump(updated_db, f, indent=4)
-                    else:
-                        parameters.log.info(f"Skipping {json_path}")
-                
-                for json_name in ["meta_cap.json", "meta_lat.json"]:
-                    update_kohya_json(renamed_pair, os.path.join(db_folder, json_name))
-                        
-            
-
-
+        
+    # DATABASE CREATION TAB
+    ###################
+    # VIEW DATABASE TAB
+    def add_db_tab_widget(self, db):
+            main_widget = DatabaseViewBase.DatabaseViewBase(db)
+            #main_widget = DatabaseTags.DatabaseFrame(db)
+            self.databaseTabWidget.addTab(main_widget, db.folder)
+    
     @Slot()
     def view_database_button(self):
         folder_path = self.lineEdit_view_database_path.text().strip()
@@ -682,13 +772,14 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             parameters.log.warning("No valid path entered.")
             return False
         temp_db = Database(folder_path)
-        temp_db.check_existence_images()
+        #temp_db.check_existence_images()
         self.add_db_tab_widget(temp_db)
 
-    def add_db_tab_widget(self, db):
-        main_widget = DatabaseViewBase.DatabaseViewBase(db)
-        #main_widget = DatabaseTags.DatabaseFrame(db)
-        self.databaseTabWidget.addTab(main_widget, db.folder)
+    @Slot()
+    def open_view_database_path_button(self):
+        path = CustomWidgets.path_input_dialog(self)
+        self.lineEdit_view_database_path.setText(path)
+        self.view_database_button()
 
     @Slot(int)
     def view_database_close_requested(self, index):
@@ -696,6 +787,9 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.databaseTabWidget.removeTab(index)
         close_tab.close()
 
+    # Other tabs (DATASET CLEANING, GLOBAL DATASET, LORA, STATISTICS) ...
+    
+    # init settings code:
     @Slot()
     def init_settings(self):
         # remove wheel event
@@ -704,11 +798,11 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             self.spin_swinv2_chara_count, self.check_swinv2_chara, self.spin_caformer_thresh, self.spin_max_batch_size,
             self.spin_max_images_loader_thread, self.spin_max_4k_pixels_save_multiplier, self.spin_similarity_thresh,
             self.comboBox_click_option, self.spinBox_custom_height, self.spinBox_custom_width, self.spinBox_custom_bucket_steps,
-            self.spinBox_sample_count, self.spin_max_amount_of_backups
+            self.spinBox_sample_count, self.spin_max_amount_of_backups, self.spinBox_detection_resolution
         ]
         for x in list_of_widget_to_have_their_wheel_event_removed:
             x.wheelEvent = lambda event: None
-
+        
         self.spin_font_size.setValue(parameters.PARAMETERS["font_size"])
         self.lineEdit_external_image_editor_path.setText(parameters.PARAMETERS["external_image_editor_path"])
         self.spin_image_load_size.setValue(parameters.PARAMETERS["image_load_size"])
@@ -727,6 +821,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spin_max_4k_pixels_save_multiplier.setValue(parameters.PARAMETERS["max_4k_pixel_save_multiplier"])
         self.spin_max_amount_of_backups.setValue(parameters.PARAMETERS["max_databases_view_backup"])
         self.spin_similarity_thresh.setValue(parameters.PARAMETERS["similarity_threshold"])
+        self.spinBox_detection_resolution.setValue(parameters.PARAMETERS["detection_small_resolution"])
         
         #self.comboBox_click_option.addItems(["Single Click", "Double Click"])
         self.comboBox_click_option.setCurrentText("Double Click" if parameters.PARAMETERS["double_click"] else "Single Click")
@@ -766,6 +861,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spin_max_4k_pixels_save_multiplier.setValue(parameters.default_parameters['Database']["max_4k_pixel_save_multiplier"])
         self.spin_max_amount_of_backups.setValue(parameters.default_parameters['Database']["max_databases_view_backup"])
         self.spin_similarity_thresh.setValue(parameters.default_parameters['General']["similarity_threshold"])
+        self.spinBox_detection_resolution.setValue(parameters.default_parameters['Taggers']["detection_small_resolution"])
 
         #self.comboBox_click_option.addItems(["Single Click", "Double Click"])
         self.comboBox_click_option.setCurrentText("Double Click" if parameters.default_parameters['Interface']["double_click"] else "Single Click")
@@ -800,6 +896,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.PARAMETERS["max_4k_pixel_save_multiplier"] = self.spin_max_4k_pixels_save_multiplier.value()
         parameters.PARAMETERS["max_databases_view_backup"] = self.spin_max_amount_of_backups.value()
         parameters.PARAMETERS["similarity_threshold"] = self.spin_similarity_thresh.value()
+        parameters.PARAMETERS["detection_small_resolution"] = self.spinBox_detection_resolution.value()
         
         parameters.PARAMETERS["double_click"] = self.comboBox_click_option.currentText() == "Double Click"
 

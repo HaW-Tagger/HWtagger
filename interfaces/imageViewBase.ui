@@ -27,215 +27,361 @@
     <number>3</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>6</number>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
-     </property>
-     <item>
-      <widget class="QPushButton" name="pushButton_deleted_group">
-       <property name="toolTip">
-        <string>delete the group (doesn't delete the images)</string>
+     <widget class="QWidget" name="page">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>3</number>
        </property>
-       <property name="text">
-        <string>Delete group</string>
+       <property name="leftMargin">
+        <number>3</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_add_group">
-       <property name="toolTip">
-        <string>create a new group</string>
+       <property name="topMargin">
+        <number>3</number>
        </property>
-       <property name="text">
-        <string>Add Group</string>
+       <property name="rightMargin">
+        <number>3</number>
        </property>
-       <property name="icon">
-        <iconset theme="list-add"/>
+       <property name="bottomMargin">
+        <number>3</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboBox_group_name">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>list of groups</string>
-       </property>
-       <property name="editable">
-        <bool>false</bool>
-       </property>
-       <property name="minimumContentsLength">
-        <number>1</number>
-       </property>
-       <property name="frame">
-        <bool>true</bool>
-       </property>
-       <property name="modelColumn">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <item>
+          <widget class="QPushButton" name="pushButton_deleted_group">
+           <property name="toolTip">
+            <string>delete the group (doesn't delete the images)</string>
+           </property>
+           <property name="text">
+            <string>Delete group</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_add_group">
+           <property name="toolTip">
+            <string>create a new group</string>
+           </property>
+           <property name="text">
+            <string>Add Group</string>
+           </property>
+           <property name="icon">
+            <iconset theme="list-add"/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="comboBox_group_name">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>list of groups</string>
+           </property>
+           <property name="editable">
+            <bool>false</bool>
+           </property>
+           <property name="minimumContentsLength">
+            <number>1</number>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="modelColumn">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QComboBox" name="comboBox_sort_type">
+           <property name="toolTip">
+            <string>sorting images view, some sorting requires calculations</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_reverse">
+           <property name="toolTip">
+            <string>reverse the sort</string>
+           </property>
+           <property name="text">
+            <string>Reverse</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_include_sentence">
+           <property name="text">
+            <string>Sentence</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_tag_search">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter text to search for tags:&lt;/p&gt;&lt;p&gt;By default, it search for any partial matches&lt;/p&gt;&lt;p&gt;- use the star, &amp;quot;*&amp;quot;, as a wildcard for any number of characters in that position. can be placed in between, before, or after other characters&lt;/p&gt;&lt;p&gt;- place quotation marks, &amp;quot; &amp;quot;, around the text for exact keyword search&lt;/p&gt;&lt;p&gt;- use the minus sign, &amp;quot;-&amp;quot;, in front of the text to remove images with that keyword&lt;/p&gt;&lt;p&gt;- search source_&amp;lt;source name&amp;gt; to filter where the tags came from. Ex: source_Swin, source_Caformer, source_danbooru, source_manual ...&lt;/p&gt;&lt;p&gt;- search group_&amp;lt;group name&amp;gt; to filter where images are grouped. Ex: group_from_behind, group_from above, ...&lt;/p&gt;&lt;p&gt;- special seach keywords (we only have 1 tag rn): &amp;quot;2persons&amp;quot; --&amp;gt; search for images with tag combinations that implies 2 people in the image, ex: &amp;quot;1boy&amp;quot; + &amp;quot;1girl&amp;quot;, &amp;quot;2girls&amp;quot;, &amp;quot;2boys&amp;quot;, etc&lt;/p&gt;&lt;p&gt;Separate multiple tag searches using &amp;quot;,&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="placeholderText">
+            <string>Enter Tag(s) to Search</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QListView" name="listView_groups">
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListView" name="listView_other">
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="pushButton_add_selection_to_group">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>add all images selected at the bottom to the group</string>
+            </property>
+            <property name="text">
+             <string>Add selection to group</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_remove_selection_from_group">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>remove all selected images in the top view from the group</string>
+            </property>
+            <property name="text">
+             <string>Remove selection from group</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_toggle_ungrouped_images">
+            <property name="toolTip">
+             <string>show all images in the bottom group except if they belong to the top group</string>
+            </property>
+            <property name="text">
+             <string>Show grouped</string>
+            </property>
+            <property name="tristate">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QSlider" name="horizontalSlider_thumbnail_size">
+           <property name="toolTip">
+            <string>change the viewed image size</string>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_image_view_count">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_single_selection_mode">
+           <property name="toolTip">
+            <string>toggle single or multi-selection, tick the checkbox to disable multi-selection. You can only selcted one image at a time.</string>
+           </property>
+           <property name="text">
+            <string>Disable multi-selection</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_zoom_on_click">
+           <property name="toolTip">
+            <string>If checked, when selecting one image it will be shown large, wih buttons enabling you to slide right or left of the view</string>
+           </property>
+           <property name="text">
+            <string>Zoom</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2">
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
         <number>0</number>
        </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QComboBox" name="comboBox_sort_type">
-       <property name="toolTip">
-        <string>sorting images view, some sorting requires calculations</string>
+       <property name="topMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_reverse">
-       <property name="toolTip">
-        <string>reverse the sort</string>
+       <property name="rightMargin">
+        <number>0</number>
        </property>
-       <property name="text">
-        <string>Reverse</string>
+       <property name="bottomMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_include_sentence">
-       <property name="text">
-        <string>Sentence</string>
+       <property name="spacing">
+        <number>3</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="lineEdit_tag_search">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter text to search for tags:&lt;/p&gt;&lt;p&gt;By default, it search for any partial matches&lt;/p&gt;&lt;p&gt;- use the star, &amp;quot;*&amp;quot;, as a wildcard for any number of characters in that position. can be placed in between, before, or after other characters&lt;/p&gt;&lt;p&gt;- place quotation marks, &amp;quot; &amp;quot;, around the text for exact keyword search&lt;/p&gt;&lt;p&gt;- use the minus sign, &amp;quot;-&amp;quot;, in front of the text to remove images with that keyword&lt;/p&gt;&lt;p&gt;- search source_&amp;lt;source name&amp;gt; to filter where the tags came from. Ex: source_Swin, source_Caformer, source_danbooru, source_manual ...&lt;/p&gt;&lt;p&gt;- search group_&amp;lt;group name&amp;gt; to filter where images are grouped. Ex: group_from_behind, group_from above, ...&lt;/p&gt;&lt;p&gt;- special seach keywords (we only have 1 tag rn): &amp;quot;2persons&amp;quot; --&amp;gt; search for images with tag combinations that implies 2 people in the image, ex: &amp;quot;1boy&amp;quot; + &amp;quot;1girl&amp;quot;, &amp;quot;2girls&amp;quot;, &amp;quot;2boys&amp;quot;, etc&lt;/p&gt;&lt;p&gt;Separate multiple tag searches using &amp;quot;,&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="placeholderText">
-        <string>Enter Tag(s) to Search</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QListView" name="listView_groups">
-     <property name="sizeAdjustPolicy">
-      <enum>QAbstractScrollArea::AdjustToContents</enum>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
+       <item row="2" column="0" colspan="3">
+        <widget class="PaintingImage" name="single_image" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="pushButton_prev_image">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>&lt;-</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="3">
+        <widget class="QLabel" name="single_info_label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QPushButton" name="pushButton_next_image">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>-&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="checkBox_masking">
+         <property name="text">
+          <string>Masking</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QLabel" name="label_image_md5">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
-   </item>
-   <item>
-    <widget class="QListView" name="listView_other">
-     <property name="sizeAdjustPolicy">
-      <enum>QAbstractScrollArea::AdjustToContents</enum>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QWidget" name="widget" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QPushButton" name="pushButton_add_selection_to_group">
-        <property name="toolTip">
-         <string>add all images selected at the bottom to the group</string>
-        </property>
-        <property name="text">
-         <string>Add selection to group</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_remove_selection_from_group">
-        <property name="toolTip">
-         <string>remove all selected images in the top view from the group</string>
-        </property>
-        <property name="text">
-         <string>Remove selection from group</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBox_toggle_ungrouped_images">
-        <property name="toolTip">
-         <string>show all images in the bottom group except if they belong to the top group</string>
-        </property>
-        <property name="text">
-         <string>Show grouped</string>
-        </property>
-        <property name="tristate">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QSlider" name="horizontalSlider_thumbnail_size">
-       <property name="toolTip">
-        <string>change the viewed image size</string>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_image_view_count">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_single_selection_mode">
-       <property name="toolTip">
-        <string>toggle single or multi-selection, tick the checkbox to disable multi-selection. You can only selcted one image at a time.</string>
-       </property>
-       <property name="text">
-        <string>Disable multi-selection</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_zoom_on_click">
-       <property name="toolTip">
-        <string>If checked, when selecting one image it will be shown large, wih buttons enabling you to slide right or left of the view</string>
-       </property>
-       <property name="text">
-        <string>Zoom</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PaintingImage</class>
+   <extends>QWidget</extends>
+   <header>CustomWidgets</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

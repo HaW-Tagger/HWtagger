@@ -1,5 +1,6 @@
 import os, torch, json, ast
 from safetensors.torch import load_file, save_file, safe_open
+from safetensors import safe_open
 
 from resources import parameters
 
@@ -39,9 +40,9 @@ def dict_from_str(key1, value1):
         dictionary[key1] = value1
     return dictionary
 
-if __name__ == "__main__":
-    test_path = ""
-    metadata = load_metadata_from_safetensors(test_path)
+def print_metadata(path):
+    metadata = load_metadata_from_safetensors(path)
+    print(metadata)
     metadata_dict = {}
     for key1, value1 in metadata.items():
         metadata_dict.update(dict_from_str(key1, value1))
@@ -55,3 +56,32 @@ if __name__ == "__main__":
                     parameters.log.info(f"{key1}: {key2}: {value2}")
         else:
             parameters.log.info(f"{key1}: {value1}")
+
+def print_metadata2(path):
+    #from diffusers import AutoencoderKL
+    parameters.log.info(f"Loading model: {path}")
+    
+    # pt stands for pickle tensor
+    tensors = {}
+    with safe_open(path, framework="pt", device="cpu") as f:
+        for key in f.keys():
+            tensors[key] = f.get_tensor(key)
+            print(key) # keep this as print
+    
+    #vae = AutoencoderKL.from_pretrained(path, torch_dtype=torch.float32)
+    #torch_model = vae
+    #torch_model = torch.load(path)
+    #state_dict = torch_model.state_dict()
+    #for k, v in state_dict.items():
+    #    print(k)
+
+def save_file():
+    #this is to save the code for saving safetensors, don't import it, keep for reference
+    #vae.state_dict()
+    
+    #save_file(state_dict, os.path.join(filename))
+    pass
+
+if __name__ == "__main__":
+    test_path = ""
+    print_metadata(test_path)

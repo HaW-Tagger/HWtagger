@@ -10,11 +10,11 @@ from PIL import Image
 from pathlib import Path
 import pandas as pd
 
-from tqdm import tqdm
+from tools import misc_func
 
 import resources.parameters
 from resources import parameters
-
+from huggingface_hub import hf_hub_download, snapshot_download
 
 def load_database(folder):
     if "TEMP_DISCARDED" in os.listdir(folder):
@@ -90,7 +90,6 @@ def get_all_databases_folder(folder, rejected_folders=resources.parameters.PARAM
             elif os.path.isdir(os.path.join(folder, f)):
                 S.extend(get_all_databases_folder(os.path.join(folder, f), rejected_folders))
     return S
-
 
 def read_history():
     try:
@@ -459,23 +458,6 @@ def find_near_duplicates(images_paths: list[str],*, threshold: float=0.9, hash_s
         A list of near-duplicates found. Near duplicates are encoded as a triple: (filename_A, filename_B, similarity)
     """
 
-    def tqdm_parallel_map(executor, fn, *iterables, **kwargs):
-        """
-        from: https://techoverflow.net/2017/05/18/how-to-use-concurrent-futures-map-with-a-tqdm-progress-bar/
-
-        Equivalent to executor.map(fn, *iterables),
-        but displays a tqdm-based progress bar.
-
-        Does not support timeout or chunksize as executor.submit is used internally
-
-        **kwargs is passed to tqdm.
-        """
-        futures_list = []
-        for iterable in iterables:
-            futures_list += [executor.submit(fn, i) for i in iterable]
-        for f in tqdm(concurrent.futures.as_completed(futures_list), total=len(futures_list), **kwargs):
-            yield f.result()
-
     def calculate_signature(image_file: str, hash_size: int):
         """
         Calculate the dhash signature of a given file
@@ -518,7 +500,7 @@ def find_near_duplicates(images_paths: list[str],*, threshold: float=0.9, hash_s
     # Iterate through all files in input directory
     pool = concurrent.futures.ThreadPoolExecutor(max_workers=parameters.PARAMETERS["max_images_loader_thread"])
     # pool.submit(img.load_image_object, (max_image_size, max_image_size))
-    for _ in tqdm_parallel_map(pool, lambda fh: calculate_signature(fh, hash_size), images_paths):
+    for _ in misc_func.tqdm_parallel_map(pool, lambda fh: calculate_signature(fh, hash_size), images_paths):
         pass
     pool.shutdown(wait=True)
 
@@ -568,4 +550,51 @@ def get_pd_swinbooru_tag_frequency():
     swin_file = "selected_tags.csv"
     tags_df = pd.read_csv(os.path.join(swin_model_folder, swin_file))
     return tags_df
-    
+
+def download_model(name: str):
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+    # use snapshot_download if we want to download an entire repo
+    match name:
+        case "Swinv2v2":
+            rel_path = "models/SwinV2/"
+            for filename in ["keras_metadata.pb", "saved_model.pb", "selected_tags.csv", "tmpugou97nr", "variables/variables.data-00000-of-00001", "variables/variables.index"]:
+                rel_file_path = rel_path + filename
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path, local_dir=parameters.MAIN_FOLDER)
+            hf_hub_download(repo_id="PhoenixAscencio/HWtagger", filename="models/SwinV2", local_dir=parameters.MAIN_FOLDER)
+        case "Swinv2v3":
+            rel_path = "models/SwinV2v3/"
+            for filename in ["config.json", "model.onnx", "selected_tags.csv", "sw_jax_cv_config.json"]:
+                rel_file_path = rel_path + filename
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path, local_dir=parameters.MAIN_FOLDER)
+        case "Caformer":
+            for filename in ["models/ML-danbooru-caformer/class.json", "models/ML-danbooru-caformer/model.ckpt"]:
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=filename, local_dir=parameters.MAIN_FOLDER)
+        case "anime_aesthetic":
+            rel_path = "models/anime_aesthetic/"
+            for filename in ["swinv2pv3_v0_448_ls0.2_x_meta.json", "model.onnx", "swinv2pv3_v0_448_ls0.2_x_metrics.json"]:
+                rel_file_path = rel_path + filename
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path, local_dir=parameters.MAIN_FOLDER)
+        case "anime_classifier":
+            rel_path = "models/anime_classifier/"
+            for filename in ["mobilenetv3_v1.3_dist_meta.json", "model.onnx", "mobilenetv3_v1.3_dist_metrics.json"]:
+                rel_file_path = rel_path + filename
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path, local_dir=parameters.MAIN_FOLDER)
+        case "detect_people":
+            for filename in ["models/person_detect/person_detect_plus_v1.1_best_m.onnx"]:
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=filename, local_dir=parameters.MAIN_FOLDER)
+        case "detect_head":
+            for filename in ["models/head_detect/head_detect_best_s.onnx"]:
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=filename, local_dir=parameters.MAIN_FOLDER)
+        case "detect_hand":
+            rel_path = "models/hand_detect/"
+            for filename in ["model.onnx", "model_artifacts.json"]:
+                rel_file_path = rel_path + filename
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path, local_dir=parameters.MAIN_FOLDER)
+        case "anime_completeness":
+            rel_path = "models/anime_completeness/"
+            for filename in ["model.onnx", "meta.json", "metrics.json"]:
+                rel_file_path = rel_path + filename
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path, local_dir=parameters.MAIN_FOLDER)
+        case _:
+            parameters.log.error(f"Unknown case when downloading model, check for typo for model")
+    pool.shutdown(wait=True)

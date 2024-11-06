@@ -1,25 +1,20 @@
-from interfaces import image_tools
-from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QCheckBox, QListView, QFrame
-from PySide6.QtCore import Slot
-import PySide6.QtCore as QtCore
-from PySide6.QtGui import QPixmap, QImageReader, QStandardItemModel, QStandardItem
-
-from resources import parameters
-from tools import images, files
+import os
+import time
 from pathlib import Path
 
-from classes.class_database import Database
-
 import PIL
-
-from PIL.ImageQt import ImageQt
-
-import concurrent.futures
-import os
-from tqdm.auto import tqdm
-import shutil
+import PySide6.QtCore as QtCore
 import imagesize
-import time
+from PIL.ImageQt import ImageQt
+from PySide6.QtCore import Slot
+from PySide6.QtGui import QPixmap, QImageReader, QStandardItemModel, QStandardItem
+from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QCheckBox, QListView, QFrame
+from tqdm.auto import tqdm
+
+from classes.class_database import Database
+from interfaces import image_tools
+from resources import parameters
+from tools import images, files
 
 REMOVE_EXIF = False
 w_font_font = parameters.PARAMETERS['font_name'] 
@@ -127,10 +122,8 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
         dir_text = self.DirectoryText.text()
         if dir_text and not os.path.exists(os.path.join(dir_text, parameters.DATABASE_FILE_NAME)):
             self.database = Database(dir_text)
-            self.database.add_images_to_db(files.get_all_images_in_folder(dir_text),
-                                            autotag=False,score=False,from_txt=False,
-                                            grouping_from_path=False,classify=False
-                                            )
+            self.database.add_images_to_db(files.get_all_images_in_folder(dir_text))
+            
             x = len(self.database.images)
             parameters.log.info(("db_len", x))
             
@@ -376,8 +369,9 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
     @Slot()
     def find_similar_images(self):
         if self.image_paths:
-            from tools.main import similarity_example
-            similarity_example(self.image_paths)
+            images.similarity_example(self.image_paths)
+        else:
+           parameters.log.error("No image paths found") 
     
     @Slot()
     def delete_duplicate_imgs(self):

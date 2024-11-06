@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 import concurrent.futures
 
+import math
 # cv2 is a backup library for high bitrate images (32 bit, 4 channel imgs) that pillow doesn't support
 import cv2
 
@@ -14,7 +15,7 @@ from timeit import default_timer as timer
 from functools import wraps
 
 from resources import parameters
-from tools import files, main
+from tools import files
 
 import torch
 import torchvision.transforms as transforms
@@ -320,3 +321,66 @@ def border_transparency2(img_path, crop_empty_space=True,fill_stray_signature=Tr
         parameters.log.debug(f"Img after: {image.size}")
 
     return original_image, cropped, filled
+
+def round_and_crop_to_bucket(x:float, reso_step=64) -> int:
+    x = int(x+0.5) # round to nearest int
+    return x - x%reso_step # crop to nearest multiple of reso_step
+
+def get_bucket_size(image_height, image_width, base_height=1024, base_width=1024, bucket_steps=64) -> tuple[int, int]:
+        # we didn't impliment upscale in this bucket size cause it's not a feature we use
+        
+        # implimentation from kohya's bucket manager with some explanation of the math behind it
+        #base h x w is (1024, 1024) for XL and (512 x 512) or (768, 768) for SD1.5 and SD2
+        image_ratio = image_width / image_height
+        max_area = base_height * base_width
+        if image_width* image_height > max_area: # we need to rescale the image down
+            # explanation of the sqrt in kohya's code:
+            # (w, h) is the image resolution, s is the scale factor needed to resize the image
+            # (w_res, h_res) is the resolution used for the max area
+            # max_area = w_res * h_res and AR (aspect ratio) = w/h
+            # the max area is also equal to s*w * s*h, because the rescaled image needs to fit in the max area
+            # the goal is to find either s*w or s*h, which is one of the rescaled sizes 
+            # so we do s*w = sqrt(max_area * AR) = sqrt(s*w * s*h * w/h) = sqrt(s^2 * w^2)
+            
+            resized_width = math.sqrt(max_area * image_ratio)
+            resized_height = max_area / resized_width
+            assert abs(resized_width / resized_height - image_ratio) < 1e-2, "aspect is illegal"
+        
+            # at this point, resized_width and height are floats and we need to get the closest int value
+            
+            # bucket resolution by clipping based on width
+            b_width_rounded = round_and_crop_to_bucket(resized_width)
+            b_height_in_wr = round_and_crop_to_bucket(b_width_rounded / image_ratio)
+            ar_width_rounded = b_width_rounded / b_height_in_wr
+            
+            # bucket resolution by clipping based on height
+            b_height_rounded = round_and_crop_to_bucket(resized_height)
+            b_width_in_hr = round_and_crop_to_bucket(b_height_rounded * image_ratio)
+            ar_height_rounded = b_width_in_hr / b_height_rounded
+            
+            # check the error between the aspect ratio and choose the one that's smallest
+            # most times the resulting bucket size would be the same
+            if abs(ar_width_rounded - image_ratio) < abs(ar_height_rounded - image_ratio):
+                resized_size = (b_width_rounded, int(b_width_rounded / image_ratio + 0.5))
+            else:
+                resized_size = (int(b_height_rounded * image_ratio + 0.5), b_height_rounded)
+        
+        else:
+            resized_size = (image_width, image_height)
+        
+        # remove any outer pixels from the bottom and right of the image that doesn't match the bucket steps (usualy 64)
+        bucket_width = resized_size[0] - resized_size[0] % bucket_steps
+        bucket_height = resized_size[1] - resized_size[1] % bucket_steps
+        
+        bucketed_resolution = (bucket_width, bucket_height)
+        
+        return bucketed_resolution
+    
+def similarity_example(images_paths,*, threshold=0.9, hash_size=32, bands=32):
+    near_duplicates = files.find_near_duplicates(images_paths, threshold=threshold, hash_size=hash_size, bands=bands)
+    if near_duplicates:
+        parameters.log.info(f"Found {len(near_duplicates)} near-duplicate images in images (threshold {threshold:.2%})")
+        for a,b,s in near_duplicates:
+            parameters.log.info(f"{s:.2%} similarity: file 1: {a} - file 2: {b}")
+    else:
+        parameters.log.info(f"No near-duplicates found in images (threshold {threshold:.2%})")

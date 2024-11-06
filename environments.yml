@@ -1,0 +1,52 @@
+name: hwtagger-cudnn #conda env update --file environments.yml --prune
+channels:
+ - defaults
+ - nvidia
+ - xformers
+dependencies:
+  - python=3.10.11
+  - nvidia::cuda-toolkit=12.1
+  - conda-forge::cudnn=8.9 # if you have a Visual Studio installed in your directory you might need to reinstall or remove it from the PATH
+  # - conda-forge::flash-attn for windows go there https://github.com/bdashore3/flash-attention and put the wheel download in your main path, activate your conda environment and type: pip install flash_attn-2.5.2+cu122torch2.2.0cxx11abiFALSE-cp310-cp310-win_amd64.whl 
+  - pytorch::pytorch=2.2.0 
+  - pytorch::torchvision=0.17.0 
+  - pytorch::torchaudio=2.2.0 
+  - pytorch::pytorch-cuda=12.1
+  - pip
+  - pip:
+    - transformers
+    - diffusers
+    - datasets
+    - accelerate==0.25.0
+    - aiofiles==23.2.1
+    - einops==0.6.1 #caformer
+    - fairscale==0.4.13
+    - ftfy==6.1.1
+    - omegaconf==2.3.0
+    - onnx==1.15.0  #1.14.1
+    - onnxruntime-gpu==1.17 #1.16.0
+    - protobuf==3.20.3
+    - safetensors==0.4.2
+    - toml==0.10.2
+    - scipy==1.11.4
+    - timm==0.6.12 #caformer
+    - ImageHash>=4.2.1 # similarity
+    - rich # logging tool
+    - loguru
+    - tqdm
+    - matplotlib
+    - PySide6==6.6.2
+    - qdarkstyle
+    - cloudscraper
+    - scikit-learn #caformer
+    - numpy 
+    - seaborn 
+    - pandas
+    - imagesize==1.4.1
+    - tensorflow==2.8.0 # Window's GPU supports ends after 2.10
+    - tensorflow-io==0.31.0 #loading images
+    - opencv-python==4.7.0.68
+    - pillow
+    - dghs-imgutils[gpu] #dghs version 0.4.1
+    - xformers==0.0.24
+    - git+https://github.com/openai/CLIP.git

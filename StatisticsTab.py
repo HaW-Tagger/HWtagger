@@ -1,24 +1,22 @@
-from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QWidget
-from PySide6.QtCore import Slot
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from resources.tag_categories import KAOMOJI, COLOR_DICT
-
-from resources import parameters
-from classes.class_database import Database
-from interfaces import statistics
-
 import datetime
-import pandas as pd
 import os
 from collections import Counter
-import numpy as np
 
 import matplotlib
+import pandas as pd
+from PySide6 import QtCore, QtGui
+from PySide6.QtCore import Slot
+from PySide6.QtWidgets import QWidget
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+
+from classes.class_database import Database
+from interfaces import statistics
+from resources import parameters
+from resources.tag_categories import KAOMOJI, COLOR_DICT
+
 matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 import seaborn as sns
 from clip import tokenize
 
@@ -166,7 +164,7 @@ class StatisticsView(QWidget, statistics.Ui_Form):
         df = self.df.loc[top_tags,top_tags]
        
         line_width = 5
-        xy_axis = [k + " (" + str(v) +")" for k, v in zip(top_tags, top_tag_count)]
+        xy_axis = [k.tag + " (" + str(v) +")" for k, v in zip(top_tags, top_tag_count)]
         sc = MplCanvas(self, 40, 20)
         #plt.figure(figsize=(40,40))
         heatmap_fig = sns.heatmap(df, ax=sc.axes, annot=False, xticklabels=xy_axis, yticklabels=xy_axis, square=True, cbar_kws={'shrink': 0.8})
@@ -400,9 +398,11 @@ class StatisticsView(QWidget, statistics.Ui_Form):
                 tag_list = list(set(swin_df["name"].tolist()+list(ca_dict.values()) + list(COLOR_DICT.keys())))
                 
                 # process tags
-                
+                blacklist = ["score_" + str(i) for i in range(1, 10)]
+                blacklist += [sc + "_up" for sc in blacklist]
                 tag_list = [t.replace("_", " ") if len(t) > 3 and t not in KAOMOJI else t for t in tag_list]
-                print(tag_list[:10])
+                tag_list+=blacklist
+                #print(tag_list[:10])
                 known_text = tokenize(tag_list, context_length=500)
                 self.token_dict = {}
                 for tag, tokens in zip(tag_list, known_text):

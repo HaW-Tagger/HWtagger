@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1052</width>
+    <width>798</width>
     <height>858</height>
    </rect>
   </property>
@@ -112,7 +112,7 @@
         <item row="0" column="0">
          <widget class="QTabWidget" name="tabWidget_2">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -120,20 +120,31 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QLineEdit" name="lineEdit_database_folder">
-              <property name="toolTip">
-               <string>path that will be used by the buttons below</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="placeholderText">
-               <string>Enter Database Folder</string>
-              </property>
-              <property name="clearButtonEnabled">
-               <bool>false</bool>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_22">
+              <item>
+               <widget class="QLineEdit" name="lineEdit_database_folder">
+                <property name="toolTip">
+                 <string>path that will be used by the buttons below</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter Database Folder</string>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_open_path_edit">
+                <property name="text">
+                 <string>Open</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_load_database">
@@ -168,16 +179,6 @@
                    <property name="topMargin">
                     <number>12</number>
                    </property>
-                   <item row="0" column="0">
-                    <widget class="QPushButton" name="pushButton_convert_images_to_png">
-                     <property name="toolTip">
-                      <string>use the path above</string>
-                     </property>
-                     <property name="text">
-                      <string>Convert images to PNG (destructive)</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="1" column="0">
                     <widget class="QPushButton" name="pushButton_rename_images_md5">
                      <property name="toolTip">
@@ -185,6 +186,16 @@
                      </property>
                      <property name="text">
                       <string>Rename images to MD5 (destructive)</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QPushButton" name="pushButton_convert_images_to_png">
+                     <property name="toolTip">
+                      <string>use the path above</string>
+                     </property>
+                     <property name="text">
+                      <string>Convert images to PNG (destructive)</string>
                      </property>
                     </widget>
                    </item>
@@ -206,43 +217,13 @@
                    <property name="topMargin">
                     <number>12</number>
                    </property>
-                   <item row="2" column="0">
-                    <widget class="QPushButton" name="pushButton_rescores">
+                   <item row="3" column="1">
+                    <widget class="QPushButton" name="pushButton_rehash">
                      <property name="toolTip">
-                      <string>only change the score tags for existing images in the dataset</string>
+                      <string>refind the md5 of the image (could fail be careful, experimental feature)</string>
                      </property>
                      <property name="text">
-                      <string>Re-evaluate Aesthetics</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QPushButton" name="pushButton_reautotags">
-                     <property name="toolTip">
-                      <string>only change the automatic tags for existing images in the dataset (you retain your manually added tags and rejected and conflicts, ...)</string>
-                     </property>
-                     <property name="text">
-                      <string>Re-AutoTag images</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="0">
-                    <widget class="QPushButton" name="pushButton_reclassify">
-                     <property name="toolTip">
-                      <string>only change the classification for existing images in the dataset</string>
-                     </property>
-                     <property name="text">
-                      <string>Re-Classify images</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QPushButton" name="pushButton_filter_images">
-                     <property name="toolTip">
-                      <string>apply the filter to the database</string>
-                     </property>
-                     <property name="text">
-                      <string>Filter images</string>
+                      <string>Rehash images in database</string>
                      </property>
                     </widget>
                    </item>
@@ -256,13 +237,64 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="1">
-                    <widget class="QPushButton" name="pushButton_rehash">
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="pushButton_reautotags">
                      <property name="toolTip">
-                      <string>refind the md5 of the image (could fail be careful, experimental feature)</string>
+                      <string>only change the automatic tags for existing images in the dataset (you retain your manually added tags and rejected and conflicts, ...)</string>
                      </property>
                      <property name="text">
-                      <string>Rehash images in database</string>
+                      <string>Re-AutoTag Images</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QPushButton" name="pushButton_rescores">
+                     <property name="toolTip">
+                      <string>only change the score tags for existing images in the dataset</string>
+                     </property>
+                     <property name="text">
+                      <string>Re-Evaluate Aesthetics</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QPushButton" name="pushButton_reclassify">
+                     <property name="toolTip">
+                      <string>only change the classification for existing images in the dataset</string>
+                     </property>
+                     <property name="text">
+                      <string>Re-Classify Images</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QPushButton" name="pushButton_filter_images">
+                     <property name="toolTip">
+                      <string>apply the filter to the database</string>
+                     </property>
+                     <property name="text">
+                      <string>Filter Images</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QPushButton" name="pushButton_redetect_person">
+                     <property name="text">
+                      <string>Re-Detect People</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QPushButton" name="pushButton_redetect_head">
+                     <property name="text">
+                      <string>Re-Detect Head</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QPushButton" name="pushButton_redetect_hand">
+                     <property name="text">
+                      <string>Re-Detect Hands</string>
                      </property>
                     </widget>
                    </item>
@@ -371,170 +403,12 @@
                <layout class="QVBoxLayout" name="verticalLayout_4">
                 <item>
                  <widget class="QGroupBox" name="groupBox_2">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
                   <property name="title">
-                   <string>Output Captions/Tags</string>
+                   <string>Output</string>
                   </property>
-                  <layout class="QGridLayout" name="gridLayout_5">
-                   <property name="topMargin">
-                    <number>12</number>
-                   </property>
-                   <item row="4" column="1">
-                    <widget class="QCheckBox" name="checkBox_remove_tag_in_sentence">
-                     <property name="toolTip">
-                      <string>remove tags if in sentence, so no repetitive</string>
-                     </property>
-                     <property name="text">
-                      <string>Remove tag if included in sentence</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QCheckBox" name="checkBox_trigger_tags">
-                     <property name="toolTip">
-                      <string>put trigger tags at the front</string>
-                     </property>
-                     <property name="text">
-                      <string>Trigger Tags</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0" colspan="2">
-                    <widget class="QPlainTextEdit" name="plainTextEdit_secondary_trigger_tags">
-                     <property name="toolTip">
-                      <string>tags separated by commas that will be put at the front, after the main trigger tags and that will have their order randomized</string>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Secondary Trigger Tag(s), Separate with &quot;,&quot;</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QCheckBox" name="checkBox_aesthetic_score">
-                     <property name="toolTip">
-                      <string>put the aesthetic score in the final output</string>
-                     </property>
-                     <property name="text">
-                      <string>Aesthetic Score</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="0">
-                    <widget class="QCheckBox" name="checkBox_token_separator">
-                     <property name="toolTip">
-                      <string>use the token separator to separate the trigger tags from the rest</string>
-                     </property>
-                     <property name="text">
-                      <string>Token Separator</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1">
-                    <widget class="QCheckBox" name="checkBox_sentence_in_token_separator">
-                     <property name="toolTip">
-                      <string>put the sentence in the token separator</string>
-                     </property>
-                     <property name="text">
-                      <string>Sentence in token separator</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QCheckBox" name="checkBox_sentence">
-                     <property name="toolTip">
-                      <string>output the sentence in the tags</string>
-                     </property>
-                     <property name="text">
-                      <string>Sentence</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_main_trigger_tags">
-                     <property name="toolTip">
-                      <string>tags separated by commas that will be put at the front, the list is ordered</string>
-                     </property>
-                     <property name="inputMask">
-                      <string/>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Main Trigger Tag(s), Separate with &quot;,&quot;</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0" colspan="2">
-                    <widget class="QPushButton" name="pushButton_create_txt_files">
-                     <property name="toolTip">
-                      <string>create txt files with the settings from the left, txt files are named after the image path</string>
-                     </property>
-                     <property name="text">
-                      <string>Create .txt Files</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="0" colspan="2">
-                    <layout class="QHBoxLayout" name="horizontalLayout_2">
-                     <property name="bottomMargin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QPushButton" name="pushButton_create_sample_toml">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="toolTip">
-                        <string>do some filtering and generate example prompts based off the dataset, and makes a toml file (currently using the pony template) in the database location</string>
-                       </property>
-                       <property name="text">
-                        <string>Create sample TOML</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QComboBox" name="comboBox_toml_resolution">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="toolTip">
-                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;this defines the base output resolution in the toml (using buckets)&lt;/p&gt;&lt;p&gt;SDXL: (1024, 1024)&lt;/p&gt;&lt;p&gt;SD1.5: (768, 768)&lt;/p&gt;&lt;p&gt;SD1.0: (512, 512)&lt;/p&gt;&lt;p&gt;Custom Resolution: (modify in setting)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                       </property>
-                       <item>
-                        <property name="text">
-                         <string>SDXL</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>SD1.5</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>SD1.0</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Custom</string>
-                        </property>
-                       </item>
-                      </widget>
-                     </item>
-                    </layout>
+                  <layout class="QGridLayout" name="gridLayout_3">
+                   <item row="0" column="0">
+                    <widget class="OutputWidget" name="widget_to_output" native="true"/>
                    </item>
                   </layout>
                  </widget>
@@ -570,23 +444,85 @@
           </widget>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
-            <string>Checkpoint Tools</string>
+            <string>Checkpoint and Misc Tools</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_12">
             <item row="2" column="0">
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
+             <widget class="QGroupBox" name="groupBox_11">
+              <property name="minimumSize">
                <size>
-                <width>20</width>
-                <height>40</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
-             </spacer>
+              <property name="title">
+               <string>Clean Dataset Folder Tools</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_5">
+               <item row="0" column="0">
+                <widget class="QLineEdit" name="lineEdit_remove_files_type">
+                 <property name="toolTip">
+                  <string>Enter file format to clean (.npz or .txt, separate by comma for both)</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Enter file format to clean (.npz or .txt, separate by comma for both)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="pushButton_remove_files_button">
+                 <property name="text">
+                  <string>Remove associated file with missing image</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </item>
             <item row="1" column="0">
+             <widget class="QGroupBox" name="groupBox_9">
+              <property name="title">
+               <string>Safetensor Tools</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="2" column="0">
+                <widget class="QPushButton" name="pushButton_inspect_safetensor">
+                 <property name="text">
+                  <string>Inspect Keys</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_24">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_safetensor_path">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="placeholderText">
+                    <string>Enter path to .safetensors file</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_open_safetensor">
+                   <property name="text">
+                    <string>Open</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="0">
              <widget class="QGroupBox" name="groupBox_4">
               <property name="title">
                <string>Checkpoint Tools</string>
@@ -596,26 +532,6 @@
                 <number>12</number>
                </property>
                <item row="5" column="0">
-                <widget class="QPushButton" name="pushButton_create_meta_cap">
-                 <property name="toolTip">
-                  <string>when making checkpoints, permits the making of npz, currently uses preprocess settings from the basic tools tab</string>
-                 </property>
-                 <property name="text">
-                  <string>Create meta_cap.json</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QPushButton" name="pushButton_export_npz">
-                 <property name="toolTip">
-                  <string>used for making our Eclipse XL model</string>
-                 </property>
-                 <property name="text">
-                  <string>Move All .npz and update metadata json</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
                 <widget class="QPushButton" name="pushButton_merge_metacap">
                  <property name="toolTip">
                   <string>used for making our EclipseXL model</string>
@@ -624,6 +540,30 @@
                   <string>Merge meta_cap.json</string>
                  </property>
                 </widget>
+               </item>
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_23">
+                 <item>
+                  <widget class="QLineEdit" name="lineEdit_dataset_folder">
+                   <property name="toolTip">
+                    <string>folder mainly used by the tools below</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="placeholderText">
+                    <string>Enter Dataset Folder</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_open_path_tools">
+                   <property name="text">
+                    <string>Open</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item row="1" column="0">
                 <widget class="QPushButton" name="pushButton_rename_all">
@@ -635,21 +575,31 @@
                  </property>
                 </widget>
                </item>
+               <item row="3" column="0">
+                <widget class="QPushButton" name="pushButton_export_npz">
+                 <property name="toolTip">
+                  <string>used for making our Eclipse XL model</string>
+                 </property>
+                 <property name="text">
+                  <string>Move All .npz and update metadata json</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLineEdit" name="lineEdit_dataset_folder">
-              <property name="toolTip">
-               <string>folder mainly used by the tools below</string>
+            <item row="5" column="0">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
-              <property name="text">
-               <string/>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
               </property>
-              <property name="placeholderText">
-               <string>Enter Dataset Folder</string>
-              </property>
-             </widget>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -674,14 +624,7 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="pushButton_view_database">
-          <property name="text">
-           <string>View Database</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="3">
+        <item row="1" column="0" colspan="4">
          <widget class="QTabWidget" name="databaseTabWidget">
           <property name="currentIndex">
            <number>-1</number>
@@ -691,10 +634,24 @@
           </property>
          </widget>
         </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pushButton_view_database">
+          <property name="text">
+           <string>View Database</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLineEdit" name="lineEdit_view_database_path">
           <property name="placeholderText">
            <string>Enter Database Directory</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pushButton_open_view_database_path">
+          <property name="text">
+           <string>Open</string>
           </property>
          </widget>
         </item>
@@ -715,8 +672,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1015</width>
-             <height>838</height>
+             <width>784</width>
+             <height>803</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1276,6 +1233,36 @@
                  </item>
                 </layout>
                </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QSpinBox" name="spinBox_detection_resolution">
+                   <property name="toolTip">
+                    <string>This is the max height/width for the resized image passed to the detection models</string>
+                   </property>
+                   <property name="maximum">
+                    <number>640</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>32</number>
+                   </property>
+                   <property name="value">
+                    <number>512</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_18">
+                   <property name="text">
+                    <string>Yolo Detection Resolution</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
               </layout>
              </widget>
             </item>
@@ -1337,6 +1324,14 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>OutputWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">CustomWidgets</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

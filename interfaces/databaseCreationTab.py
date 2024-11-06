@@ -23,13 +23,62 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(1170, 640)
+        Form.resize(706, 640)
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
         self.lineEdit_path = QLineEdit(Form)
         self.lineEdit_path.setObjectName(u"lineEdit_path")
 
-        self.gridLayout.addWidget(self.lineEdit_path, 0, 0, 1, 2)
+        self.gridLayout.addWidget(self.lineEdit_path, 0, 0, 1, 1)
+
+        self.pushButton_open_path = QPushButton(Form)
+        self.pushButton_open_path.setObjectName(u"pushButton_open_path")
+
+        self.gridLayout.addWidget(self.pushButton_open_path, 0, 1, 1, 1)
+
+        self.gridLayout_4 = QGridLayout()
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.pushButton_reapply_to_database = QPushButton(Form)
+        self.pushButton_reapply_to_database.setObjectName(u"pushButton_reapply_to_database")
+
+        self.gridLayout_4.addWidget(self.pushButton_reapply_to_database, 1, 0, 1, 2)
+
+        self.pushButton_add_new_images = QPushButton(Form)
+        self.pushButton_add_new_images.setObjectName(u"pushButton_add_new_images")
+
+        self.gridLayout_4.addWidget(self.pushButton_add_new_images, 0, 1, 1, 1)
+
+        self.pushButton_create_database = QPushButton(Form)
+        self.pushButton_create_database.setObjectName(u"pushButton_create_database")
+
+        self.gridLayout_4.addWidget(self.pushButton_create_database, 3, 0, 1, 2)
+
+        self.pushButton_load_database = QPushButton(Form)
+        self.pushButton_load_database.setObjectName(u"pushButton_load_database")
+
+        self.gridLayout_4.addWidget(self.pushButton_load_database, 0, 0, 1, 1)
+
+        self.pushButton_save_database = QPushButton(Form)
+        self.pushButton_save_database.setObjectName(u"pushButton_save_database")
+
+        self.gridLayout_4.addWidget(self.pushButton_save_database, 5, 0, 1, 2)
+
+        self.line_4 = QFrame(Form)
+        self.line_4.setObjectName(u"line_4")
+        self.line_4.setFrameShape(QFrame.HLine)
+        self.line_4.setFrameShadow(QFrame.Sunken)
+
+        self.gridLayout_4.addWidget(self.line_4, 2, 0, 1, 2)
+
+        self.line_5 = QFrame(Form)
+        self.line_5.setObjectName(u"line_5")
+        self.line_5.setFrameShape(QFrame.HLine)
+        self.line_5.setFrameShadow(QFrame.Sunken)
+
+        self.gridLayout_4.addWidget(self.line_5, 4, 0, 1, 2)
+
+
+        self.gridLayout.addLayout(self.gridLayout_4, 1, 0, 1, 2)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -166,8 +215,35 @@ class Ui_Form(object):
 
         self.verticalLayout_4.addWidget(self.checkBox_use_classifier)
 
+        self.checkBox_use_completeness = QCheckBox(self.groupBox_3)
+        self.checkBox_use_completeness.setObjectName(u"checkBox_use_completeness")
+
+        self.verticalLayout_4.addWidget(self.checkBox_use_completeness)
+
 
         self.verticalLayout.addWidget(self.groupBox_3)
+
+        self.groupBox_7 = QGroupBox(Form)
+        self.groupBox_7.setObjectName(u"groupBox_7")
+        self.verticalLayout_5 = QVBoxLayout(self.groupBox_7)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.checkBox_detect_people = QCheckBox(self.groupBox_7)
+        self.checkBox_detect_people.setObjectName(u"checkBox_detect_people")
+
+        self.verticalLayout_5.addWidget(self.checkBox_detect_people)
+
+        self.checkBox_detect_head = QCheckBox(self.groupBox_7)
+        self.checkBox_detect_head.setObjectName(u"checkBox_detect_head")
+
+        self.verticalLayout_5.addWidget(self.checkBox_detect_head)
+
+        self.checkBox_detect_hand = QCheckBox(self.groupBox_7)
+        self.checkBox_detect_hand.setObjectName(u"checkBox_detect_hand")
+
+        self.verticalLayout_5.addWidget(self.checkBox_detect_hand)
+
+
+        self.verticalLayout.addWidget(self.groupBox_7)
 
         self.groupBox_2 = QGroupBox(Form)
         self.groupBox_2.setObjectName(u"groupBox_2")
@@ -211,51 +287,7 @@ class Ui_Form(object):
         self.horizontalLayout.addLayout(self.verticalLayout)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
-
-        self.gridLayout_4 = QGridLayout()
-        self.gridLayout_4.setObjectName(u"gridLayout_4")
-        self.pushButton_reapply_to_database = QPushButton(Form)
-        self.pushButton_reapply_to_database.setObjectName(u"pushButton_reapply_to_database")
-
-        self.gridLayout_4.addWidget(self.pushButton_reapply_to_database, 1, 0, 1, 2)
-
-        self.pushButton_add_new_images = QPushButton(Form)
-        self.pushButton_add_new_images.setObjectName(u"pushButton_add_new_images")
-
-        self.gridLayout_4.addWidget(self.pushButton_add_new_images, 0, 1, 1, 1)
-
-        self.pushButton_create_database = QPushButton(Form)
-        self.pushButton_create_database.setObjectName(u"pushButton_create_database")
-
-        self.gridLayout_4.addWidget(self.pushButton_create_database, 3, 0, 1, 2)
-
-        self.pushButton_load_database = QPushButton(Form)
-        self.pushButton_load_database.setObjectName(u"pushButton_load_database")
-
-        self.gridLayout_4.addWidget(self.pushButton_load_database, 0, 0, 1, 1)
-
-        self.pushButton_save_database = QPushButton(Form)
-        self.pushButton_save_database.setObjectName(u"pushButton_save_database")
-
-        self.gridLayout_4.addWidget(self.pushButton_save_database, 5, 0, 1, 2)
-
-        self.line_4 = QFrame(Form)
-        self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.HLine)
-        self.line_4.setFrameShadow(QFrame.Sunken)
-
-        self.gridLayout_4.addWidget(self.line_4, 2, 0, 1, 2)
-
-        self.line_5 = QFrame(Form)
-        self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.HLine)
-        self.line_5.setFrameShadow(QFrame.Sunken)
-
-        self.gridLayout_4.addWidget(self.line_5, 4, 0, 1, 2)
-
-
-        self.gridLayout.addLayout(self.gridLayout_4, 1, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 2)
 
 
         self.retranslateUi(Form)
@@ -269,6 +301,27 @@ class Ui_Form(object):
         self.lineEdit_path.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>The first step in making a database, enter a directory that contains images or contains subdirectories with images. Then select the method of tagging you want to enable (loading tags from an external file, via API, or autotagging), then create the database.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_path.setPlaceholderText(QCoreApplication.translate("Form", u"Enter Database Path", None))
+        self.pushButton_open_path.setText(QCoreApplication.translate("Form", u"Open", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_reapply_to_database.setToolTip(QCoreApplication.translate("Form", u"Re-applies the tagging/processes below to images currently in the database.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_reapply_to_database.setText(QCoreApplication.translate("Form", u"Re-Apply to Database", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_add_new_images.setToolTip(QCoreApplication.translate("Form", u"Use this to add new images to a pre-existing database.  Load a database and select the tagging criterions and click on this.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_add_new_images.setText(QCoreApplication.translate("Form", u"Add New Images", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_create_database.setToolTip(QCoreApplication.translate("Form", u"Create a database using the enabled settng below.  If nothing is enabled it'll just make a database with the images with no tag/caption assigned to them.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_create_database.setText(QCoreApplication.translate("Form", u"Create Database", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_load_database.setToolTip(QCoreApplication.translate("Form", u"Enter a database directory, and this will load any database in the folder.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_load_database.setText(QCoreApplication.translate("Form", u"Load Database", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_save_database.setToolTip(QCoreApplication.translate("Form", u"Saves the created or loaded database.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_save_database.setText(QCoreApplication.translate("Form", u"Save Database", None))
         self.groupBox.setTitle(QCoreApplication.translate("Form", u"External Tag Sources", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("Form", u"Retrieve Tags Via API (No guarantee finding tags for all images)", None))
 #if QT_CONFIG(tooltip)
@@ -330,7 +383,15 @@ class Ui_Form(object):
         self.checkBox_use_classifier.setToolTip(QCoreApplication.translate("Form", u"Use an additional img source classifier and add medium/source tags to imgs above a threshold, useful for checkpoints", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_use_classifier.setText(QCoreApplication.translate("Form", u"Use classifier", None))
-        self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"Pre&Post tagging options", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_use_completeness.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Use an additional img completeness classifier and add tags like &quot;rough art&quot; to imgs above a threshold, useful for checkpoints and identifying completed works vs a quick drawing that's better than a sketch</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_use_completeness.setText(QCoreApplication.translate("Form", u"Use completeness identifier", None))
+        self.groupBox_7.setTitle(QCoreApplication.translate("Form", u"Object detection options", None))
+        self.checkBox_detect_people.setText(QCoreApplication.translate("Form", u"Detect people(s)", None))
+        self.checkBox_detect_head.setText(QCoreApplication.translate("Form", u"Detect head(s)", None))
+        self.checkBox_detect_hand.setText(QCoreApplication.translate("Form", u"Detect hand(s)", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"Pre & Post tagging options", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_groups_from_folders.setToolTip(QCoreApplication.translate("Form", u"automatically assign images to groups, use the parent folder's name for group name", None))
 #endif // QT_CONFIG(tooltip)
@@ -348,25 +409,5 @@ class Ui_Form(object):
 #endif // QT_CONFIG(tooltip)
         self.checkBox_rename_to_png.setText(QCoreApplication.translate("Form", u"Convert Images to PNG", None))
         self.checkBox_filter_all_images.setText(QCoreApplication.translate("Form", u"Apply tag filter", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_reapply_to_database.setToolTip(QCoreApplication.translate("Form", u"Re-applies the tagging/processes below to images currently in the database.", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_reapply_to_database.setText(QCoreApplication.translate("Form", u"Re-Apply to Database", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_add_new_images.setToolTip(QCoreApplication.translate("Form", u"Use this to add new images to a pre-existing database.  Load a database and select the tagging criterions and click on this.", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_add_new_images.setText(QCoreApplication.translate("Form", u"Add New Images", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_create_database.setToolTip(QCoreApplication.translate("Form", u"Create a database using the enabled settng below.  If nothing is enabled it'll just make a database with the images with no tag/caption assigned to them.", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_create_database.setText(QCoreApplication.translate("Form", u"Create Database", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_load_database.setToolTip(QCoreApplication.translate("Form", u"Enter a database directory, and this will load any database in the folder.", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_load_database.setText(QCoreApplication.translate("Form", u"Load Database", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_save_database.setToolTip(QCoreApplication.translate("Form", u"Saves the created or loaded database.", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_save_database.setText(QCoreApplication.translate("Form", u"Save Database", None))
     # retranslateUi
 
