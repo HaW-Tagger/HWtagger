@@ -170,7 +170,8 @@ class GlobalDatabaseFrame(QWidget, global_database_view.Ui_Form):
                                                score_trigger=True,
                                                use_sentence=False,
                                                sentence_in_trigger=False,
-                                               remove_tags_in_sentence=False
+                                               remove_tags_in_sentence=False,
+                                               shuffle_tags=True
                                                )
                 image_dict[image.path] = {}
                 image_dict[image.path]["tags"] = to_write

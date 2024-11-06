@@ -188,7 +188,7 @@ class RectElement:
         """
         return [tag.tag for tag in self.get_full_tags()]
 
-    def create_output(self, add_backslash_before_parenthesis=False, keep_tokens_separator: str= "|||", main_tags: list[str]=[], secondary_tags: list[str]=[], use_sentence=True):
+    def create_output(self, add_backslash_before_parenthesis=False, keep_tokens_separator: str= "|||", main_tags: list[str]=[], secondary_tags: list[str]=[], use_sentence=True, shuffle_tags=True):
         result = ""
         if use_sentence:
             segments = self.sentence_description.get_output_info()
@@ -198,7 +198,8 @@ class RectElement:
         for segment in self.sentence_description.get_output_info():
             if segment == "#full_tags":
                 tags = self.get_full_only_tags()
-                np.random.shuffle(tags)
+                if shuffle_tags:
+                    np.random.shuffle(tags)
                 identified_main_tags = []
                 identified_secondary_tags = []
 
@@ -232,7 +233,8 @@ class RectElement:
                 if identified_main_tags:
                     temp_tags += identified_main_tags
                 if identified_secondary_tags:
-                    np.random.shuffle(identified_secondary_tags)
+                    if shuffle_tags:
+                        np.random.shuffle(identified_secondary_tags)
                     temp_tags += identified_secondary_tags
 
                 if len(segments) == 1 and keep_tokens_separator: #todo: improves all requirements

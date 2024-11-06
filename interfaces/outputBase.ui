@@ -16,6 +16,22 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Include the quality tags from the aesthetic scores and place them into the main trigger tag section.</string>
+       </property>
+       <property name="text">
+        <string>Aesthetic scores in token separator</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QCheckBox" name="checkBox_use_separator">
        <property name="sizePolicy">
@@ -41,60 +57,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="checkBox_trigger_tags">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>put trigger tags at the front</string>
-       </property>
-       <property name="text">
-        <string>Trigger Tags</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="checkBox_sentence_separator">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Place sentence (caption) infront of the token separator.&lt;/p&gt;&lt;p&gt;Useful if you want natural language in the front of the tags&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Sentence in Token Separator</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Include the quality tags from the aesthetic scores and place them into the main trigger tag section.</string>
-       </property>
-       <property name="text">
-        <string>Aesthetic scores in token separator</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0">
       <widget class="QCheckBox" name="checkBox_use_sentence">
        <property name="sizePolicy">
@@ -108,19 +70,6 @@
        </property>
        <property name="text">
         <string>Sentence</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="QCheckBox" name="checkBox_remove_tags_in_sentence">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable this to remove tags that are included in the sentence. This is to reduce potential duplicates in both the caption and tags.&lt;br/&gt;Example: &lt;br/&gt;caption: &amp;quot;1girl sitting on a chair thinking and contemplating life&amp;quot;&lt;br/&gt;tag: &amp;quot;1girl, solo, chair, sitting, red hair, green eyes, blue shirt&amp;quot;&lt;br/&gt;--&amp;gt; &lt;/p&gt;&lt;p&gt;caption and a shorter tag list is exported: caption + &amp;quot;solo, red hair, green eyes, blue shirt&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Remove tag if included in sentence</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -143,6 +92,70 @@
        </property>
        <property name="checked">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="checkBox_sentence_separator">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Place sentence (caption) infront of the token separator.&lt;/p&gt;&lt;p&gt;Useful if you want natural language in the front of the tags&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Sentence in Token Separator</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBox_remove_tags_in_sentence">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable this to remove tags that are included in the sentence. This is to reduce potential duplicates in both the caption and tags.&lt;br/&gt;Example: &lt;br/&gt;caption: &amp;quot;1girl sitting on a chair thinking and contemplating life&amp;quot;&lt;br/&gt;tag: &amp;quot;1girl, solo, chair, sitting, red hair, green eyes, blue shirt&amp;quot;&lt;br/&gt;--&amp;gt; &lt;/p&gt;&lt;p&gt;caption and a shorter tag list is exported: caption + &amp;quot;solo, red hair, green eyes, blue shirt&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Remove tag if included in sentence</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="checkBox_trigger_tags">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>put trigger tags at the front</string>
+       </property>
+       <property name="text">
+        <string>Trigger Tags</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBox_shuffle_tags">
+       <property name="toolTip">
+        <string>HIGHLY RECOMMENDED FOR LORA TRAINING</string>
+       </property>
+       <property name="text">
+        <string>Shuffle Tags</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

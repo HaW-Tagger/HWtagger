@@ -102,6 +102,9 @@ class OutputWidget(QWidget, outputBase.Ui_Form):
         self.lineEdit_main_trigger_tag.editingFinished.connect(lambda: self.editedMainTriggerTag.emit(self.lineEdit_main_trigger_tag.text()))
         self.plainTextEdit_secondary_trigger_tags.textChanged.connect(lambda: self.editedSecondaryTriggerTag.emit(self.plainTextEdit_secondary_trigger_tags.toPlainText()))
 
+    def shuffle_tags(self):
+        return self.checkBox_shuffle_tags.isChecked()
+
     def use_trigger_tags(self):
         return self.checkBox_trigger_tags.isChecked()
 

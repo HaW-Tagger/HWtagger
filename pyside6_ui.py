@@ -174,7 +174,8 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             use_sentence=self.widget_to_output.use_sentence(),
             sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
             remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator(),
+            shuffle_tags=self.widget_to_output.shuffle_tags()
             )
 
     @Slot()
@@ -189,7 +190,8 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             use_sentence=self.widget_to_output.use_sentence(),
             sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
             remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator(),
+            shuffle_tags=self.widget_to_output.shuffle_tags()
             )
 
     @Slot()
@@ -226,7 +228,8 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             use_sentence=self.widget_to_output.use_sentence(),
             sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
             remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator(),
+            shuffle_tags=self.widget_to_output.shuffle_tags()
             )
 
     @Slot(str)

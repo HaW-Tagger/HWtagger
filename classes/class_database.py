@@ -280,7 +280,7 @@ class VirtualDatabase:
         for image_index in images_index:
             self.images[image_index].reset_score()
 
-    def create_txt_files(self, add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator="|||", use_trigger_tags=True, use_aesthetic_score=False, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True):
+    def create_txt_files(self, add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator="|||", use_trigger_tags=True, use_aesthetic_score=False, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True, shuffle_tags=True):
         token_keeper = keep_tokens_separator
         if not token_separator:
             token_keeper = ""
@@ -299,7 +299,8 @@ class VirtualDatabase:
                                            use_sentence=use_sentence,
                                            sentence_in_trigger=sentence_in_trigger,
                                            remove_tags_in_sentence=remove_tags_in_sentence,
-                                           score_trigger=score_trigger
+                                           score_trigger=score_trigger,
+                                           shuffle_tags=shuffle_tags
                                            )
             with open(os.path.join(os.path.splitext(image.path)[0] + ".txt"), 'w') as f:
                 f.write(to_write + "\n")
@@ -1125,7 +1126,7 @@ class Database(VirtualDatabase):
                 self.add_image_to_group(relative_dir, image_index)
 
     def create_json_file(self,add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator=parameters.PARAMETERS["keep_token_tags_separator"],
-                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True):
+                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True, shuffle_tags=True):
         image_dict = {}
         token_keeper = keep_tokens_separator if token_separator else ""
         main_tags = self.trigger_tags["main_tags"]
@@ -1143,6 +1144,7 @@ class Database(VirtualDatabase):
                                            use_sentence = use_sentence,
                                            sentence_in_trigger = sentence_in_trigger,
                                            remove_tags_in_sentence = remove_tags_in_sentence,
+                                           shuffle_tags=shuffle_tags
                                            )
             image_dict[image.path] = {}
             image_dict[image.path]["tags"] = to_write
@@ -1332,7 +1334,7 @@ class Database(VirtualDatabase):
         parameters.log.info(f"Samples are added in {toml_full_path}")
 
     def create_jsonL_file(self,add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator=parameters.PARAMETERS["keep_token_tags_separator"],
-                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True):
+                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True, shuffle_tags=True):
         jsonL_name = "dataset.jsonl"
         token_keeper = keep_tokens_separator if token_separator else ""
         main_tags = self.trigger_tags["main_tags"]
@@ -1354,7 +1356,8 @@ class Database(VirtualDatabase):
                             score_trigger=score_trigger,
                             use_sentence = use_sentence,
                             sentence_in_trigger = sentence_in_trigger,
-                            remove_tags_in_sentence = remove_tags_in_sentence
+                            remove_tags_in_sentence = remove_tags_in_sentence,
+                            shuffle_tags=shuffle_tags
                         ),
                         model_prefix_tags=[],
                         keep_token_tags= main_tags + secondary_tags,
