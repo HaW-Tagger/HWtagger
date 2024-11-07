@@ -487,6 +487,10 @@ class ImageDatabase:
         self.filtered_new_tags.clear()
         self.filtered_rejected_tags.clear()
         self.filtered_review = {}
+        if parameters.PARAMETERS["deactivate_filter"]:
+            self.update_full_tags()
+            return
+
         full_tags = self.get_prefiltered_full_tags()
 
         # add HIGH tags if we find associated tags from TAG and LOW:

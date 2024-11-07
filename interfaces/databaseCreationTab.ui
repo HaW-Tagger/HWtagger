@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>706</width>
+    <width>781</width>
     <height>640</height>
    </rect>
   </property>
@@ -385,6 +385,16 @@
           <string>Pre &amp; Post tagging options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBox_rename_to_png">
+            <property name="toolTip">
+             <string>convert image to png (post tagging)</string>
+            </property>
+            <property name="text">
+             <string>Convert Images to PNG</string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0" colspan="2">
            <widget class="QCheckBox" name="checkBox_groups_from_folders">
             <property name="toolTip">
@@ -392,16 +402,6 @@
             </property>
             <property name="text">
              <string>Create groups following folder structure</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_rename_to_md5">
-            <property name="toolTip">
-             <string>Updates the filename to the exact md5 hash (post tagging)</string>
-            </property>
-            <property name="text">
-             <string>Rename Images to MD5</string>
             </property>
            </widget>
           </item>
@@ -415,20 +415,13 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_rename_to_png">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBox_rename_to_md5">
             <property name="toolTip">
-             <string>convert image to png (post tagging)</string>
+             <string>Updates the filename to the exact md5 hash (post tagging)</string>
             </property>
             <property name="text">
-             <string>Convert Images to PNG</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="checkBox_filter_all_images">
-            <property name="text">
-             <string>Apply tag filter</string>
+             <string>Rename Images to MD5</string>
             </property>
            </widget>
           </item>

@@ -838,8 +838,11 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spinBox_custom_width.setValue(parameters.PARAMETERS["custom_export_width"])
         self.spinBox_custom_bucket_steps.setValue(parameters.PARAMETERS["custom_export_bucket_steps"])
         self.spinBox_sample_count.setValue(parameters.PARAMETERS["toml_sample_max_count"])
-         
-         
+
+        self.checkBox_load_images_thumbnail.setChecked(parameters.PARAMETERS["view_load_images"])
+        self.checkBox_double_images_thumbnail_size.setChecked(parameters.PARAMETERS["doubling_image_thumbnail_max_size"])
+        self.check_deactivate_filter.setChecked(parameters.PARAMETERS["deactivate_filter"])
+
         self.pushButton_save_settings.clicked.connect(self.save_settings_button)
         self.pushButton_cancel_settings.clicked.connect(self.init_settings)
         self.pushButton_reload_default.clicked.connect(self.init_default_settings)
@@ -879,6 +882,11 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spinBox_custom_bucket_steps.setValue(parameters.default_parameters['Exporting']["custom_export_bucket_steps"])
         self.spinBox_sample_count.setValue(parameters.default_parameters['Exporting']["toml_sample_max_count"])
 
+        self.checkBox_load_images_thumbnail.setChecked(parameters.default_parameters['Interface']["view_load_images"])
+        self.checkBox_double_images_thumbnail_size.setChecked(parameters.default_parameters['Interface']["doubling_image_thumbnail_max_size"])
+        self.check_deactivate_filter.setChecked(parameters.default_parameters['Filter']["deactivate_filter"])
+
+
     @Slot()
     def save_settings_button(self):
         parameters.PARAMETERS["font_size"] = self.spin_font_size.value()
@@ -912,7 +920,12 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.PARAMETERS["custom_export_width"] = self.spinBox_custom_width.value()
         parameters.PARAMETERS["custom_export_bucket_steps"] = self.spinBox_custom_bucket_steps.value()
         parameters.PARAMETERS["toml_sample_max_count"] = self.spinBox_sample_count.value()
-        
+
+
+        parameters.PARAMETERS["view_load_images"] = self.checkBox_load_images_thumbnail.isChecked()
+        parameters.PARAMETERS["doubling_image_thumbnail_max_size"] = self.checkBox_double_images_thumbnail_size.isChecked()
+        parameters.PARAMETERS["deactivate_filter"] = self.check_deactivate_filter.isChecked()
+
         parameters.save_config()
 
 

@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(706, 640)
+        Form.resize(781, 640)
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
         self.lineEdit_path = QLineEdit(Form)
@@ -251,30 +251,25 @@ class Ui_Form(object):
         self.groupBox_2.setSizePolicy(sizePolicy2)
         self.gridLayout_2 = QGridLayout(self.groupBox_2)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.checkBox_rename_to_png = QCheckBox(self.groupBox_2)
+        self.checkBox_rename_to_png.setObjectName(u"checkBox_rename_to_png")
+
+        self.gridLayout_2.addWidget(self.checkBox_rename_to_png, 1, 0, 1, 2)
+
         self.checkBox_groups_from_folders = QCheckBox(self.groupBox_2)
         self.checkBox_groups_from_folders.setObjectName(u"checkBox_groups_from_folders")
 
         self.gridLayout_2.addWidget(self.checkBox_groups_from_folders, 3, 0, 1, 2)
-
-        self.checkBox_rename_to_md5 = QCheckBox(self.groupBox_2)
-        self.checkBox_rename_to_md5.setObjectName(u"checkBox_rename_to_md5")
-
-        self.gridLayout_2.addWidget(self.checkBox_rename_to_md5, 0, 0, 1, 2)
 
         self.checkBox_move_duplicates_out_of_folder = QCheckBox(self.groupBox_2)
         self.checkBox_move_duplicates_out_of_folder.setObjectName(u"checkBox_move_duplicates_out_of_folder")
 
         self.gridLayout_2.addWidget(self.checkBox_move_duplicates_out_of_folder, 2, 0, 1, 2)
 
-        self.checkBox_rename_to_png = QCheckBox(self.groupBox_2)
-        self.checkBox_rename_to_png.setObjectName(u"checkBox_rename_to_png")
+        self.checkBox_rename_to_md5 = QCheckBox(self.groupBox_2)
+        self.checkBox_rename_to_md5.setObjectName(u"checkBox_rename_to_md5")
 
-        self.gridLayout_2.addWidget(self.checkBox_rename_to_png, 1, 0, 1, 2)
-
-        self.checkBox_filter_all_images = QCheckBox(self.groupBox_2)
-        self.checkBox_filter_all_images.setObjectName(u"checkBox_filter_all_images")
-
-        self.gridLayout_2.addWidget(self.checkBox_filter_all_images, 4, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.checkBox_rename_to_md5, 0, 0, 1, 2)
 
 
         self.verticalLayout.addWidget(self.groupBox_2)
@@ -393,21 +388,20 @@ class Ui_Form(object):
         self.checkBox_detect_hand.setText(QCoreApplication.translate("Form", u"Detect hand(s)", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"Pre & Post tagging options", None))
 #if QT_CONFIG(tooltip)
+        self.checkBox_rename_to_png.setToolTip(QCoreApplication.translate("Form", u"convert image to png (post tagging)", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_rename_to_png.setText(QCoreApplication.translate("Form", u"Convert Images to PNG", None))
+#if QT_CONFIG(tooltip)
         self.checkBox_groups_from_folders.setToolTip(QCoreApplication.translate("Form", u"automatically assign images to groups, use the parent folder's name for group name", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_groups_from_folders.setText(QCoreApplication.translate("Form", u"Create groups following folder structure", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_rename_to_md5.setToolTip(QCoreApplication.translate("Form", u"Updates the filename to the exact md5 hash (post tagging)", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_rename_to_md5.setText(QCoreApplication.translate("Form", u"Rename Images to MD5", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_move_duplicates_out_of_folder.setToolTip(QCoreApplication.translate("Form", u"move duplicate (matching md5 hash) files to duplicate folder", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_move_duplicates_out_of_folder.setText(QCoreApplication.translate("Form", u"Move duplicate images out of folder", None))
 #if QT_CONFIG(tooltip)
-        self.checkBox_rename_to_png.setToolTip(QCoreApplication.translate("Form", u"convert image to png (post tagging)", None))
+        self.checkBox_rename_to_md5.setToolTip(QCoreApplication.translate("Form", u"Updates the filename to the exact md5 hash (post tagging)", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_rename_to_png.setText(QCoreApplication.translate("Form", u"Convert Images to PNG", None))
-        self.checkBox_filter_all_images.setText(QCoreApplication.translate("Form", u"Apply tag filter", None))
+        self.checkBox_rename_to_md5.setText(QCoreApplication.translate("Form", u"Rename Images to MD5", None))
     # retranslateUi
 

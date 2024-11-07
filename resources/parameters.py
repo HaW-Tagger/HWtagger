@@ -81,6 +81,7 @@ default_parameters['Database'] = {
     'frequency_rare_tag_threshold': 0.02
 }
 default_parameters['Filter'] = {
+    'deactivate_filter': False,
     'filter_remove_series': True,
     'filter_remove_metadata': False,
     'filter_remove_characters': False

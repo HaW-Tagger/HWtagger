@@ -112,7 +112,7 @@
         <item row="0" column="0">
          <widget class="QTabWidget" name="tabWidget_2">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -671,9 +671,9 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>784</width>
-             <height>803</height>
+             <y>-155</y>
+             <width>761</width>
+             <height>937</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -776,6 +776,20 @@
                 <widget class="QCheckBox" name="checkBox_hide_sentence_in_view">
                  <property name="text">
                   <string>Hide Sentence in the Database View</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBox_load_images_thumbnail">
+                 <property name="text">
+                  <string>Load Images Thumbnails in view</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBox_double_images_thumbnail_size">
+                 <property name="text">
+                  <string>Double Images Thumbnails Size in view</string>
                  </property>
                 </widget>
                </item>
@@ -994,6 +1008,13 @@
                 </layout>
                </item>
                <item>
+                <widget class="QCheckBox" name="check_deactivate_filter">
+                 <property name="text">
+                  <string>Deactivate Filter</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QCheckBox" name="check_filter_remove_series">
                  <property name="text">
                   <string>Filter remove series</string>
@@ -1068,7 +1089,7 @@
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_20">
                  <property name="bottomMargin">
-                  <number>10</number>
+                  <number>0</number>
                  </property>
                  <item>
                   <widget class="QSpinBox" name="spinBox_sample_count">

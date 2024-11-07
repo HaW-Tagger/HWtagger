@@ -20,3 +20,4 @@ resources/tag_definition.csv
 resources/danbooru_implications.csv
 *__pycache__*
 update_interface.bat
+/models/

@@ -106,9 +106,6 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 
 		if self.checkBox_rename_to_png.isChecked():
 			self.db.rename_images_to_png(new_indices)
-
-		if self.checkBox_filter_all_images.isChecked():
-			self.db.filter_all()
  
 	@Slot()
 	def create_database_button(self):

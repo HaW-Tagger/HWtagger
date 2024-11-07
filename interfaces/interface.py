@@ -389,7 +389,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 784, 803))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -155, 761, 937))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
         self.groupBox = QGroupBox(self.scrollAreaWidgetContents)
@@ -459,6 +459,16 @@ class Ui_MainWindow(object):
         self.checkBox_hide_sentence_in_view.setObjectName(u"checkBox_hide_sentence_in_view")
 
         self.verticalLayout_5.addWidget(self.checkBox_hide_sentence_in_view)
+
+        self.checkBox_load_images_thumbnail = QCheckBox(self.groupBox)
+        self.checkBox_load_images_thumbnail.setObjectName(u"checkBox_load_images_thumbnail")
+
+        self.verticalLayout_5.addWidget(self.checkBox_load_images_thumbnail)
+
+        self.checkBox_double_images_thumbnail_size = QCheckBox(self.groupBox)
+        self.checkBox_double_images_thumbnail_size.setObjectName(u"checkBox_double_images_thumbnail_size")
+
+        self.verticalLayout_5.addWidget(self.checkBox_double_images_thumbnail_size)
 
 
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
@@ -599,6 +609,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_7.addLayout(self.horizontalLayout_17)
 
+        self.check_deactivate_filter = QCheckBox(self.groupBox_8)
+        self.check_deactivate_filter.setObjectName(u"check_deactivate_filter")
+
+        self.verticalLayout_7.addWidget(self.check_deactivate_filter)
+
         self.check_filter_remove_series = QCheckBox(self.groupBox_8)
         self.check_filter_remove_series.setObjectName(u"check_filter_remove_series")
 
@@ -654,7 +669,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_20 = QHBoxLayout()
         self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
-        self.horizontalLayout_20.setContentsMargins(-1, -1, -1, 10)
+        self.horizontalLayout_20.setContentsMargins(-1, -1, -1, 0)
         self.spinBox_sample_count = QSpinBox(self.groupBox_8)
         self.spinBox_sample_count.setObjectName(u"spinBox_sample_count")
         self.spinBox_sample_count.setValue(5)
@@ -827,7 +842,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(1)
+        self.tabWidget_2.setCurrentIndex(0)
         self.databaseTabWidget.setCurrentIndex(-1)
 
 
@@ -963,6 +978,8 @@ class Ui_MainWindow(object):
 
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Tag Edit Click Count", None))
         self.checkBox_hide_sentence_in_view.setText(QCoreApplication.translate("MainWindow", u"Hide Sentence in the Database View", None))
+        self.checkBox_load_images_thumbnail.setText(QCoreApplication.translate("MainWindow", u"Load Images Thumbnails in view", None))
+        self.checkBox_double_images_thumbnail_size.setText(QCoreApplication.translate("MainWindow", u"Double Images Thumbnails Size in view", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("MainWindow", u"Misc", None))
         self.spin_max_amount_of_backups.setSuffix("")
 #if QT_CONFIG(tooltip)
@@ -1000,6 +1017,7 @@ class Ui_MainWindow(object):
         self.label_13.setToolTip(QCoreApplication.translate("MainWindow", u"path to the image editor that should be used to open images, if not specified, the default app will be launched", None))
 #endif // QT_CONFIG(tooltip)
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"External Image Editor Path", None))
+        self.check_deactivate_filter.setText(QCoreApplication.translate("MainWindow", u"Deactivate Filter", None))
         self.check_filter_remove_series.setText(QCoreApplication.translate("MainWindow", u"Filter remove series", None))
         self.check_filter_remove_metadata.setText(QCoreApplication.translate("MainWindow", u"Filter remove metadata", None))
         self.check_filter_remove_characters.setText(QCoreApplication.translate("MainWindow", u"Filter remove characters", None))
