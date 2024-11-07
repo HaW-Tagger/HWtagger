@@ -1116,9 +1116,11 @@ class ImageDatabase:
             tooltip_text += f"\nOrigin: filtered_rejected tags"
         if tag in self.manual_tags:
             tooltip_text += f"\nOrigin: manual tags"
-        wiki = tag.wiki()
-        if wiki:
-            tooltip_text += "\n\nDanbooru wiki page:\n"+wiki
+        
+        if parameters.PARAMETERS["danbooru_tag_wiki_lookup"]:
+            wiki = tag.wiki()
+            if wiki:
+                tooltip_text += "\n\nDanbooru wiki page:\n"+wiki
         return tooltip_text
 
     def uncommon_tags_tooltip(self, tag: str) -> str:

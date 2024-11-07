@@ -843,6 +843,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.checkBox_load_images_thumbnail.setChecked(parameters.PARAMETERS["view_load_images"])
         self.checkBox_double_images_thumbnail_size.setChecked(parameters.PARAMETERS["doubling_image_thumbnail_max_size"])
         self.check_deactivate_filter.setChecked(parameters.PARAMETERS["deactivate_filter"])
+        self.checkBox_activate_danbooru_tag_wiki_lookup.setChecked(parameters.PARAMETERS["danbooru_tag_wiki_lookup"])
 
         self.pushButton_save_settings.clicked.connect(self.save_settings_button)
         self.pushButton_cancel_settings.clicked.connect(self.init_settings)
@@ -887,6 +888,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.checkBox_load_images_thumbnail.setChecked(parameters.default_parameters['Interface']["view_load_images"])
         self.checkBox_double_images_thumbnail_size.setChecked(parameters.default_parameters['Interface']["doubling_image_thumbnail_max_size"])
         self.check_deactivate_filter.setChecked(parameters.default_parameters['Filter']["deactivate_filter"])
+        self.checkBox_activate_danbooru_tag_wiki_lookup.setChecked(parameters.default_parameters['Interface']["danbooru_tag_wiki_lookup"])
 
 
     @Slot()
@@ -928,6 +930,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.PARAMETERS["view_load_images"] = self.checkBox_load_images_thumbnail.isChecked()
         parameters.PARAMETERS["doubling_image_thumbnail_max_size"] = self.checkBox_double_images_thumbnail_size.isChecked()
         parameters.PARAMETERS["deactivate_filter"] = self.check_deactivate_filter.isChecked()
+        parameters.PARAMETERS["danbooru_tag_wiki_lookup"] = self.checkBox_activate_danbooru_tag_wiki_lookup.isChecked()
 
         parameters.save_config()
 

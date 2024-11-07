@@ -389,7 +389,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 761, 967))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 761, 993))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
         self.groupBox = QGroupBox(self.scrollAreaWidgetContents)
@@ -469,6 +469,11 @@ class Ui_MainWindow(object):
         self.checkBox_double_images_thumbnail_size.setObjectName(u"checkBox_double_images_thumbnail_size")
 
         self.verticalLayout_5.addWidget(self.checkBox_double_images_thumbnail_size)
+
+        self.checkBox_activate_danbooru_tag_wiki_lookup = QCheckBox(self.groupBox)
+        self.checkBox_activate_danbooru_tag_wiki_lookup.setObjectName(u"checkBox_activate_danbooru_tag_wiki_lookup")
+
+        self.verticalLayout_5.addWidget(self.checkBox_activate_danbooru_tag_wiki_lookup)
 
 
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
@@ -997,6 +1002,7 @@ class Ui_MainWindow(object):
         self.checkBox_hide_sentence_in_view.setText(QCoreApplication.translate("MainWindow", u"Hide Sentence in the Database View", None))
         self.checkBox_load_images_thumbnail.setText(QCoreApplication.translate("MainWindow", u"Load Images Thumbnails in view", None))
         self.checkBox_double_images_thumbnail_size.setText(QCoreApplication.translate("MainWindow", u"Double Images Thumbnails Size in view", None))
+        self.checkBox_activate_danbooru_tag_wiki_lookup.setText(QCoreApplication.translate("MainWindow", u"Activate Danbooru Tag Wiki Lookup", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("MainWindow", u"Misc", None))
         self.spin_max_amount_of_backups.setSuffix("")
 #if QT_CONFIG(tooltip)

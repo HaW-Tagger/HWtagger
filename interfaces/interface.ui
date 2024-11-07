@@ -673,7 +673,7 @@
              <x>0</x>
              <y>0</y>
              <width>761</width>
-             <height>967</height>
+             <height>993</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -790,6 +790,13 @@
                 <widget class="QCheckBox" name="checkBox_double_images_thumbnail_size">
                  <property name="text">
                   <string>Double Images Thumbnails Size in view</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBox_activate_danbooru_tag_wiki_lookup">
+                 <property name="text">
+                  <string>Activate Danbooru Tag Wiki Lookup</string>
                  </property>
                 </widget>
                </item>
