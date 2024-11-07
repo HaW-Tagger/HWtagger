@@ -671,9 +671,9 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-155</y>
+             <y>0</y>
              <width>761</width>
-             <height>937</height>
+             <height>967</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1133,7 +1133,7 @@
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2,WDEVA02LARGEV3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="text">
                     <string>Automatic Tagger</string>
@@ -1279,6 +1279,30 @@
                   <widget class="QLabel" name="label_18">
                    <property name="text">
                     <string>Yolo Detection Resolution</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_25">
+                 <item>
+                  <widget class="QDoubleSpinBox" name="spin_wdeva02_large_threshold">
+                   <property name="maximum">
+                    <double>0.990000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.050000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_19">
+                   <property name="toolTip">
+                    <string>the threshold for wich to add tags from the swinv2 tagger</string>
+                   </property>
+                   <property name="text">
+                    <string>WD EVA02-Large Threshold</string>
                    </property>
                   </widget>
                  </item>

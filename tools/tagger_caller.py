@@ -15,9 +15,11 @@ def multi_model_caller(image_paths, tagging_models, extra_args=None):
     # here, we list the name of the key that stores the folder location and the model invoked
     # the list of hf_names are used to identify what to download and are used as keys for the results
     param_tagger_download_folders = ["caformer_folder", "swinv2v3_folder", "aesthetic_folder", "classifier_folder", 
-                                     "completeness_folder", "person_detect_folder", "head_detect_folder", "hand_detect_folder"]
+                                     "completeness_folder", "person_detect_folder", "head_detect_folder", "hand_detect_folder",
+                                     "eva02_large_v3_folder"]
     tagger_huggingface_name = ["Caformer", "Swinv2v3", "anime_aesthetic", "anime_classifier", 
-                               "anime_completeness", "detect_people", "detect_head", "detect_hand"]
+                               "anime_completeness", "detect_people", "detect_head", "detect_hand",
+                               "Eva02_largev3"]
     
     # basic checks
     if len(path_set) < 1: # check if we have data to tag
@@ -64,6 +66,8 @@ def multi_model_caller(image_paths, tagging_models, extra_args=None):
                     results[model_hf_name] = detection_taggers.detect_head(image_paths, model_folder)
                 case "detect_hand":
                     results[model_hf_name] = detection_taggers.detect_hand(image_paths, model_folder)
+                case "Eva02_largev3":
+                    results[model_hf_name] = wd14_based_taggers.eva02_large_v3_tagging(image_paths, model_folder)
                 case "florence_caption":
                     pass
                 case _:

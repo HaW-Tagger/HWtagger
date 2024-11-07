@@ -273,6 +273,57 @@ class Swinv2v3TaggingDemo(BaseDemo):
                 tag_dict[f_path] = tags
 
         return tag_dict
+
+
+class Eva02LargeV3TaggingDemo(BaseDemo):
+    def __init__(self, args):
+        super().__init__(args)
+
+        tags_df = files.get_pd_eva02_large_tag_frequency()
+        # https://huggingface.co/spaces/SmilingWolf/wd-tagger/tree/main
+        name_series = tags_df["name"]
+        name_series = name_series.map(lambda x: x.replace("_", " ") if x not in tag_categories.KAOMOJI else x)
+        self.tag_names = name_series.tolist()
+        self.rating_indexes = list(np.where(tags_df["category"] == 9)[0])
+        self.general_indexes = list(np.where(tags_df["category"] == 0)[0])
+        self.character_indexes = list(np.where(tags_df["category"] == 4)[0])
+        self.general_tag = [self.tag_names[i] for i in self.general_indexes]
+        self.character_tags = [self.tag_names[i] for i in self.character_indexes]
+
+        self.whitelist_characters = [chara for chara, freq in tag_categories.CHARACTERS_TAG_FREQUENCY.items() if
+                                     int(freq) > CHARACTERS_COUNT_THRESHOLD]
+
+    @torch.no_grad()
+    def infer_batch(self, paths, bs, thresh, char_thresh, num_classes=10861, char_tag=False, character_only=False):
+        tag_dict = {}
+        dataset = PathDataset_test(paths, self.trans, convert_bhwc=False, convert_bgr=True, to_np=True,
+                                   fill_transaprent=True)
+        loader = torch.utils.data.DataLoader(dataset, batch_size=bs, num_workers=4, shuffle=False,
+                                             collate_fn=custom_collate)
+        # np.set_printoptions(suppress=True)
+        for imgs, path_list in tqdm(loader):
+            imgs = np.array(imgs)
+            probs = self.ort_session.run([self.output_name], {self.input_name: imgs})[0]  # onnx output numpy
+            for f_path, prob_vec in zip(path_list, probs):
+                general_prob = prob_vec[self.general_indexes]
+                tags = [(tag_name, round(float(prob), 3)) for tag_name, prob in zip(self.general_tag, general_prob) if
+                        prob > thresh]
+                tags.sort(reverse=True, key=lambda x: x[1])
+
+                if char_tag and not character_only:
+                    char_prob = prob_vec[self.character_indexes]
+                    tags.extend(
+                        [(char_name, round(float(prob), 3)) for char_name, prob in zip(self.character_tags, char_prob)
+                         if prob > char_thresh and char_name in self.whitelist_characters])
+                elif char_tag and character_only:
+                    char_prob = prob_vec[self.character_indexes]
+                    tags = [(char_name, round(float(prob), 3)) for char_name, prob in
+                            zip(self.character_tags, char_prob) if
+                            prob > char_thresh and char_name in self.whitelist_characters]
+
+                tag_dict[f_path] = tags
+
+        return tag_dict
         
 def image_scoring(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_size"]):
     #https://huggingface.co/deepghs/anime_aesthetic/tree/main/swinv2pv3_v0_448_ls0.2_x
@@ -313,6 +364,18 @@ def swinv2v3_tagging(data, model_pth, character_only=False, batch_size=parameter
     args = FictionnalArgs(data, model_pth, ckpt,  batch_size)
     args.add_args_for_tagger(threshold, character_threshold, CHARACTERS, character_only)
     demo = Swinv2v3TaggingDemo(args)
+    tag_dict = demo.infer_batch(args.data, args.batch_size, args.thresh ,args.char_thresh, args.num_classes, args.char_tag, args.character_only)
+    return tag_dict
+
+def eva02_large_v3_tagging(data, model_pth, character_only=False, batch_size=parameters.PARAMETERS["max_batch_size"]):
+    threshold=parameters.PARAMETERS["wdeva02_large_threshold"],
+    character_threshold=parameters.PARAMETERS["swinv2_character_threshold"],
+    ckpt = os.path.join(model_pth, "wd-eva02-large-tagger-v3.onnx")
+    CHARACTERS = parameters.PARAMETERS["swinv2_enable_character"]
+    parameters.log.info(f"Loading wd-eva02-large-tagger-v3, Batch:{batch_size}, using ONNX and torch")
+    args = FictionnalArgs(data, model_pth, ckpt,  batch_size)
+    args.add_args_for_tagger(threshold, character_threshold, CHARACTERS, character_only)
+    demo = Eva02LargeV3TaggingDemo(args)
     tag_dict = demo.infer_batch(args.data, args.batch_size, args.thresh ,args.char_thresh, args.num_classes, args.char_tag, args.character_only)
     return tag_dict
 

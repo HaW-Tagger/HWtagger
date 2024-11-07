@@ -141,6 +141,23 @@ class VirtualDatabase:
                     self.images[image_index].init_image_dict(result)
                 else:
                     self.images[index_dict[img_path]].init_image_dict({"auto_tags": {"Swinv2v3": new_tags}})
+        if "Eva02_largev3" in results:  # update swin tags, two cases for char only vs normal case
+            characters_only = False
+            if extra_args and "Eva02_largev3" in extra_args:
+                characters_only = extra_args["Eva02_largev3"].get("characters_only", False)
+
+            for img_path, new_tags in results["Eva02_largev3"].items():
+                # characters are merged to pre-existing tags of the same model,otherwise newly initialized
+                image_index = index_dict[img_path]
+                if characters_only:  # tagging only characters
+                    if "Eva02_largev3" in self.images[image_index].auto_tags.names():
+                        result = {"auto_tags": {
+                            "Eva02_largev3": list(set(self.images[image_index].auto_tags["Eva02_largev3"] + new_tags))}}
+                    else:
+                        result = {"auto_tags": {"Eva02_largev3": new_tags}}
+                    self.images[image_index].init_image_dict(result)
+                else:
+                    self.images[index_dict[img_path]].init_image_dict({"auto_tags": {"Eva02_largev3": new_tags}})
         if "detect_people" in results:
             #parameter.log.info(results["detect_people"])
             for img_path, detection_list in results["detect_people"].items():

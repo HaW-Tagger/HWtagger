@@ -551,6 +551,13 @@ def get_pd_swinbooru_tag_frequency():
     tags_df = pd.read_csv(os.path.join(swin_model_folder, swin_file))
     return tags_df
 
+def get_pd_eva02_large_tag_frequency():
+    # get the tags booru tags used in the swin model
+    swin_model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["eva02_large_v3_folder"])
+    swin_file = "wd-eva02-large-tagger-v3.csv"
+    tags_df = pd.read_csv(os.path.join(swin_model_folder, swin_file))
+    return tags_df
+
 def download_model(name: str):
     pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
     # use snapshot_download if we want to download an entire repo
@@ -595,6 +602,12 @@ def download_model(name: str):
             for filename in ["model.onnx", "meta.json", "metrics.json"]:
                 rel_file_path = rel_path + filename
                 pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path, local_dir=parameters.MAIN_FOLDER)
+        case "Eva02_largev3":
+            rel_path = "models/wd-eva02-large-tagger-v3/"
+            for filename in ["wd-eva02-large-tagger-v3.csv", "wd-eva02-large-tagger-v3.onnx"]:
+                rel_file_path = rel_path + filename
+                pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path,
+                            local_dir=parameters.MAIN_FOLDER)
         case _:
             parameters.log.error(f"Unknown case when downloading model, check for typo for model")
     pool.shutdown(wait=True)

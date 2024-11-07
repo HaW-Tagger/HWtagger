@@ -389,7 +389,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -155, 761, 937))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 761, 967))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
         self.groupBox = QGroupBox(self.scrollAreaWidgetContents)
@@ -802,6 +802,23 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_6.addLayout(self.horizontalLayout_2)
 
+        self.horizontalLayout_25 = QHBoxLayout()
+        self.horizontalLayout_25.setObjectName(u"horizontalLayout_25")
+        self.spin_wdeva02_large_threshold = QDoubleSpinBox(self.groupBox_7)
+        self.spin_wdeva02_large_threshold.setObjectName(u"spin_wdeva02_large_threshold")
+        self.spin_wdeva02_large_threshold.setMaximum(0.990000000000000)
+        self.spin_wdeva02_large_threshold.setSingleStep(0.050000000000000)
+
+        self.horizontalLayout_25.addWidget(self.spin_wdeva02_large_threshold)
+
+        self.label_19 = QLabel(self.groupBox_7)
+        self.label_19.setObjectName(u"label_19")
+
+        self.horizontalLayout_25.addWidget(self.label_19)
+
+
+        self.verticalLayout_6.addLayout(self.horizontalLayout_25)
+
 
         self.gridLayout.addWidget(self.groupBox_7, 1, 0, 1, 1)
 
@@ -1025,7 +1042,7 @@ class Ui_MainWindow(object):
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"Prompt count for sample toml", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("MainWindow", u"Tagger", None))
 #if QT_CONFIG(tooltip)
-        self.label_3.setToolTip(QCoreApplication.translate("MainWindow", u"if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2", None))
+        self.label_3.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2,WDEVA02LARGEV3</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Automatic Tagger", None))
 #if QT_CONFIG(tooltip)
@@ -1053,6 +1070,10 @@ class Ui_MainWindow(object):
         self.spinBox_detection_resolution.setToolTip(QCoreApplication.translate("MainWindow", u"This is the max height/width for the resized image passed to the detection models", None))
 #endif // QT_CONFIG(tooltip)
         self.label_18.setText(QCoreApplication.translate("MainWindow", u"Yolo Detection Resolution", None))
+#if QT_CONFIG(tooltip)
+        self.label_19.setToolTip(QCoreApplication.translate("MainWindow", u"the threshold for wich to add tags from the swinv2 tagger", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_19.setText(QCoreApplication.translate("MainWindow", u"WD EVA02-Large Threshold", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_cancel_settings.setToolTip(QCoreApplication.translate("MainWindow", u"cancel the changes, doesn't restore to defaults, it only restore the previous setting, if yyou want to restore the default, delete the .ini file that acts as the config", None))
 #endif // QT_CONFIG(tooltip)

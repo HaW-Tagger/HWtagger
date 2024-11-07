@@ -801,7 +801,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             self.spin_swinv2_chara_count, self.check_swinv2_chara, self.spin_caformer_thresh, self.spin_max_batch_size,
             self.spin_max_images_loader_thread, self.spin_max_4k_pixels_save_multiplier, self.spin_similarity_thresh,
             self.comboBox_click_option, self.spinBox_custom_height, self.spinBox_custom_width, self.spinBox_custom_bucket_steps,
-            self.spinBox_sample_count, self.spin_max_amount_of_backups, self.spinBox_detection_resolution
+            self.spinBox_sample_count, self.spin_max_amount_of_backups, self.spinBox_detection_resolution, self.spin_wdeva02_large_threshold
         ]
         for x in list_of_widget_to_have_their_wheel_event_removed:
             x.wheelEvent = lambda event: None
@@ -811,6 +811,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spin_image_load_size.setValue(parameters.PARAMETERS["image_load_size"])
         self.lineEdit_automatic_tagger.setText(",".join([x.name for x in parameters.PARAMETERS["automatic_tagger"]]))
         self.spin_swinv2_thresh.setValue(parameters.PARAMETERS["swinv2_threshold"])
+        self.spin_wdeva02_large_threshold.setValue(parameters.PARAMETERS["wdeva02_large_threshold"])
         self.spin_swinv2_chara_thresh.setValue(parameters.PARAMETERS["swinv2_character_threshold"])
         self.spin_swinv2_chara_count.setValue(parameters.PARAMETERS["swinv2_character_count_threshold"])
         self.check_swinv2_chara.setChecked(parameters.PARAMETERS["swinv2_enable_character"])
@@ -854,6 +855,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spin_image_load_size.setValue(parameters.default_parameters['Interface']["image_load_size"])
         self.lineEdit_automatic_tagger.setText(",".join([x.name for x in parameters.default_parameters['Taggers']["automatic_tagger"]]))
         self.spin_swinv2_thresh.setValue(parameters.default_parameters['Taggers']["swinv2_threshold"])
+        self.spin_wdeva02_large_threshold.setValue(parameters.default_parameters['Taggers']["wdeva02_large_threshold"])
         self.spin_swinv2_chara_thresh.setValue(parameters.default_parameters['Taggers']["swinv2_character_threshold"])
         self.spin_swinv2_chara_count.setValue(parameters.default_parameters['Taggers']["swinv2_character_count_threshold"])
         self.check_swinv2_chara.setChecked(parameters.default_parameters['Taggers']["swinv2_enable_character"])
@@ -896,6 +898,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.PARAMETERS["image_load_size"] = self.spin_image_load_size.value()
         parameters.PARAMETERS["automatic_tagger"] = [parameters.AvailableTaggers[t.strip().upper()] for t in self.lineEdit_automatic_tagger.text().strip().split(",")]
         parameters.PARAMETERS["swinv2_threshold"] = self.spin_swinv2_thresh.value()
+        parameters.PARAMETERS["wdeva02_large_threshold"] = self.spin_wdeva02_large_threshold.value()
         parameters.PARAMETERS["swinv2_character_threshold"] = self.spin_swinv2_chara_thresh.value()
         parameters.PARAMETERS["swinv2_character_count_threshold"]=self.spin_swinv2_chara_count.value()
         parameters.PARAMETERS["swinv2_enable_character"]=self.check_swinv2_chara.isChecked()

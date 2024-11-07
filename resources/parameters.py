@@ -14,7 +14,7 @@ class AvailableTaggers(enum.Enum):
     CAFORMER = "Caformer"
     CLASSIFY = "anime_classifier"
     AESTHETIC = "anime_aesthetic"
-
+    WDEVA02LARGEV3 = "Eva02_largev3"
 # these are the names/string used for calling models
 tagger_huggingface_name = ["anime_aesthetic", "anime_classifier", "Swinv2v3", "Caformer"]
 
@@ -57,7 +57,7 @@ default_parameters['Taggers'] = {
     'swinv2_enable_character': True,
     'swinv2_character_threshold': 0.5,
     'swinv2_character_count_threshold': 250,
-    'caformer_folder': "models/ML-danbooru-caformer",
+    'caformer_folder': "models/ML-danbooru-caformer/",
     'caformer_threshold': 0.70,
     'max_batch_size': 8,
     'aesthetic_folder':"models/anime_aesthetic/",
@@ -66,7 +66,9 @@ default_parameters['Taggers'] = {
     "head_detect_folder": "models/head_detect/",
     "hand_detect_folder": "models/hand_detect/",
     "completeness_folder": "models/anime_completeness/",
-    "detection_small_resolution": 512
+    "detection_small_resolution": 512,
+    "eva02_large_v3_folder": "models/wd-eva02-large-tagger-v3/",
+    "wdeva02_large_threshold": 0.35
 }
 
 
