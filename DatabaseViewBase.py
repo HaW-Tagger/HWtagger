@@ -1178,7 +1178,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
             parameters.log.info("No images selected.")
             return False
         for w_index in self.listView_other.selectedIndexes():
-            image_index = int(self.listView_groups.model().db_index(w_index))
+            image_index = int(self.listView_other.model().db_index(w_index))
             self.db.add_image_to_group(self.current_group, image_index)
         self.listView_other.clearSelection()
         self.update_sorting()

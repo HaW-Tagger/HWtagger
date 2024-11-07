@@ -1116,7 +1116,7 @@ class ImageDatabase:
             tooltip_text += f"\nOrigin: filtered_rejected tags"
         if tag in self.manual_tags:
             tooltip_text += f"\nOrigin: manual tags"
-        
+
         if parameters.PARAMETERS["danbooru_tag_wiki_lookup"]:
             wiki = tag.wiki()
             if wiki:
