@@ -1535,7 +1535,15 @@ class TagsViewBase(QWidget, tagsViewBase.Ui_Form):
 
     @Slot()
     def changed_highlight(self):
-        self.highlight_tags = TagsList(tags=[t.strip() for t in self.lineEdit_tag_highlight.text().split(",") if t.strip()], name="highlight_tags")
+        self.highlight_tags = TagsList(tags=[], name="highlight_tags")
+        for t in [t.strip() for t in self.lineEdit_tag_highlight.text().split(",") if t.strip()]:
+            # Highlight tags when category name is explicit
+            if self.image and t in self.image.auto_tags.names():
+                self.highlight_tags+=self.image.auto_tags[t]
+            elif self.image and t in self.image.external_tags.names():
+                self.highlight_tags+=self.image.external_tags[t]
+            else:
+                self.highlight_tags+=t
         if self.image:
             self.view_image(self.image)
 

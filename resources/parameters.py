@@ -15,9 +15,6 @@ class AvailableTaggers(enum.Enum):
     CLASSIFY = "anime_classifier"
     AESTHETIC = "anime_aesthetic"
     WDEVA02LARGEV3 = "Eva02_largev3"
-# these are the names/string used for calling models
-tagger_huggingface_name = ["anime_aesthetic", "anime_classifier", "Swinv2v3", "Caformer"]
-
 
 log = logging.getLogger("rich")
 
