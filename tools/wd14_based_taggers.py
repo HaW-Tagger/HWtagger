@@ -1,11 +1,14 @@
 import os
+
+from PIL import Image
+
 os.environ["XFORMERS_FORCE_DISABLE_TRITON"] = "1"
 import warnings
 warnings.filterwarnings("ignore")
 # onnx is built into pytorch
 
 import torch
-import torchvision.transforms as transforms
+import torchvision.transforms.v2 as transforms
 import torchvision.transforms.functional as F
 from torch.utils.data.dataloader import default_collate
 import onnxruntime as ort
@@ -40,16 +43,15 @@ CHARACTERS_COUNT_THRESHOLD = parameters.PARAMETERS["swinv2_character_count_thres
 
 class SquarePad:
     #https://discuss.pytorch.org/t/how-to-resize-and-pad-in-a-torchvision-transforms-compose/71850/10
-    def __call__(self, image):
+    def __call__(self, image: Image.Image):
         max_wh = max(image.size)
         p_left, p_top = [(max_wh - s) // 2 for s in image.size]
         p_right, p_bottom = [max_wh - (s+pad) for s, pad in zip(image.size, [p_left, p_top])]
         padding = (p_left, p_top, p_right, p_bottom)
-        return F.pad(image, padding, 0, 'constant')
+        return F.pad(image, padding, (255,255,255), 'constant')
+
 
 def custom_collate(batch):
-    len_batch = len(batch)
-    
     return default_collate(batch)
 
 class FictionnalArgs:
@@ -74,7 +76,7 @@ class FictionnalArgs:
         
 class BaseDemo: 
     # https://github.com/kohya-ss/sd-scripts/blob/main/finetune/tag_images_by_wd14_tagger.py
-    def __init__(self, args):
+    def __init__(self, args: FictionnalArgs):
         parameters.log.info(f'Creating model {args.model_name}...')
         self.ort_session = ort.InferenceSession(
                     args.model_path,
@@ -84,15 +86,15 @@ class BaseDemo:
         parameters.log.debug(self.ort_session.get_inputs()[0])
         if args.base_tagger: # this is for the basic tagger, swinv2v3
             self.trans = transforms.Compose([
-                #SquarePad(), # ignore keep ratio bc it has a tentancy to add letterboxed and other tags related to borders to tags
-                transforms.Resize((args.image_size, args.image_size), 
-                                  interpolation=transforms.functional.InterpolationMode.BICUBIC),
+                SquarePad(), # ignore keep ratio bc it has a tendency to add letterboxed and other tags related to borders to tags
+                transforms.Resize((args.image_size, args.image_size),
+                                  interpolation=transforms.functional.InterpolationMode.LANCZOS),
             ])
         else:# this is for aesthetic and classifying
             self.trans = transforms.Compose([
                 #square_pad()
                 transforms.Resize((args.image_size, args.image_size),
-                                interpolation=transforms.functional.InterpolationMode.BICUBIC),
+                                interpolation=transforms.functional.InterpolationMode.LANCZOS),
                 transforms.ToTensor(),
                 #transforms.ToPILImage()
             ])
@@ -110,7 +112,7 @@ class ImageClassificationDemo(BaseDemo):
         #from imgutils.validate.classify import anime_classify 
         dataset = PathDataset_test(paths, self.trans, convert_bhwc=False, convert_bgr=False, to_np=True, fill_transaprent=True)
         loader = torch.utils.data.DataLoader(dataset, batch_size=bs, num_workers=4, shuffle=False, collate_fn=custom_collate)
-        
+
         np.set_printoptions(suppress=True)
         for imgs, path_list in tqdm(loader):
             imgs = np.array(imgs)
@@ -249,11 +251,12 @@ class Swinv2v3TaggingDemo(BaseDemo):
 
         self.whitelist_characters = [chara for chara, freq in tag_categories.CHARACTERS_TAG_FREQUENCY.items() if int(freq) > CHARACTERS_COUNT_THRESHOLD]
     
-    @torch.no_grad()  
+    @torch.no_grad()
     def infer_batch(self, paths, bs, thresh, char_thresh, num_classes=10861, char_tag=False, character_only=False):
         tag_dict = {}
         dataset = PathDataset_test(paths, self.trans, convert_bhwc=False, convert_bgr=True, to_np=True, fill_transaprent=True)
-        loader = torch.utils.data.DataLoader(dataset, batch_size=bs, num_workers=4, shuffle=False, collate_fn=custom_collate)
+        loader = torch.utils.data.DataLoader(dataset,batch_size=bs, num_workers=min(int(len(paths)/bs), 4 if len(paths)>200 else 2), shuffle=False, collate_fn=custom_collate, pin_memory=True if torch.cuda.is_available() else False)
+
         #np.set_printoptions(suppress=True)
         for imgs, path_list in tqdm(loader):
             imgs = np.array(imgs)
@@ -298,8 +301,8 @@ class Eva02LargeV3TaggingDemo(BaseDemo):
         tag_dict = {}
         dataset = PathDataset_test(paths, self.trans, convert_bhwc=False, convert_bgr=True, to_np=True,
                                    fill_transaprent=True)
-        loader = torch.utils.data.DataLoader(dataset, batch_size=bs, num_workers=4, shuffle=False,
-                                             collate_fn=custom_collate)
+        loader = torch.utils.data.DataLoader(dataset, batch_size=bs, num_workers=min(int(len(paths)/bs), 4 if len(paths)>200 else 2), shuffle=False,
+                                             collate_fn=custom_collate, pin_memory=True if torch.cuda.is_available() else False)
         # np.set_printoptions(suppress=True)
         for imgs, path_list in tqdm(loader):
             imgs = np.array(imgs)

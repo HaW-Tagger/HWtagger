@@ -22,7 +22,9 @@ class PathDataset(Dataset):
     
 class PathDataset_test(Dataset):
     def __init__(self, img_list, transform=None, convert_bhwc=False, convert_bgr=False, to_np=False, fill_transaprent=False, remove_exif=False, break_on_monocolor=False):
-        self.img_list = img_list
+
+        # https://github.com/pytorch/pytorch/issues/13246#issuecomment-905703662
+        self.img_list = np.array(img_list).astype(np.string_)
         self.transform = transform
         self.convert_bhwc = convert_bhwc
         self.convert_bgr = convert_bgr
@@ -32,12 +34,12 @@ class PathDataset_test(Dataset):
         self.break_on_monocolor = break_on_monocolor
 
     def __getitem__(self, index):
-        path = self.img_list[index]
+        path = str(self.img_list[index], encoding='utf-8')
         try: # check for truncated images
             with Image.open(path) as img:
                 img_format = img.format.lower()
                 # https://stackoverflow.com/a/74188794
-                if self.remove_exif and (img_format == "jpeg" or img_format == "jpg"): 
+                if self.remove_exif and (img_format == "jpeg" or img_format == "jpg"):
                     # check corrupted exif , exif is only for jpeg for images
                     if img.getexif():
                         # create new image with the image data and return it
@@ -45,7 +47,7 @@ class PathDataset_test(Dataset):
                         data = list(img.getdata())
                         image_without_exif = Image.new(img.mode, img.size)
                         image_without_exif.putdata(data)
-                        # convert to 
+                        # convert to
                         image_without_exif.save(path)
                         img = image_without_exif
                 if img_format not in ("png", "jpeg", "jpg"):
@@ -53,11 +55,11 @@ class PathDataset_test(Dataset):
                     # save as png and if it originally wasn't png, then delete the old one
                     img = img.convert('RGBA')
                     img.save(os.path.splitext(path)[0]+".png", "PNG")
-                    if os.path.splitext(path)[0]+".png" != path: 
+                    if os.path.splitext(path)[0]+".png" != path:
                         os.remove(path)
                         path = os.path.splitext(path)[0]+".png"
-                
-                if self.fill and img.has_transparency_data: 
+
+                if self.fill and img.has_transparency_data:
                     if img.mode not in COMPATIBLE_IMG_TYPES:
                         img = img.convert('RGBA')
                     else:
@@ -65,15 +67,15 @@ class PathDataset_test(Dataset):
                     blank_image = Image.new('RGBA', img.size, (255, 255, 255))
                     blank_image.alpha_composite(img)
                     img = blank_image.convert('RGB')
-                    
+
                 else:
-                    if img.mode == "P": 
+                    if img.mode == "P":
                         # some PNGS in P (Pallete) mode may have transparency embedded even if it's not PA mode
                         # IMG MODES: https://pillow.readthedocs.io/en/latest/handbook/concepts.html#modes
                         img = img.convert('RGBA')
-                        
+
                     img = img.convert('RGB')
-                
+
                 if self.break_on_monocolor:
                     # this method will return none for monocolor images
                     monocolor_max_diff = 10
@@ -81,12 +83,11 @@ class PathDataset_test(Dataset):
                     if all(extrema[i][1]-extrema[i][0] < 10 for i in range(3)):
                         print("all one color", path)
                         return None, path
-                
                 img = self.transform(img)
                 if self.convert_bhwc:
                     # https://discuss.pytorch.org/t/torchvision-totensor-dont-change-channel-order/82038/3
                     img = img.permute((1, 2, 0)).contiguous()
-                
+
                 if self.to_np:
                     img = np.array(img, dtype=np.float32)
                 if self.convert_bgr:

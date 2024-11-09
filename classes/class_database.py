@@ -31,22 +31,11 @@ class VirtualDatabase:
         self.rare_tags = set()
 
     def append_images_dict(self, image_dict) -> bool:
-        t0 = time.time()
         is_dupe = image_dict["md5"] in self.get_all_md5()
-        t1 = time.time()
         if not is_dupe:
             is_dupe = image_dict["path"] in self.get_all_paths()
-            t2 = time.time()
             if not is_dupe:
                 self.images.append(ImageDatabase(image_dict))
-                t3 = time.time()
-        if t1 - t0 > 0.001:
-            print(f"md5: {t1-t0}")
-        if t2 - t1 > 0.001:
-            print(f"path: {t2-t1}")
-        if t3-t2 > 0.01:
-            print(len(self.images))
-            print(f"creation: {t3-t2}")
         return is_dupe
 
     def index_of_image_by_md5(self, image_md5) -> int:
