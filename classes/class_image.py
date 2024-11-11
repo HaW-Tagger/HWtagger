@@ -6,6 +6,7 @@ from PIL import Image, ImageQt
 
 import resources.tag_categories
 from classes.class_elements import *
+from classes.class_settings import TagsLogic
 from resources import parameters
 from tools import images
 
@@ -78,6 +79,7 @@ class ImageDatabase:
         self.classify_value: float = 0.0
         self.completeness_label: TagElement = TagElement("")
         self.completeness_value: float = 0.0
+
         # Groups
         self.groups: list[GroupElement] = []
 
@@ -95,6 +97,7 @@ class ImageDatabase:
         self.auto_tags_merged_confidence: dict[str: float] = {}
         self.rare_tags_count = 0
         self.uncommon_tags: dict[str:float] = {}
+        self.database_settings: SettingsDatabase = None # should not be saved since this is populated with database settings, should not be overwritten there too
 
         # pixel related, one time calc done together
         self.brightness_value = None
@@ -109,6 +112,7 @@ class ImageDatabase:
     def __eq__(self, other):
         if not isinstance(other, type(self)):
             return False
+
         for simple_key in simple_keys:
             if getattr(self, simple_key) != getattr(other, simple_key):
                 return False
@@ -129,7 +133,7 @@ class ImageDatabase:
             if getattr(self, sentence_key) != getattr(other, sentence_key):
                 return False
 
-        if self.rects != other.rects:
+        if  len(self.rects) != len(other.rects) or any(rect not in other.rects for rect in self.rects):
             return False
 
         return True
@@ -147,6 +151,8 @@ class ImageDatabase:
         if self.completeness_label.tag in kept_completeness_tags and self.completeness_value > 0.7:
             # add rough art
             tags.append(self.completeness_label)
+
+        # todo: convert to a classic settings rule
         if self.rects:
             name_list = [x.name for x in self.rects]
             hand_names = [n for n in name_list if "hand_" in n]
@@ -537,6 +543,34 @@ class ImageDatabase:
 
         # update the unresolved
         self.update_full_tags()
+
+        # updating the tags using the settings, database first then groups
+        if self.database_settings:
+            to_remove, to_add = self.database_settings.apply_all_tags_logics(self.full_tags)
+            if to_remove:
+                self.filtered_rejected_tags += to_remove
+                self.filtered_new_tags -= to_remove
+            if to_add:
+                self.filtered_rejected_tags -= to_add
+                self.filtered_new_tags += to_add
+
+            # update the unresolved
+            self.update_full_tags()
+
+        if self.groups:
+            for group in self.groups:
+                if group.settings:
+                    to_remove, to_add = group.settings.apply_all_tags_logics(self.full_tags)
+                    if to_remove:
+                        self.filtered_rejected_tags += to_remove
+                        self.filtered_new_tags -= to_remove
+                    if to_add:
+                        self.filtered_rejected_tags -= to_add
+                        self.filtered_new_tags += to_add
+
+            # update the unresolved
+            self.update_full_tags()
+
         if update_review:
             self.update_review_tags()
 

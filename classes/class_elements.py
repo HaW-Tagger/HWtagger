@@ -4,6 +4,7 @@ from collections import defaultdict
 import cloudscraper
 import numpy as np
 
+from classes.class_settings import SettingsDatabase
 from resources import tag_categories
 from clip import tokenize
 
@@ -321,6 +322,7 @@ class GroupElement:
             md5s = []
         self.group_name: str = group_name
         self.md5s: list[str] = md5s
+        self.settings: SettingsDatabase = SettingsDatabase()
 
     def __len__(self):
         return len(self.md5s)
@@ -338,7 +340,6 @@ class GroupElement:
         elif isinstance(key, str):
             self.md5s[self.md5s.index(key)] = value
             return
-        print(key, value)
         self.md5s[key] = value
 
     def __eq__(self, other):
@@ -347,7 +348,7 @@ class GroupElement:
         elif isinstance(other, type(self)):
             if len(self) != len(other):
                 return False
-            if all(md5 in self.md5s for md5 in other.md5s):
+            if all(md5 in self.md5s for md5 in other.md5s) and self.settings == other.settings:
                 return True
         elif isinstance(other, list):
             if all(md5 in self.md5s for md5 in other):
@@ -363,8 +364,9 @@ class GroupElement:
             self.md5s.remove(item)
 
     def save(self):
-        result = {"images": self.md5s}
+        result = {"images": self.md5s, "settings": self.settings.save()}
         return result
+
 
 class TagsLists:
     """

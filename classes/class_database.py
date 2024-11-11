@@ -11,6 +11,7 @@ import tqdm
 import tools
 import tools.images
 from classes.class_image import *
+from classes.class_settings import SettingsDatabase
 from resources import parameters, tag_categories
 from tools import files, tagger_caller
 from tools.misc_func import tqdm_parallel_map, order_tag_prompt
@@ -26,6 +27,7 @@ class VirtualDatabase:
             'secondary_tags': []
         }
         self.groups: dict[str: GroupElement] = {}
+        self.settings: SettingsDatabase = SettingsDatabase()
 
         #Temp Info
         self.rare_tags = set()
@@ -338,8 +340,10 @@ class VirtualDatabase:
 
         """
         if group_name not in self.groups:
+            # todo: make groups store ImageDatabase access instead of md5
             self.groups[group_name] = GroupElement(group_name=group_name, md5s=[self.images[image_index].md5])
 
+        # todo: make it so that it updates the group object
         if self.images[image_index].md5 in self.groups[group_name].md5s:
             return
 
@@ -786,6 +790,8 @@ class VirtualDatabase:
         for k in range(len(self.images)):
             if self.images[k] != other.images[k]:
                 return False
+        if self.settings != other.settings:
+            return False
         return True
 
     def get_changes(self, other):
@@ -812,6 +818,9 @@ class VirtualDatabase:
         if self.groups != other.groups:
             for group in self.groups.values():
                 result["groups"][group.group_name] = group.save()
+
+        if self.settings != other.settings:
+            result["settings"] = self.settings.save()
         return copy.deepcopy(result)
 
     def apply_changes(self, changes: dict):
@@ -833,6 +842,8 @@ class VirtualDatabase:
                 self.remove_groups()
                 for group_name, group in changes["groups"].items():
                     self.add_images_to_group(group_name, group["images"])
+        if "settings" in changes.keys():
+            self.settings = SettingsDatabase(changes["settings"])
 
     def apply_all_changes(self, all_changes: list[dict]):
         """
@@ -842,6 +853,7 @@ class VirtualDatabase:
         """
         for change in all_changes:
             self.apply_changes(change)
+        self.populate_settings()
 
     def get_saving_dict(self):
         result = {"images":{}}
@@ -851,6 +863,7 @@ class VirtualDatabase:
         result["groups"] = {}
         for group in self.groups.values():
             result["groups"][group.group_name] = group.save()
+        result["settings"] = self.settings.save()
         return result
 
     def get_common_image(self, images_index: list[int]) -> ImageDatabase:
@@ -862,6 +875,7 @@ class VirtualDatabase:
             - an image database,
             - an uncommon tags list, the tags that are not common between all the images
         """
+        # todo: do something about settings, if same group use the group settings, if not don't send it
         common_image = ImageDatabase()
         common_image.auto_tags = copy.deepcopy(self.images[images_index[0]].auto_tags)
         common_image.external_tags = copy.deepcopy(self.images[images_index[0]].external_tags)
@@ -947,6 +961,13 @@ class VirtualDatabase:
 
         return changes_happened
 
+    def populate_settings(self):
+        """
+        Populate the settings object across all images
+        """
+        for image in self.images:
+            image.database_settings = self.settings
+
 class Database(VirtualDatabase):
     def __init__(self, folder):
         super().__init__()
@@ -971,8 +992,6 @@ class Database(VirtualDatabase):
             return False
 
         old_score_system = False # needs to be removed when time will come
-
-
 
         self.images = [ImageDatabase(image_dict) for image_dict in db["images"].values()]
         for image in self.images:
@@ -1012,6 +1031,11 @@ class Database(VirtualDatabase):
                     pass
         except KeyError:
             parameters.log.error(f"Empty data for groups: {self.folder}")
+
+        # Settings
+        if "settings" in db.keys():
+            self.settings = SettingsDatabase(db["settings"])
+        self.populate_settings()
 
         if old_score_system:
             parameters.log.warning("You should redo the score of the images in this dataset")
@@ -1067,7 +1091,7 @@ class Database(VirtualDatabase):
             parameters.log.info(f"All {len(self.images)} images exists")
 
     def add_images_to_db(self, image_paths: list[str], from_txt=False, grouping_from_path=False, move_dupes=False):
-        """_summary_
+        """
 
         Args:
             image_paths (list[str]): _description_
@@ -1075,7 +1099,8 @@ class Database(VirtualDatabase):
             grouping_from_path (bool, optional): _description_. Defaults to False.
             move_dupes (bool, optional): _description_. Defaults to False.
    
-        Return: list of img_paths added to db
+        Return:
+            list of img_paths added to db
         """
         parameters.log.info(f"{len(image_paths)} images are going to be added to the database. (Before dupe check)")
         current_paths = set(self.get_all_paths())
@@ -1120,6 +1145,7 @@ class Database(VirtualDatabase):
                 files.export_images(duplicate_paths, self.folder, "DUPLICATES")
 
         self.check_img_integrity()
+        self.populate_settings()
         return new_paths
 
     def add_image_to_groups_by_path(self, image_paths):
@@ -1499,6 +1525,7 @@ class Database(VirtualDatabase):
             remove_absolute_and_relative_images:
             remove_relative_images: doesn't matter if remove_absolute_and_relative is set to True
         """
+        # todo: do something about settings ?
         images_tuples: list[tuple[int, str,str]]=[]
         for image_index in range(len(self.images)):
             current_path = os.path.normpath(self.images[image_index].path)

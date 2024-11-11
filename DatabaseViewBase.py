@@ -986,20 +986,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
     @Slot()
     def search_tags_changed(self):
         search_tags = self.lineEdit_tag_search.text().split(',')
-        temp_search_tags = []
-        for tag in search_tags:
-            if tag.strip():
-                to_add = ([tag.strip()], True, False)
-                if to_add[0][0][0] == "-":  # positive
-                    to_add = ([to_add[0][0][1:]], False, to_add[2])
-                if to_add[0][0][0] == '"' and to_add[0][0][-1] == '"':  # exact
-                    to_add = ([to_add[0][0][1:-1]], to_add[1], True)
-                if to_add[0][0][0] == "-":  # positive
-                    to_add = ([to_add[0][0][1:]], False, to_add[2])
-                if '*' in to_add[0][0]:
-                    to_add = (to_add[0][0].split('*'), to_add[1], to_add[2])
-                temp_search_tags.append(to_add)
-        self.current_search_tags = temp_search_tags
+        self.current_search_tags = files.loose_tags_search_settings_from_tags_list(search_tags)
         parameters.log.info(self.current_search_tags)
         self.update_sorting()
         self.update_other_view()
