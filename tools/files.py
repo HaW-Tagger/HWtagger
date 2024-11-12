@@ -374,10 +374,10 @@ def loose_tags_check(search_tags, full_tags):
                     return False
         else: #inexact
             if search_tag[1]: #positive
-                if not any([search_tag[0][0] in ft for ft in full_tags]):
+                if not any([search_tag[0][0] in str(ft) for ft in full_tags]):
                     return False
             else: # negative
-                if any([search_tag[0][0] in ft for ft in full_tags]):
+                if any([search_tag[0][0] in str(ft) for ft in full_tags]):
                     return False
     return True
     # return all(any([t[0] in ft for ft in full_tags]) for t in search_tags if t[1]==True) and all(all([t[0] not in ft for ft in full_tags]) for t in search_tags if t[1]==False)
