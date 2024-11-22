@@ -41,7 +41,7 @@ The installation should be done
 
 ### Running the tagger
 
-You can run the tagger by using the run.bat
+You can run the tagger by using the `start_app.bat`
 
 *for linux, you might need to change how the venv is activated from .venv\scripts\activate to .venv\bin\activate
 
