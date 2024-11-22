@@ -6,11 +6,12 @@ import PySide6.QtGui as QtGui
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QCompleter, QDialog, QMessageBox, QLabel, QCheckBox, QHBoxLayout, \
-    QLineEdit, QPushButton, QGridLayout, QFileDialog
+    QLineEdit, QPushButton, QGridLayout, QFileDialog, QStyle
 
 from classes.class_database import Database
 from interfaces import global_database_item, outputBase
 from resources import parameters
+from tools import files
 
 
 #from version 2, page 203 - 205 of Fluent Python by Luciano Ramalho
@@ -432,3 +433,83 @@ class GlobalDatabaseItem(QWidget, global_database_item.Ui_Form):
         if not self.group_storage:
             return []
         return [x.text() for x in self.group_storage if x.isChecked()]
+
+class DatabaseTagsLogicWidget(QWidget):
+    changedState = Signal(tuple) #index, TagLogic save dict
+    deleted = Signal(int) #index
+    def __init__(self, conditions, added, index: int, keep_conditions=False, completer: QCompleter=None):
+        super().__init__()
+        self.index = index # an integer index for creating and storing where the TagsLogic is from
+        h_layout = QHBoxLayout()
+
+        self.first_line_edit = QLineEdit()
+        h_layout.addWidget(self.first_line_edit)
+        self.keep_conditions_check = QCheckBox()
+        self.keep_conditions_check.setToolTip("Checked: Keep the conditions \nUnchecked: Remove the conditions")
+        h_layout.addWidget(self.keep_conditions_check)
+
+        h_layout.addWidget(QLabel("->"))
+
+        self.second_line_edit = QLineEdit()
+        h_layout.addWidget(self.second_line_edit)
+
+        self.delete_button = QPushButton(
+            QtGui.QIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogDiscardButton)), "")
+        h_layout.addWidget(self.delete_button)
+
+        self.setLayout(h_layout)
+
+        if completer:
+            self.first_line_edit.setCompleter(completer)
+            self.second_line_edit.setCompleter(completer)
+
+        self.keep_conditions_check.setChecked(keep_conditions)
+        self.second_line_edit.setText(", ".join(added))
+        if conditions:
+            first_line_text = []
+            for condition in conditions:
+                for tag_tuple in condition:
+                    tag=""
+                    if not tag_tuple[1]:
+                        tag+="-"
+                    if tag_tuple[2]:
+                        tag+='"'
+                    if len(tag_tuple[0])>1:
+                        tag += "*".join(tag_tuple[0])
+                    else:
+                        tag += tag_tuple[0][0]
+                    if tag_tuple[2]:
+                        tag+='"'
+                    first_line_text.append(tag)
+            self.first_line_edit.setText(", ".join(first_line_text))
+
+        self.first_line_edit.editingFinished.connect(self._state_changed)
+        self.second_line_edit.editingFinished.connect(self._state_changed)
+        self.keep_conditions_check.stateChanged.connect(self._state_changed)
+        self.delete_button.clicked.connect(self._delete_clicked)
+
+    def _get_conditions(self):
+        #todo: make a way to have multiple conditions, like using []
+        return [files.loose_tags_search_settings_from_tags_list([tag.strip() for tag in self.first_line_edit.text().split(",")])]
+
+    def _get_keep_conditions(self):
+        return self.keep_conditions_check.isChecked()
+
+    def _get_added(self):
+        return [tag.strip() for tag in self.second_line_edit.text().split(',')]
+
+    def _get_tags_logic(self):
+        return {"conditions":self._get_conditions(), "added":self._get_added(), "keep_conditions":self._get_keep_conditions()}
+
+    def change_index(self, index):
+        self.index = index
+
+    @Slot()
+    def _state_changed(self):
+        print(self._get_tags_logic())
+        self.changedState.emit((self.index, self._get_tags_logic()))
+
+    @Slot()
+    def _delete_clicked(self):
+        self.deleted.emit(self.index)
+

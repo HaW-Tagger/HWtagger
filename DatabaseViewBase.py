@@ -11,7 +11,7 @@ from PySide6.QtCore import Slot, QStringListModel, QSize, Signal
 from PySide6.QtGui import QPixmap, QStandardItem, QBrush
 from PySide6.QtWidgets import QWidget, QCompleter, QSizePolicy, QSplitter, QHBoxLayout, QLabel, QVBoxLayout, QDialog, \
     QPushButton, QLineEdit, QStackedWidget, QButtonGroup, QRadioButton, QScrollArea, \
-    QColorDialog, QApplication
+    QColorDialog, QApplication, QStyle
 
 import CustomWidgets
 from CustomWidgets import confirmation_dialog, InputDialog
@@ -473,7 +473,7 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
     clickedBatchFunction = Signal(tuple)
     clickedPopupWindow = Signal()
     clickedFavourites = Signal(TagElement)
-    clickedReplace = Signal(tuple)
+    changedDatabaseSettings = Signal()
     frequencyTagSelected = Signal(str)
     removeTagsFrequencySelected = Signal(tuple)
     clickedSaveDatabase = Signal()
@@ -528,16 +528,14 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         self.lineEdit_edit_favourites.returnPressed.connect(self.edit_favourites)
 
         # Replace
-        self.replace_lines: list[QWidget] = []
+        self.replace_lines: list[CustomWidgets.DatabaseTagsLogicWidget] = []
         base_replace_layout = QVBoxLayout()
-        add_replace_line_button = QPushButton("Add replace line")
-        remove_replace_line_button = QPushButton("Remove last replace lines")
+        add_replace_line_button = QPushButton("Add Tags Logic")
         add_replace_line_button.clicked.connect(self.create_replace_line)
-        remove_replace_line_button.clicked.connect(self.remove_last_replace_line)
         base_replace_layout.addWidget(add_replace_line_button)
-        base_replace_layout.addWidget(remove_replace_line_button)
         self.scrollAreaWidgetContents.setLayout(base_replace_layout)
-        self.pushButton_replace.clicked.connect(self.replace_tags)
+        self.init_tags_logic()
+
 
         # Tags Frequency
         self.pushButton_refresh_tags_frequency.clicked.connect(self.refresh_tags_frequency)
@@ -583,46 +581,41 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
             parameters.log.info("No tags were selected")
             return False
         self.removeTagsFrequencySelected.emit((tags_to_remove, self.comboBox_batch_selection_frequency.currentText()))
+
+    def init_tags_logic(self):
+        while len(self.replace_lines)>0:
+            x = self.replace_lines.pop(-1)
+            self.scrollAreaWidgetContents.layout().removeWidget(x)
+            x.hide()
+            x.destroy()
+        if self.db.settings.tags_logics:
+            for tags_logic in self.db.settings.tags_logics:
+                self.create_replace_line(tags_logic)
+
+
     @Slot()
-    def create_replace_line(self):
-        one_widget = QWidget()
-        h_layout = QHBoxLayout()
-        first_line_edit = QLineEdit()
-        first_line_edit.setCompleter(completer)
-        h_layout.addWidget(first_line_edit)
-        h_layout.addWidget(QLabel("->"))
-        second_line_edit = QLineEdit()
-        first_line_edit.setCompleter(completer)
-        h_layout.addWidget(second_line_edit)
-        one_widget.setLayout(h_layout)
+    def create_replace_line(self, tags_logic: TagsLogic=None):
+        if tags_logic:
+            one_widget = CustomWidgets.DatabaseTagsLogicWidget(tags_logic.conditions, tags_logic.added, index=len(self.replace_lines), completer=completer, keep_conditions=tags_logic.keep_conditions)
+        else:
+            one_widget = CustomWidgets.DatabaseTagsLogicWidget("", "",index=len(self.replace_lines), completer=completer)
+            self.db.settings.add_tags_logic([], [], False)
+        one_widget.changedState.connect(lambda x: self.db.settings.tags_logics[x[0]].load(x[1]))
+        one_widget.changedState.connect(lambda: self.changedDatabaseSettings.emit())
+        one_widget.deleted.connect(self.remove_replace_line)
         self.replace_lines.append(one_widget)
         self.scrollAreaWidgetContents.layout().insertWidget(0, one_widget)
 
-    @Slot()
-    def remove_last_replace_line(self):
-        if len(self.replace_lines) < 1:
-            parameters.log.info("No replace line to remove")
-            return False
-        x = self.replace_lines.pop(-1)
+    @Slot(int)
+    def remove_replace_line(self, index: int):
+        x = self.replace_lines.pop(index)
+        self.db.settings.remove_tags_logic(index)
         self.scrollAreaWidgetContents.layout().removeWidget(x)
         x.hide()
         x.destroy()
-
-    @Slot()
-    def replace_tags(self):
-        if len(self.replace_lines) < 1:
-            parameters.log.info("No replacement line created")
-            return False
-        result = defaultdict(lambda: {"from_tags":[], "to_tags":[]})
-        for index, line in enumerate(self.replace_lines):
-            from_tags = [tag.strip() for tag in line.layout().itemAt(0).widget().text().split(',') if tag != ""]
-            to_tags = [tag.strip() for tag in line.layout().itemAt(2).widget().text().split(',') if tag != ""]
-            if not from_tags and not to_tags:
-                parameters.log.info("Blank replace line")
-                continue
-            result[index]["from_tags"] = from_tags
-            result[index]["to_tags"] = to_tags
-        self.clickedReplace.emit((result, self.comboBox_selection.currentText()))
+        for i in range(index, len(self.replace_lines)):
+            self.replace_lines[i].change_index(i)
+        self.changedDatabaseSettings.emit()
 
     def init_favourites(self):
         favourites = TagsList(tags=files.get_favourites(), name="Favourites")
@@ -744,45 +737,56 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
 
     class BatchFunctions:
         update_image_frames_func_names = ["flip_horizontally"]
-        def apply_filter(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def apply_filter(db: Database, image_indexes: list[int]):
             if len(image_indexes) > 0.6*len(db.images):
                 db.filter_all()
             else:
                 for index in image_indexes:
                     db.images[index].filter()
 
-        def apply_sentence_filter(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def apply_sentence_filter(db: Database, image_indexes: list[int]):
             if len(image_indexes) > 0.6*len(db.images):
                 db.filter_sentence_all()
             else:
                 for index in image_indexes:
                     db.images[index].filter_sentence()
 
-        def auto_tag(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def auto_tag(db: Database, image_indexes: list[int]):
             db.re_call_models(image_indexes, tag_images=True)
 
-        def auto_tag_characters(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def auto_tag_characters(db: Database, image_indexes: list[int]):
             db.call_models([db.images[index].path for index in image_indexes], tag_only_character=True)
 
-        def auto_score(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def auto_score(db: Database, image_indexes: list[int]):
             db.re_call_models(image_indexes, score_images=True)
 
-        def auto_classify(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def auto_classify(db: Database, image_indexes: list[int]):
             db.call_models([db.images[index].path for index in image_indexes], classify_images=True)
 
-        def cleanup_rejected_manual(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def cleanup_rejected_manual(db: Database, image_indexes: list[int]):
             db.cleanup_images_rejected_tags(image_indexes)
 
-        def refresh_unsafe_tags(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def refresh_unsafe_tags(db: Database, image_indexes: list[int]):
             db.refresh_unsafe_tags(image_indexes)
 
-        def reset_manual_score(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def reset_manual_score(db: Database, image_indexes: list[int]):
             db.reset_scores(image_indexes)
 
-        def purge_manual(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def purge_manual(db: Database, image_indexes: list[int]):
             db.purge_manual_tags(image_indexes)
 
-        def open_default_program(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def open_default_program(db: Database, image_indexes: list[int]):
             if len(image_indexes) > 1:
                 if not CustomWidgets.confirmation_dialog(None,
                                                          f"You selected {len(image_indexes)} images to open.\nAre you sure you want to open them ?\n\nTip: This button is affected by the 'apply to:' setting at the top right of the window."):
@@ -796,7 +800,8 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
                 else:
                     os.startfile(image_path)
 
-        def flip_horizontally(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def flip_horizontally(db: Database, image_indexes: list[int]):
             if len(image_indexes) > 1:
                 if not CustomWidgets.confirmation_dialog(None,
                                                          f"You selected {len(image_indexes)} images to be flipped horizontally.\nAre you sure you want to flip them ?\n\nTip: This button is affected by the 'apply to:' setting at the top right of the window."):
@@ -822,8 +827,8 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
             db.update_image_objects(min(parameters.PARAMETERS["image_load_size"], 512), image_indexes)
             return [image_index for image_index in image_indexes if image_index not in error_path]
 
-    
-        def discard_images(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def discard_images(db: Database, image_indexes: list[int]):
             # todo: add a button to return temp_discarded images
             if len(image_indexes) > 1:
                 if not CustomWidgets.confirmation_dialog(None, f"You selected {len(image_indexes)} images to discard.\nAre you sure you want to discard them ?\n\nTip: This button is affected by the 'apply to:' setting at the top right of the window."):
@@ -833,7 +838,8 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
                 db.folder, "TEMP_DISCARDED"
             )
 
-        def export_images(self, db: Database, image_indexes: list[int]):
+        @staticmethod
+        def export_images(db: Database, image_indexes: list[int]):
             export_path_dialog = InputDialog()
             export_path_dialog.setWindowTitle(f"Input path to export {len(image_indexes)} images")
             export_path_dialog.setToolTip("This is the folder where the images will be put.")
@@ -1704,7 +1710,7 @@ class DatabaseViewBase(QWidget):
         self.tags_view.askForRareTags.connect(self.get_rare_tags)
 
         # Replace Button
-        self.database_tools.clickedReplace.connect(self.clicked_replace)
+        self.database_tools.changedDatabaseSettings.connect(self.changed_database_settings)
 
         # Frequency
         self.database_tools.frequencyTagSelected.connect(self.frequency_tag_clicked)
@@ -1785,7 +1791,7 @@ class DatabaseViewBase(QWidget):
         if not selected_indexes:
             parameters.log.info("No valid images selected for batch button")
             return False
-        result = inherent[0](None, self.db, selected_indexes)
+        result = inherent[0](self.db, selected_indexes)
 
         # Update the image frames if a function updates it
         if result:
@@ -1840,33 +1846,10 @@ class DatabaseViewBase(QWidget):
         self.tags_view.clicked_favourites(tag)
 
     @Slot()
-    def clicked_replace(self, replace_info):
-        selected_indexes = self.get_selected_indexes(replace_info[1])
-        if not selected_indexes:
-            parameters.log.info("No valid images selected for batch button")
-            return False
-        for image_index in selected_indexes:
-            for replace_tags in replace_info[0].values():
-                from_tags: list[str] = replace_tags["from_tags"]
-                to_tags: list[str] = replace_tags["to_tags"]
-                if not from_tags: # add all to tags
-                    self.db.images[image_index].append_manual_tags(to_tags)
-                    self.db.images[image_index].remove_rejected_manual_tags(to_tags)
-
-                elif not to_tags: # remove all from tags
-                    self.db.images[image_index].remove_manual_tags(from_tags)
-                    self.db.images[image_index].append_rejected_manual_tags(from_tags)
-
-                elif all(tag in self.db.images[image_index].full_tags for tag in from_tags): # remove from tags and add to tags
-                    self.db.images[image_index].append_manual_tags(to_tags)
-                    self.db.images[image_index].remove_rejected_manual_tags(to_tags)
-
-                    self.db.images[image_index].remove_manual_tags(from_tags)
-                    self.db.images[image_index].append_rejected_manual_tags(from_tags)
-
-        # todo: better history name
-        self.add_db_to_history("Replace "+str(replace_info[0])+"on "+replace_info[1])
-        self.database_changed(selected_indexes)
+    def changed_database_settings(self):
+        if isinstance(self.tags_view.image, ImageDatabase):
+            self.tags_view.view_image(self.tags_view.image)
+        self.add_db_to_history("Changed Database Settings")
 
     @Slot()
     def frequency_tag_clicked(self, tag):
@@ -1973,6 +1956,7 @@ class DatabaseViewBase(QWidget):
             self.image_view.db = self.db
             self.database_tools.db = self.db
             self.currently_selected_database = 0
+            self.database_tools.init_tags_logic()
             self.selected_images_changed(self.selected_images, history=True)
             return
         self.db = copy.deepcopy(self.db_on_load)
@@ -1980,6 +1964,7 @@ class DatabaseViewBase(QWidget):
         self.database_tools.db = self.db
         self.db.apply_changes(self.db_history[history_index-1][0])
         self.currently_selected_database = history_index
+        self.database_tools.init_tags_logic()
         self.selected_images_changed(self.selected_images, history=True)
 
     def keyReleaseEvent(self, event):

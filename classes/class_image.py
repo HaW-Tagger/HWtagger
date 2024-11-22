@@ -546,7 +546,7 @@ class ImageDatabase:
 
         # updating the tags using the settings, database first then groups
         if self.database_settings:
-            to_remove, to_add = self.database_settings.apply_all_tags_logics(self.full_tags)
+            to_remove, to_add = self.database_settings.apply_all_tags_logics(self.get_search_tags())
             if to_remove:
                 self.filtered_rejected_tags += to_remove
                 self.filtered_new_tags -= to_remove
@@ -560,7 +560,7 @@ class ImageDatabase:
         if self.groups:
             for group in self.groups:
                 if group.settings:
-                    to_remove, to_add = group.settings.apply_all_tags_logics(self.full_tags)
+                    to_remove, to_add = group.settings.apply_all_tags_logics(self.get_search_tags())
                     if to_remove:
                         self.filtered_rejected_tags += to_remove
                         self.filtered_new_tags -= to_remove

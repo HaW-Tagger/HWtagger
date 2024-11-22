@@ -1,3 +1,4 @@
+from resources import parameters
 from tools import files
 
 
@@ -63,9 +64,14 @@ class TagsLogic:
                 validated = True
                 if not self.keep_conditions:
                     # Remove the tags, we need to check for every tag that could be a problem (asterisk plus conditions)
-                    for tag in tags_list:
-                        if files.loose_tags_check(condition, [tag]):
-                            to_remove.add(tag)
+                    for tag_tuple in condition:
+                        if tag_tuple[1]:
+                            if tag_tuple[2]:
+                                to_remove.add(tag_tuple[2])
+                            else:
+                                for tag in tags_list:
+                                    if files.loose_tags_check([tag_tuple], [tag]):
+                                        to_remove.add(tag)
 
         if validated:
             return to_remove, self.added
@@ -109,10 +115,22 @@ class SettingsDatabase:
                 to_remove = to_remove.union(r)
             if a:
                 to_add = to_add.union(a)
-
         return to_remove, to_add
 
+    def add_tags_logic(self, conditions, added, keep_conditions=False):
+        """
+        Add a new TagsLogic with conditions being a simple list of list of tags/strings or a list of tuples of tags/strings
+        Args:
+            conditions: list of list of tags or strings
+            added: tags to add when the conditions are set
+            keep_conditions: True if you want to keep the conditions
+        """
+        tags_logic = TagsLogic({"conditions": [files.loose_tags_search_settings_from_tags_list(condition) for condition in conditions], "added": added, "keep_conditions": keep_conditions})
+        if tags_logic not in self.tags_logics:
+            self.tags_logics.append(tags_logic)
+        else:
+            parameters.log.info("This tags_logic already exists in the database.")
 
-
-
-
+    def remove_tags_logic(self, index: int):
+        if len(self.tags_logics)>index:
+            self.tags_logics.pop(index)

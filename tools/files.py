@@ -326,7 +326,7 @@ def get_duplicate_string(string_list):
 def loose_tags_check(search_tags, full_tags):
     """return a bool if all search tag is included in the full tags (fuzzy search), search tags: ([tag], positive, exact)"""
     for search_tag in search_tags:
-
+        print(search_tag, full_tags)
         # with asterisks
         if len(search_tag[0]) > 1:
             if search_tag[1]:  # positive
@@ -382,11 +382,11 @@ def loose_tags_check(search_tags, full_tags):
     return True
     # return all(any([t[0] in ft for ft in full_tags]) for t in search_tags if t[1]==True) and all(all([t[0] not in ft for ft in full_tags]) for t in search_tags if t[1]==False)
 
-def loose_tags_search_settings_from_tags_list(search_tags) -> list[tuple[list, bool, bool]]:
+def loose_tags_search_settings_from_tags_list(search_tags) -> list[tuple[str, bool, bool]]:
     temp_search_tags = []
     for tag in search_tags:
         if tag.strip():
-            to_add = ([tag.strip()], True, False)
+            to_add = ([tag.strip()], True, False) #[tag],positive,exact
             if to_add[0][0][0] == "-":  # positive
                 to_add = ([to_add[0][0][1:]], False, to_add[2])
             if to_add[0][0][0] == '"' and to_add[0][0][-1] == '"':  # exact

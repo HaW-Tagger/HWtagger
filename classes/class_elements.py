@@ -834,6 +834,11 @@ class TagElement:
     def __float__(self):
         return self.probability
 
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.tag[key]
+        else:
+            raise KeyError
     def __eq__(self, other):
 
         if isinstance(other, type(self)):
