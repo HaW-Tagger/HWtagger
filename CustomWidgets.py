@@ -62,14 +62,19 @@ def path_input_dialog(parent):
     folder = file_dialog.getExistingDirectory()
     return folder
 
-def file_input_dialog(parent):
+def file_input_dialog(parent, accepted_extensions=None) -> str:
     if parameters.PARAMETERS["default_path"]:
         file_dialog = QFileDialog(parent, directory=parameters.PARAMETERS["default_path"])
     else:
         file_dialog = QFileDialog(parent)
     file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-    folder = file_dialog.getOpenFileName()
-    return folder
+    if accepted_extensions:
+        file_dialog.setNameFilters(accepted_extensions)
+    if file_dialog.exec():
+        filename = file_dialog.selectedFiles()[0]
+        return filename
+    else:
+        return ""
 class OutputWidget(QWidget, outputBase.Ui_Form):
     createTxtFiles = Signal()
     createJsonTagFile = Signal()
@@ -506,7 +511,6 @@ class DatabaseTagsLogicWidget(QWidget):
 
     @Slot()
     def _state_changed(self):
-        print(self._get_tags_logic())
         self.changedState.emit((self.index, self._get_tags_logic()))
 
     @Slot()

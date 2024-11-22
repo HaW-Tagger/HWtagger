@@ -19,6 +19,7 @@ class AvailableTaggers(enum.Enum):
 log = logging.getLogger("rich")
 
 DATABASE_FILE_NAME = "database.json"
+SETTINGS_FILE_NAME = "settings.json"
 
 # NOT TO CHANGE
 IMAGES_EXT = (".png", ".jpeg", ".jpg", ".PNG", ".JPEG", ".JPG")

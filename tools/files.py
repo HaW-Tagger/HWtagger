@@ -29,6 +29,15 @@ def save_database(database: dict, folder):
     with open(os.path.join(folder, parameters.DATABASE_FILE_NAME), 'w') as f:
         json.dump(database, f)
 
+def save_settings(settings: dict, folder):
+    with open(os.path.join(folder, parameters.SETTINGS_FILE_NAME), 'w') as f:
+        json.dump(settings, f)
+
+def load_settings(file):
+    with open(file, 'r') as f:
+        settings = json.load(f)
+    return settings
+
 def check_database_exist(folder):
     # return bool, if database.json exists
     return os.path.exists(os.path.join(folder, parameters.DATABASE_FILE_NAME))
@@ -326,7 +335,6 @@ def get_duplicate_string(string_list):
 def loose_tags_check(search_tags, full_tags):
     """return a bool if all search tag is included in the full tags (fuzzy search), search tags: ([tag], positive, exact)"""
     for search_tag in search_tags:
-        print(search_tag, full_tags)
         # with asterisks
         if len(search_tag[0]) > 1:
             if search_tag[1]:  # positive

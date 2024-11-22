@@ -554,7 +554,8 @@ class TagsList:
             tags = []
         self.tags = []
         for tag in tags:
-            self.tags.append(TagElement(tag))
+            if tag:
+                self.tags.append(TagElement(tag))
         self.name: str = name
         self.token_length: int = 0
 
@@ -569,17 +570,17 @@ class TagsList:
         new = TagsList(name=self.name, tags=self.tags)
 
         if isinstance(other, type(self)):
-            new.tags += [tag for tag in other.tags if tag not in new.tags]
+            new.tags += [tag for tag in other.tags if tag and tag not in new.tags]
         elif isinstance(other, (list, set)):
-            new.tags += [TagElement(tag) for tag in other if TagElement(tag) not in new.tags]
-        elif isinstance(other, TagElement) and other not in new.tags:
+            new.tags += [TagElement(tag) for tag in other if tag and tag not in new.tags]
+        elif isinstance(other, TagElement) and other and other not in new.tags:
             new.tags += [other]
-        elif isinstance(other, str) and other not in new.tags:
+        elif isinstance(other, str) and other and other not in new.tags:
             new.tags += [TagElement(other)]
         elif isinstance(other, TagsLists):
             for other_tag_list in other.tags_lists:
                 if "rejected" not in other_tag_list.name:
-                    new.tags += [tag for tag in other_tag_list if tag not in new.tags]
+                    new.tags += [tag for tag in other_tag_list if tag and tag not in new.tags]
 
         return new
     def __sub__(self, other):

@@ -711,8 +711,9 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
 
     @Slot()
     def open_path_safetensor_button(self):
-        path_tuple = CustomWidgets.file_input_dialog(self)
-        path = path_tuple[0] # path tuple stores the file name and the selected option
+        path = CustomWidgets.file_input_dialog(self)
+        if not path:
+            return False
         self.lineEdit_safetensor_path.setText(path)
 
     def inspect_safetensor(self):

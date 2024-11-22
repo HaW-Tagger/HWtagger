@@ -1645,3 +1645,6 @@ class Database(VirtualDatabase):
                         if not export_database.images[export_index].external_tags and to_export_image.external_tags:
                             export_database.images[export_index].original_md5 = to_export_image.original_md5
         export_database.save_database()
+
+    def export_settings(self):
+        files.save_settings(self.settings.save(), self.folder)

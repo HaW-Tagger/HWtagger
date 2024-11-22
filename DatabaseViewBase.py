@@ -527,7 +527,7 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         self.treeView_favourites.clicked.connect(self.clicked_favourites)
         self.lineEdit_edit_favourites.returnPressed.connect(self.edit_favourites)
 
-        # Replace
+        # Tags Logic
         self.replace_lines: list[CustomWidgets.DatabaseTagsLogicWidget] = []
         base_replace_layout = QVBoxLayout()
         add_replace_line_button = QPushButton("Add Tags Logic")
@@ -535,6 +535,8 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         base_replace_layout.addWidget(add_replace_line_button)
         self.scrollAreaWidgetContents.setLayout(base_replace_layout)
         self.init_tags_logic()
+        self.pushButton_export_settings.clicked.connect(self.export_settings)
+        self.pushButton_import_settings.clicked.connect(self.import_settings)
 
 
         # Tags Frequency
@@ -616,6 +618,19 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         for i in range(index, len(self.replace_lines)):
             self.replace_lines[i].change_index(i)
         self.changedDatabaseSettings.emit()
+
+    @Slot()
+    def export_settings(self):
+        self.db.export_settings()
+
+    @Slot()
+    def import_settings(self):
+        accepted_file = CustomWidgets.file_input_dialog(self, ["JSON Files (*.json)"])
+        if not accepted_file:
+            return False
+        self.db.settings.load(files.load_settings(accepted_file))
+        self.changedDatabaseSettings.emit()
+        self.init_tags_logic()
 
     def init_favourites(self):
         favourites = TagsList(tags=files.get_favourites(), name="Favourites")

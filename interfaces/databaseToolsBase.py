@@ -16,10 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplication, QComboBox,
-    QFrame, QGridLayout, QGroupBox, QHeaderView,
-    QLabel, QLineEdit, QListView, QPushButton,
-    QScrollArea, QSizePolicy, QSpacerItem, QTabWidget,
-    QTreeView, QVBoxLayout, QWidget)
+    QFrame, QGridLayout, QGroupBox, QHBoxLayout,
+    QHeaderView, QLabel, QLineEdit, QListView,
+    QPushButton, QScrollArea, QSizePolicy, QSpacerItem,
+    QTabWidget, QTreeView, QVBoxLayout, QWidget)
 
 from CustomWidgets import OutputWidget
 
@@ -157,17 +157,35 @@ class Ui_Form(object):
         self.tab_4 = QWidget()
         self.tab_4.setObjectName(u"tab_4")
         self.verticalLayout_4 = QVBoxLayout(self.tab_4)
+        self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.scrollArea = QScrollArea(self.tab_4)
         self.scrollArea.setObjectName(u"scrollArea")
         self.scrollArea.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 388, 721))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 406, 713))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_4.addWidget(self.scrollArea)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.pushButton_import_settings = QPushButton(self.tab_4)
+        self.pushButton_import_settings.setObjectName(u"pushButton_import_settings")
+
+        self.horizontalLayout.addWidget(self.pushButton_import_settings)
+
+        self.pushButton_export_settings = QPushButton(self.tab_4)
+        self.pushButton_export_settings.setObjectName(u"pushButton_export_settings")
+
+        self.horizontalLayout.addWidget(self.pushButton_export_settings)
+
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout)
 
         self.tabWidget.addTab(self.tab_4, "")
         self.tabWidgetPage2 = QWidget()
@@ -265,7 +283,7 @@ class Ui_Form(object):
         self.scrollArea_history.setWidgetResizable(True)
         self.scrollAreaWidgetContents_history = QWidget()
         self.scrollAreaWidgetContents_history.setObjectName(u"scrollAreaWidgetContents_history")
-        self.scrollAreaWidgetContents_history.setGeometry(QRect(0, 0, 98, 28))
+        self.scrollAreaWidgetContents_history.setGeometry(QRect(0, 0, 388, 691))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents_history)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.scrollArea_history.setWidget(self.scrollAreaWidgetContents_history)
@@ -358,6 +376,8 @@ class Ui_Form(object):
 #if QT_CONFIG(tooltip)
         self.scrollArea.setToolTip(QCoreApplication.translate("Form", u"Add a new line to set up a tag replacement rule (not saved by the database)", None))
 #endif // QT_CONFIG(tooltip)
+        self.pushButton_import_settings.setText(QCoreApplication.translate("Form", u"Import", None))
+        self.pushButton_export_settings.setText(QCoreApplication.translate("Form", u"Export", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("Form", u"Database Settings", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage2), QCoreApplication.translate("Form", u"Output", None))
 #if QT_CONFIG(tooltip)
