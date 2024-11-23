@@ -473,6 +473,7 @@ class DatabaseTagsLogicWidget(QWidget):
         if conditions:
             first_line_text = []
             for condition in conditions:
+                current_condition = []
                 for tag_tuple in condition:
                     tag=""
                     if not tag_tuple[1]:
@@ -485,8 +486,9 @@ class DatabaseTagsLogicWidget(QWidget):
                         tag += tag_tuple[0][0]
                     if tag_tuple[2]:
                         tag+='"'
-                    first_line_text.append(tag)
-            self.first_line_edit.setText(", ".join(first_line_text))
+                    current_condition.append(tag)
+                first_line_text.append(", ".join(current_condition))
+            self.first_line_edit.setText(parameters.PARAMETERS["separator_for_tags_logics_conditions"].join(first_line_text))
 
         self.first_line_edit.editingFinished.connect(self._state_changed)
         self.second_line_edit.editingFinished.connect(self._state_changed)
@@ -494,8 +496,7 @@ class DatabaseTagsLogicWidget(QWidget):
         self.delete_button.clicked.connect(self._delete_clicked)
 
     def _get_conditions(self):
-        #todo: make a way to have multiple conditions, like using []
-        return [files.loose_tags_search_settings_from_tags_list([tag.strip() for tag in self.first_line_edit.text().split(",")])]
+        return [files.loose_tags_search_settings_from_tags_list([tag for tag in tags.split(",")]) for tags in self.first_line_edit.text().split(parameters.PARAMETERS["separator_for_tags_logics_conditions"])]
 
     def _get_keep_conditions(self):
         return self.keep_conditions_check.isChecked()

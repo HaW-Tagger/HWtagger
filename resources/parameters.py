@@ -45,7 +45,8 @@ default_parameters['Interface'] = {
     'view_load_images': True,
     'view_placeholder_default_path': "resources/images/default.jpg",
     'doubling_image_thumbnail_max_size': False,
-    'danbooru_tag_wiki_lookup': True
+    'danbooru_tag_wiki_lookup': True,
+    'separator_for_tags_logics_conditions': "--"
 }
 default_parameters['Taggers'] = {
     'automatic_tagger': [AvailableTaggers.SWINV2V3, AvailableTaggers.CAFORMER],

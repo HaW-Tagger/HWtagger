@@ -390,7 +390,7 @@ def loose_tags_check(search_tags, full_tags):
     return True
     # return all(any([t[0] in ft for ft in full_tags]) for t in search_tags if t[1]==True) and all(all([t[0] not in ft for ft in full_tags]) for t in search_tags if t[1]==False)
 
-def loose_tags_search_settings_from_tags_list(search_tags) -> list[tuple[str, bool, bool]]:
+def loose_tags_search_settings_from_tags_list(search_tags: list[str]) -> list[tuple[[str], bool, bool]]:
     temp_search_tags = []
     for tag in search_tags:
         if tag.strip():
