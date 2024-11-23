@@ -508,6 +508,8 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         self.pushButton_refresh_tags_from_gelbooru_and_rule34.clicked.connect(lambda: self.clickedBatchFunction.emit((self.BatchFunctions.refresh_unsafe_tags, self.comboBox_selection.currentText())))
         self.pushButton_reset_manual_score.clicked.connect(lambda: self.clickedBatchFunction.emit((self.BatchFunctions.reset_manual_score, self.comboBox_selection.currentText())))
         self.pushButton_purge_manual.clicked.connect(lambda: self.clickedBatchFunction.emit((self.BatchFunctions.purge_manual, self.comboBox_selection.currentText())))
+        self.pushButton_remove_specific_source.clicked.connect(lambda: self.clickedBatchFunction.emit((self.BatchFunctions.remove_specific_source, self.comboBox_selection.currentText())))
+        self.pushButton_resolve_manual_tags.clicked.connect(lambda: self.clickedBatchFunction.emit((self.BatchFunctions.resolve_manual_tags, self.comboBox_selection.currentText())))
 
         # Other Batches
         self.pushButton_export_images.clicked.connect(lambda: self.clickedBatchFunction.emit((self.BatchFunctions.export_images, self.comboBox_selection.currentText())))
@@ -799,6 +801,31 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         @staticmethod
         def purge_manual(db: Database, image_indexes: list[int]):
             db.purge_manual_tags(image_indexes)
+
+        @staticmethod
+        def remove_specific_source(db: Database, image_indexes: list[int]):
+            available_sources = db.available_sources(image_indexes)
+            source_name_dialog = InputDialog()
+            source_name_dialog.setWindowTitle("Source name")
+            source_name_dialog.setToolTip(
+                f"Remove a source from {len(image_indexes)} images.\nAvailable source names are: {', '.join(available_sources)}")
+            if source_name_dialog.exec() == QDialog.DialogCode.Accepted:
+                source_input = source_name_dialog.input_field.text().strip()
+            else:
+                parameters.log.warning("No specified source")
+                return False
+            if source_input not in available_sources:
+                parameters.log.warning("Wrong source name")
+                return False
+            db.remove_source(source_input, image_indexes)
+
+        @staticmethod
+        def resolve_manual_tags(db: Database, image_indexes: list[int]):
+            if len(image_indexes) > 1:
+                if not CustomWidgets.confirmation_dialog(None,
+                                                         f"You selected {len(image_indexes)} images to resolve the manual tags.\nThis will remove all added manual tags that are also in the rejected manual tags.\n\nTip: This button is affected by the 'apply to:' setting at the top right of the window."):
+                    return False
+            db.resolve_manual_tags(image_indexes)
 
         @staticmethod
         def open_default_program(db: Database, image_indexes: list[int]):

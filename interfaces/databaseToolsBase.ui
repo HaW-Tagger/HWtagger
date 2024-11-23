@@ -71,23 +71,10 @@
        <string>Batch Operations</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="9" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_cleanup_rejected_manual_tags">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Can always be used without causing issues, should be used when you want to remove rejected manual tags that are useless.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
+       <item row="25" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_flip_horizontally">
          <property name="text">
-          <string>Cleanup Rejected manual tags</string>
-         </property>
-        </widget>
-       </item>
-       <item row="21" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_discard_image">
-         <property name="toolTip">
-          <string>discard the selected images by moving it to the discarded folder</string>
-         </property>
-         <property name="text">
-          <string>Discard Images</string>
+          <string>Flip Horizontally</string>
          </property>
         </widget>
        </item>
@@ -101,13 +88,6 @@
          </property>
         </widget>
        </item>
-       <item row="23" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_flip_horizontally">
-         <property name="text">
-          <string>Flip Horizontally</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -115,54 +95,17 @@
          </property>
         </widget>
        </item>
-       <item row="22" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_open_in_default_program">
+       <item row="9" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_cleanup_rejected_manual_tags">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;open the images in the default program or the specified program in the settings&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Can always be used without causing issues, should be used when you want to remove rejected manual tags that are useless.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Open in default program</string>
+          <string>Cleanup Rejected manual tags</string>
          </property>
         </widget>
        </item>
-       <item row="12" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_refresh_tags_from_gelbooru_and_rule34">
-         <property name="text">
-          <string>Refresh Tags from rule34 and gelbooru</string>
-         </property>
-        </widget>
-       </item>
-       <item row="20" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_export_images">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will export the selection (check the apply to section above) to a new directory.&lt;br/&gt;&lt;br/&gt;A pop up will show up and ask for a directory and a group name&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database doesn't exist in the output location, then a new database is created with the same tags.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database exists, then the images are exported, and the tags are automatically added to the previously exisiting database under the entered group name.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Export Images</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_only_tag_characters">
-         <property name="toolTip">
-          <string>Use the Swinv2-3 tagger and only extract identified characters</string>
-         </property>
-         <property name="text">
-          <string>Only auto-tag characters</string>
-         </property>
-        </widget>
-       </item>
-       <item row="17" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_purge_manual">
-         <property name="toolTip">
-          <string>remove all manually edited tags and reviewed conflicts</string>
-         </property>
-         <property name="text">
-          <string>Purge Manual</string>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="0" colspan="2">
+       <item row="16" column="0" colspan="2">
         <widget class="QPushButton" name="pushButton_reset_manual_score">
          <property name="toolTip">
           <string>reset all scores that were changed, and if the threshold are changed, will change the scores, without needing to restart the scorer</string>
@@ -172,52 +115,30 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_apply_replacement_to_sentence">
-         <property name="toolTip">
-          <string>Currently doesn't do anything, will be implemented later</string>
-         </property>
-         <property name="text">
-          <string>Apply Replacement to Sentence</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_auto_tag">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>use an auto tagger for tagging the image using your preferred tagging method</string>
-         </property>
-         <property name="text">
-          <string>Auto-tagger</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButton_auto_score">
-         <property name="toolTip">
-          <string>use an auto scorer for scoring the image using your preferred scoring method</string>
-         </property>
-         <property name="text">
-          <string>Auto-aesthetic scorer</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
         <widget class="QComboBox" name="comboBox_selection">
          <property name="toolTip">
           <string>Apply to most of the buttons below</string>
+         </property>
+        </widget>
+       </item>
+       <item row="23" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_discard_image">
+         <property name="toolTip">
+          <string>discard the selected images by moving it to the discarded folder</string>
+         </property>
+         <property name="text">
+          <string>Discard Images</string>
+         </property>
+        </widget>
+       </item>
+       <item row="22" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_export_images">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will export the selection (check the apply to section above) to a new directory.&lt;br/&gt;&lt;br/&gt;A pop up will show up and ask for a directory and a group name&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database doesn't exist in the output location, then a new database is created with the same tags.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;If a database exists, then the images are exported, and the tags are automatically added to the previously exisiting database under the entered group name.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Export Images</string>
          </property>
         </widget>
        </item>
@@ -243,14 +164,29 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="5" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_auto_tag">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>use an auto tagger for tagging the image using your preferred tagging method</string>
+         </property>
+         <property name="text">
+          <string>Auto-tagger</string>
          </property>
         </widget>
        </item>
-       <item row="24" column="0" colspan="2">
+       <item row="26" column="0" colspan="2">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -262,6 +198,84 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="15" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_remove_specific_source">
+         <property name="text">
+          <string>Remove Specific Source</string>
+         </property>
+        </widget>
+       </item>
+       <item row="19" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_purge_manual">
+         <property name="toolTip">
+          <string>remove all manually edited tags and reviewed conflicts</string>
+         </property>
+         <property name="text">
+          <string>Purge Manual</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_only_tag_characters">
+         <property name="toolTip">
+          <string>Use the Swinv2-3 tagger and only extract identified characters</string>
+         </property>
+         <property name="text">
+          <string>Only auto-tag characters</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_apply_replacement_to_sentence">
+         <property name="toolTip">
+          <string>Currently doesn't do anything, will be implemented later</string>
+         </property>
+         <property name="text">
+          <string>Apply Replacement to Sentence</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_auto_score">
+         <property name="toolTip">
+          <string>use an auto scorer for scoring the image using your preferred scoring method</string>
+         </property>
+         <property name="text">
+          <string>Auto-aesthetic scorer</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_refresh_tags_from_gelbooru_and_rule34">
+         <property name="text">
+          <string>Refresh Tags from rule34 and gelbooru</string>
+         </property>
+        </widget>
+       </item>
+       <item row="24" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_open_in_default_program">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;open the images in the default program or the specified program in the settings&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Open in default program</string>
+         </property>
+        </widget>
+       </item>
+       <item row="17" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_resolve_manual_tags">
+         <property name="text">
+          <string>Resolve manual tags</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -301,8 +315,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>406</width>
-            <height>713</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
          </widget>
@@ -483,8 +497,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>388</width>
-            <height>691</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2"/>

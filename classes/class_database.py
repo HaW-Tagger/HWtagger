@@ -968,6 +968,35 @@ class VirtualDatabase:
         for image in self.images:
             image.database_settings = self.settings
 
+    def available_sources(self, images_indexes: list[int]=None) -> set[str]:
+        """
+        Returns: a list of strings that are all available sources for a tag (outside the filter)
+        """
+        if not images_indexes:
+            images_indexes = self.get_all_image_indices()
+        available_sources = set()
+        for index in images_indexes:
+            available_sources = available_sources.union(self.images[index].get_sources())
+        return available_sources
+
+    def remove_source(self, source_name: str, images_indexes: list[int]=None):
+        """
+        Remove a source name from auto_tags or external_tags
+        """
+        if not images_indexes:
+            images_indexes = self.get_all_image_indices()
+        for index in images_indexes:
+            self.images[index].remove_source(source_name)
+
+    def resolve_manual_tags(self, source_name: str, images_indexes: list[int]=None):
+        """
+        Remove all manual_tags that are also in rejected_manual_tags
+        """
+        if not images_indexes:
+            images_indexes = self.get_all_image_indices()
+        for index in images_indexes:
+            self.images[index].resolve_manual_tags()
+
 class Database(VirtualDatabase):
     def __init__(self, folder):
         super().__init__()

@@ -56,83 +56,45 @@ class Ui_Form(object):
         self.tabWidgetPage1.setObjectName(u"tabWidgetPage1")
         self.gridLayout_2 = QGridLayout(self.tabWidgetPage1)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.pushButton_cleanup_rejected_manual_tags = QPushButton(self.tabWidgetPage1)
-        self.pushButton_cleanup_rejected_manual_tags.setObjectName(u"pushButton_cleanup_rejected_manual_tags")
+        self.pushButton_flip_horizontally = QPushButton(self.tabWidgetPage1)
+        self.pushButton_flip_horizontally.setObjectName(u"pushButton_flip_horizontally")
 
-        self.gridLayout_2.addWidget(self.pushButton_cleanup_rejected_manual_tags, 9, 0, 1, 2)
-
-        self.pushButton_discard_image = QPushButton(self.tabWidgetPage1)
-        self.pushButton_discard_image.setObjectName(u"pushButton_discard_image")
-
-        self.gridLayout_2.addWidget(self.pushButton_discard_image, 21, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.pushButton_flip_horizontally, 25, 0, 1, 2)
 
         self.pushButton_auto_classify = QPushButton(self.tabWidgetPage1)
         self.pushButton_auto_classify.setObjectName(u"pushButton_auto_classify")
 
         self.gridLayout_2.addWidget(self.pushButton_auto_classify, 8, 0, 1, 2)
 
-        self.pushButton_flip_horizontally = QPushButton(self.tabWidgetPage1)
-        self.pushButton_flip_horizontally.setObjectName(u"pushButton_flip_horizontally")
-
-        self.gridLayout_2.addWidget(self.pushButton_flip_horizontally, 23, 0, 1, 2)
-
         self.label = QLabel(self.tabWidgetPage1)
         self.label.setObjectName(u"label")
 
         self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
 
-        self.pushButton_open_in_default_program = QPushButton(self.tabWidgetPage1)
-        self.pushButton_open_in_default_program.setObjectName(u"pushButton_open_in_default_program")
+        self.pushButton_cleanup_rejected_manual_tags = QPushButton(self.tabWidgetPage1)
+        self.pushButton_cleanup_rejected_manual_tags.setObjectName(u"pushButton_cleanup_rejected_manual_tags")
 
-        self.gridLayout_2.addWidget(self.pushButton_open_in_default_program, 22, 0, 1, 2)
-
-        self.pushButton_refresh_tags_from_gelbooru_and_rule34 = QPushButton(self.tabWidgetPage1)
-        self.pushButton_refresh_tags_from_gelbooru_and_rule34.setObjectName(u"pushButton_refresh_tags_from_gelbooru_and_rule34")
-
-        self.gridLayout_2.addWidget(self.pushButton_refresh_tags_from_gelbooru_and_rule34, 12, 0, 1, 2)
-
-        self.pushButton_export_images = QPushButton(self.tabWidgetPage1)
-        self.pushButton_export_images.setObjectName(u"pushButton_export_images")
-
-        self.gridLayout_2.addWidget(self.pushButton_export_images, 20, 0, 1, 2)
-
-        self.pushButton_only_tag_characters = QPushButton(self.tabWidgetPage1)
-        self.pushButton_only_tag_characters.setObjectName(u"pushButton_only_tag_characters")
-
-        self.gridLayout_2.addWidget(self.pushButton_only_tag_characters, 6, 0, 1, 2)
-
-        self.pushButton_purge_manual = QPushButton(self.tabWidgetPage1)
-        self.pushButton_purge_manual.setObjectName(u"pushButton_purge_manual")
-
-        self.gridLayout_2.addWidget(self.pushButton_purge_manual, 17, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.pushButton_cleanup_rejected_manual_tags, 9, 0, 1, 2)
 
         self.pushButton_reset_manual_score = QPushButton(self.tabWidgetPage1)
         self.pushButton_reset_manual_score.setObjectName(u"pushButton_reset_manual_score")
 
-        self.gridLayout_2.addWidget(self.pushButton_reset_manual_score, 15, 0, 1, 2)
-
-        self.pushButton_apply_replacement_to_sentence = QPushButton(self.tabWidgetPage1)
-        self.pushButton_apply_replacement_to_sentence.setObjectName(u"pushButton_apply_replacement_to_sentence")
-
-        self.gridLayout_2.addWidget(self.pushButton_apply_replacement_to_sentence, 4, 0, 1, 2)
-
-        self.pushButton_auto_tag = QPushButton(self.tabWidgetPage1)
-        self.pushButton_auto_tag.setObjectName(u"pushButton_auto_tag")
-        sizePolicy.setHeightForWidth(self.pushButton_auto_tag.sizePolicy().hasHeightForWidth())
-        self.pushButton_auto_tag.setSizePolicy(sizePolicy)
-        self.pushButton_auto_tag.setMinimumSize(QSize(50, 0))
-
-        self.gridLayout_2.addWidget(self.pushButton_auto_tag, 5, 0, 1, 2)
-
-        self.pushButton_auto_score = QPushButton(self.tabWidgetPage1)
-        self.pushButton_auto_score.setObjectName(u"pushButton_auto_score")
-
-        self.gridLayout_2.addWidget(self.pushButton_auto_score, 7, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.pushButton_reset_manual_score, 16, 0, 1, 2)
 
         self.comboBox_selection = QComboBox(self.tabWidgetPage1)
         self.comboBox_selection.setObjectName(u"comboBox_selection")
 
         self.gridLayout_2.addWidget(self.comboBox_selection, 0, 1, 1, 1)
+
+        self.pushButton_discard_image = QPushButton(self.tabWidgetPage1)
+        self.pushButton_discard_image.setObjectName(u"pushButton_discard_image")
+
+        self.gridLayout_2.addWidget(self.pushButton_discard_image, 23, 0, 1, 2)
+
+        self.pushButton_export_images = QPushButton(self.tabWidgetPage1)
+        self.pushButton_export_images.setObjectName(u"pushButton_export_images")
+
+        self.gridLayout_2.addWidget(self.pushButton_export_images, 22, 0, 1, 2)
 
         self.pushButton_apply_filtering = QPushButton(self.tabWidgetPage1)
         self.pushButton_apply_filtering.setObjectName(u"pushButton_apply_filtering")
@@ -142,6 +104,33 @@ class Ui_Form(object):
 
         self.gridLayout_2.addWidget(self.pushButton_apply_filtering, 3, 0, 1, 2)
 
+        self.pushButton_auto_tag = QPushButton(self.tabWidgetPage1)
+        self.pushButton_auto_tag.setObjectName(u"pushButton_auto_tag")
+        sizePolicy.setHeightForWidth(self.pushButton_auto_tag.sizePolicy().hasHeightForWidth())
+        self.pushButton_auto_tag.setSizePolicy(sizePolicy)
+        self.pushButton_auto_tag.setMinimumSize(QSize(50, 0))
+
+        self.gridLayout_2.addWidget(self.pushButton_auto_tag, 5, 0, 1, 2)
+
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout_2.addItem(self.verticalSpacer_3, 26, 0, 1, 2)
+
+        self.pushButton_remove_specific_source = QPushButton(self.tabWidgetPage1)
+        self.pushButton_remove_specific_source.setObjectName(u"pushButton_remove_specific_source")
+
+        self.gridLayout_2.addWidget(self.pushButton_remove_specific_source, 15, 0, 1, 2)
+
+        self.pushButton_purge_manual = QPushButton(self.tabWidgetPage1)
+        self.pushButton_purge_manual.setObjectName(u"pushButton_purge_manual")
+
+        self.gridLayout_2.addWidget(self.pushButton_purge_manual, 19, 0, 1, 2)
+
+        self.pushButton_only_tag_characters = QPushButton(self.tabWidgetPage1)
+        self.pushButton_only_tag_characters.setObjectName(u"pushButton_only_tag_characters")
+
+        self.gridLayout_2.addWidget(self.pushButton_only_tag_characters, 6, 0, 1, 2)
+
         self.line = QFrame(self.tabWidgetPage1)
         self.line.setObjectName(u"line")
         self.line.setFrameShape(QFrame.HLine)
@@ -149,9 +138,30 @@ class Ui_Form(object):
 
         self.gridLayout_2.addWidget(self.line, 1, 0, 1, 2)
 
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.pushButton_apply_replacement_to_sentence = QPushButton(self.tabWidgetPage1)
+        self.pushButton_apply_replacement_to_sentence.setObjectName(u"pushButton_apply_replacement_to_sentence")
 
-        self.gridLayout_2.addItem(self.verticalSpacer_3, 24, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.pushButton_apply_replacement_to_sentence, 4, 0, 1, 2)
+
+        self.pushButton_auto_score = QPushButton(self.tabWidgetPage1)
+        self.pushButton_auto_score.setObjectName(u"pushButton_auto_score")
+
+        self.gridLayout_2.addWidget(self.pushButton_auto_score, 7, 0, 1, 2)
+
+        self.pushButton_refresh_tags_from_gelbooru_and_rule34 = QPushButton(self.tabWidgetPage1)
+        self.pushButton_refresh_tags_from_gelbooru_and_rule34.setObjectName(u"pushButton_refresh_tags_from_gelbooru_and_rule34")
+
+        self.gridLayout_2.addWidget(self.pushButton_refresh_tags_from_gelbooru_and_rule34, 12, 0, 1, 2)
+
+        self.pushButton_open_in_default_program = QPushButton(self.tabWidgetPage1)
+        self.pushButton_open_in_default_program.setObjectName(u"pushButton_open_in_default_program")
+
+        self.gridLayout_2.addWidget(self.pushButton_open_in_default_program, 24, 0, 1, 2)
+
+        self.pushButton_resolve_manual_tags = QPushButton(self.tabWidgetPage1)
+        self.pushButton_resolve_manual_tags.setObjectName(u"pushButton_resolve_manual_tags")
+
+        self.gridLayout_2.addWidget(self.pushButton_resolve_manual_tags, 17, 0, 1, 2)
 
         self.tabWidget.addTab(self.tabWidgetPage1, "")
         self.tab_4 = QWidget()
@@ -166,7 +176,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 406, 713))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 98, 28))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_4.addWidget(self.scrollArea)
@@ -283,7 +293,7 @@ class Ui_Form(object):
         self.scrollArea_history.setWidgetResizable(True)
         self.scrollAreaWidgetContents_history = QWidget()
         self.scrollAreaWidgetContents_history.setObjectName(u"scrollAreaWidgetContents_history")
-        self.scrollAreaWidgetContents_history.setGeometry(QRect(0, 0, 388, 691))
+        self.scrollAreaWidgetContents_history.setGeometry(QRect(0, 0, 98, 28))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents_history)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.scrollArea_history.setWidget(self.scrollAreaWidgetContents_history)
@@ -318,60 +328,62 @@ class Ui_Form(object):
         self.pushButton_popup_image.setToolTip(QCoreApplication.translate("Form", u"Display the selected image in a separate window", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_popup_image.setText(QCoreApplication.translate("Form", u"Pop-up image", None))
+        self.pushButton_flip_horizontally.setText(QCoreApplication.translate("Form", u"Flip Horizontally", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_auto_classify.setToolTip(QCoreApplication.translate("Form", u"Use the classifer model and some images will have additional tags for sources if the confidence is high", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_auto_classify.setText(QCoreApplication.translate("Form", u"Auto-classifier", None))
+        self.label.setText(QCoreApplication.translate("Form", u"Apply to:", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_cleanup_rejected_manual_tags.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Can always be used without causing issues, should be used when you want to remove rejected manual tags that are useless.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_cleanup_rejected_manual_tags.setText(QCoreApplication.translate("Form", u"Cleanup Rejected manual tags", None))
 #if QT_CONFIG(tooltip)
+        self.pushButton_reset_manual_score.setToolTip(QCoreApplication.translate("Form", u"reset all scores that were changed, and if the threshold are changed, will change the scores, without needing to restart the scorer", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_reset_manual_score.setText(QCoreApplication.translate("Form", u"Reset manual score", None))
+#if QT_CONFIG(tooltip)
+        self.comboBox_selection.setToolTip(QCoreApplication.translate("Form", u"Apply to most of the buttons below", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
         self.pushButton_discard_image.setToolTip(QCoreApplication.translate("Form", u"discard the selected images by moving it to the discarded folder", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_discard_image.setText(QCoreApplication.translate("Form", u"Discard Images", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_auto_classify.setToolTip(QCoreApplication.translate("Form", u"Use the classifer model and some images will have additional tags for sources if the confidence is high", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_auto_classify.setText(QCoreApplication.translate("Form", u"Auto-classifier", None))
-        self.pushButton_flip_horizontally.setText(QCoreApplication.translate("Form", u"Flip Horizontally", None))
-        self.label.setText(QCoreApplication.translate("Form", u"Apply to:", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton_open_in_default_program.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>open the images in the default program or the specified program in the settings</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_open_in_default_program.setText(QCoreApplication.translate("Form", u"Open in default program", None))
-        self.pushButton_refresh_tags_from_gelbooru_and_rule34.setText(QCoreApplication.translate("Form", u"Refresh Tags from rule34 and gelbooru", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_export_images.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>This will export the selection (check the apply to section above) to a new directory.<br/><br/>A pop up will show up and ask for a directory and a group name</p><p><br/></p><p>If a database doesn't exist in the output location, then a new database is created with the same tags.</p><p><br/></p><p>If a database exists, then the images are exported, and the tags are automatically added to the previously exisiting database under the entered group name.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_export_images.setText(QCoreApplication.translate("Form", u"Export Images", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_only_tag_characters.setToolTip(QCoreApplication.translate("Form", u"Use the Swinv2-3 tagger and only extract identified characters", None))
+        self.pushButton_apply_filtering.setToolTip(QCoreApplication.translate("Form", u"filter the selction", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButton_only_tag_characters.setText(QCoreApplication.translate("Form", u"Only auto-tag characters", None))
+        self.pushButton_apply_filtering.setText(QCoreApplication.translate("Form", u"Apply Filtering", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_auto_tag.setToolTip(QCoreApplication.translate("Form", u"use an auto tagger for tagging the image using your preferred tagging method", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_auto_tag.setText(QCoreApplication.translate("Form", u"Auto-tagger", None))
+        self.pushButton_remove_specific_source.setText(QCoreApplication.translate("Form", u"Remove Specific Source", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_purge_manual.setToolTip(QCoreApplication.translate("Form", u"remove all manually edited tags and reviewed conflicts", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_purge_manual.setText(QCoreApplication.translate("Form", u"Purge Manual", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_reset_manual_score.setToolTip(QCoreApplication.translate("Form", u"reset all scores that were changed, and if the threshold are changed, will change the scores, without needing to restart the scorer", None))
+        self.pushButton_only_tag_characters.setToolTip(QCoreApplication.translate("Form", u"Use the Swinv2-3 tagger and only extract identified characters", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButton_reset_manual_score.setText(QCoreApplication.translate("Form", u"Reset manual score", None))
+        self.pushButton_only_tag_characters.setText(QCoreApplication.translate("Form", u"Only auto-tag characters", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_apply_replacement_to_sentence.setToolTip(QCoreApplication.translate("Form", u"Currently doesn't do anything, will be implemented later", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_apply_replacement_to_sentence.setText(QCoreApplication.translate("Form", u"Apply Replacement to Sentence", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_auto_tag.setToolTip(QCoreApplication.translate("Form", u"use an auto tagger for tagging the image using your preferred tagging method", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_auto_tag.setText(QCoreApplication.translate("Form", u"Auto-tagger", None))
-#if QT_CONFIG(tooltip)
         self.pushButton_auto_score.setToolTip(QCoreApplication.translate("Form", u"use an auto scorer for scoring the image using your preferred scoring method", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_auto_score.setText(QCoreApplication.translate("Form", u"Auto-aesthetic scorer", None))
+        self.pushButton_refresh_tags_from_gelbooru_and_rule34.setText(QCoreApplication.translate("Form", u"Refresh Tags from rule34 and gelbooru", None))
 #if QT_CONFIG(tooltip)
-        self.comboBox_selection.setToolTip(QCoreApplication.translate("Form", u"Apply to most of the buttons below", None))
+        self.pushButton_open_in_default_program.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>open the images in the default program or the specified program in the settings</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.pushButton_apply_filtering.setToolTip(QCoreApplication.translate("Form", u"filter the selction", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_apply_filtering.setText(QCoreApplication.translate("Form", u"Apply Filtering", None))
+        self.pushButton_open_in_default_program.setText(QCoreApplication.translate("Form", u"Open in default program", None))
+        self.pushButton_resolve_manual_tags.setText(QCoreApplication.translate("Form", u"Resolve manual tags", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage1), QCoreApplication.translate("Form", u"Batch Operations", None))
 #if QT_CONFIG(tooltip)
         self.scrollArea.setToolTip(QCoreApplication.translate("Form", u"Add a new line to set up a tag replacement rule (not saved by the database)", None))

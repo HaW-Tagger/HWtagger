@@ -459,6 +459,11 @@ class TagsLists:
     def names(self):
         return [tags_list.name for tags_list in self.tags_lists]
 
+    def remove_name(self, name: str):
+        if name in self.names():
+            source_index = self.names().index(name)
+            self.tags_lists.pop(source_index)
+
     def save(self):
         result = defaultdict(lambda: [])
         for tags_list in self.tags_lists:
@@ -663,7 +668,7 @@ class TagsList:
         Args:
             other:
 
-        Returns: all tags that are in both the self and other, or None if empty
+        Returns: all tags that are in both the self and other
 
         """
         if isinstance(other, type(self)):

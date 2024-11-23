@@ -1167,6 +1167,27 @@ class ImageDatabase:
 
         return tooltip_text
 
+    def get_sources(self):
+        return self.external_tags.names() + self.auto_tags.names()
+
+    def remove_source(self, source_name: str):
+        """
+        Remove the tagsList corresponding to the specified source
+        Args:
+            source_name: the name of the source
+        """
+        if source_name in self.external_tags.names():
+            self.external_tags.remove_name(source_name)
+        if source_name in self.auto_tags.names():
+            self.auto_tags.remove_name(source_name)
+
+    def resolve_manual_tags(self):
+        """
+        Remove all manual_tags that are also in rejected_manual_tags
+        """
+        self.manual_tags -= self.manual_tags.all_tags_in(self.rejected_manual_tags)
+
+
 def percentile_to_label(percentile):
     mapping = tag_categories.QUALITY_LABELS_MAPPING
     for label, threshold in sorted(mapping.items(), key=lambda x: (-x[1], x[0])):
