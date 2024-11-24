@@ -39,7 +39,7 @@ class Ui_Form(object):
         self.pushButton_save_database.setSizePolicy(sizePolicy)
         self.pushButton_save_database.setMinimumSize(QSize(50, 0))
 
-        self.gridLayout.addWidget(self.pushButton_save_database, 8, 0, 1, 1)
+        self.gridLayout.addWidget(self.pushButton_save_database, 9, 0, 1, 1)
 
         self.pushButton_popup_image = QPushButton(Form)
         self.pushButton_popup_image.setObjectName(u"pushButton_popup_image")
@@ -47,7 +47,7 @@ class Ui_Form(object):
         self.pushButton_popup_image.setSizePolicy(sizePolicy)
         self.pushButton_popup_image.setMinimumSize(QSize(50, 0))
 
-        self.gridLayout.addWidget(self.pushButton_popup_image, 7, 0, 1, 1)
+        self.gridLayout.addWidget(self.pushButton_popup_image, 8, 0, 1, 1)
 
         self.tabWidget = QTabWidget(Form)
         self.tabWidget.setObjectName(u"tabWidget")
@@ -170,13 +170,19 @@ class Ui_Form(object):
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.comboBox_group_name_settings = QComboBox(self.tab_4)
+        self.comboBox_group_name_settings.setObjectName(u"comboBox_group_name_settings")
+        self.comboBox_group_name_settings.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+
+        self.verticalLayout_4.addWidget(self.comboBox_group_name_settings)
+
         self.scrollArea = QScrollArea(self.tab_4)
         self.scrollArea.setObjectName(u"scrollArea")
         self.scrollArea.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 98, 28))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 406, 691))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_4.addWidget(self.scrollArea)
@@ -293,7 +299,7 @@ class Ui_Form(object):
         self.scrollArea_history.setWidgetResizable(True)
         self.scrollAreaWidgetContents_history = QWidget()
         self.scrollAreaWidgetContents_history.setObjectName(u"scrollAreaWidgetContents_history")
-        self.scrollAreaWidgetContents_history.setGeometry(QRect(0, 0, 98, 28))
+        self.scrollAreaWidgetContents_history.setGeometry(QRect(0, 0, 388, 691))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents_history)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.scrollArea_history.setWidget(self.scrollAreaWidgetContents_history)
@@ -307,7 +313,7 @@ class Ui_Form(object):
 
         self.tabWidget.addTab(self.tab, "")
 
-        self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
 
 
         self.retranslateUi(Form)

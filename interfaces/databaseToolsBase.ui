@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="8" column="0">
+   <item row="9" column="0">
     <widget class="QPushButton" name="pushButton_save_database">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -36,7 +36,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="QPushButton" name="pushButton_popup_image">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -58,7 +58,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="tabPosition">
       <enum>QTabWidget::East</enum>
@@ -300,6 +300,13 @@
         <number>0</number>
        </property>
        <item>
+        <widget class="QComboBox" name="comboBox_group_name_settings">
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QScrollArea" name="scrollArea">
          <property name="toolTip">
           <string>Add a new line to set up a tag replacement rule (not saved by the database)</string>
@@ -315,8 +322,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>406</width>
+            <height>691</height>
            </rect>
           </property>
          </widget>
@@ -497,8 +504,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>388</width>
+            <height>691</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2"/>

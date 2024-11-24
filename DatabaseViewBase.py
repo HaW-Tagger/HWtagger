@@ -536,7 +536,9 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         add_replace_line_button.clicked.connect(self.create_replace_line)
         base_replace_layout.addWidget(add_replace_line_button)
         self.scrollAreaWidgetContents.setLayout(base_replace_layout)
-        self.init_tags_logic()
+        self.comboBox_group_name_settings.currentTextChanged.connect(self.init_tags_logic)
+        self.comboBox_group_name_settings.addItem("All")
+        self.comboBox_group_name_settings.addItems([group.group_name for group in self.db.groups.values()])
         self.pushButton_export_settings.clicked.connect(self.export_settings)
         self.pushButton_import_settings.clicked.connect(self.import_settings)
 
@@ -592,34 +594,64 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
             self.scrollAreaWidgetContents.layout().removeWidget(x)
             x.hide()
             x.destroy()
-        if self.db.settings.tags_logics:
-            for tags_logic in self.db.settings.tags_logics:
-                self.create_replace_line(tags_logic)
+        group_name = self.comboBox_group_name_settings.currentText()
+        if group_name == "All":
+            if self.db.settings.tags_logics:
+                for tags_logic in self.db.settings.tags_logics:
+                    self.create_replace_line(tags_logic=tags_logic)
+        else:
+            if self.db.groups[group_name].settings.tags_logics:
+                for tags_logic in self.db.groups[group_name].settings.tags_logics:
+                    self.create_replace_line(tags_logic=tags_logic)
 
 
     @Slot()
-    def create_replace_line(self, tags_logic: TagsLogic=None):
+    def create_replace_line(self,*, tags_logic: TagsLogic=None):
+        group_name = self.comboBox_group_name_settings.currentText() if self.comboBox_group_name_settings.currentText() != "All" else None
         if tags_logic:
-            one_widget = CustomWidgets.DatabaseTagsLogicWidget(tags_logic.conditions, tags_logic.added, index=len(self.replace_lines), completer=completer, keep_conditions=tags_logic.keep_conditions)
+            one_widget = CustomWidgets.DatabaseTagsLogicWidget(tags_logic.conditions, tags_logic.added, index=len(self.replace_lines), completer=completer, keep_conditions=tags_logic.keep_conditions, group_name=group_name)
         else:
             one_widget = CustomWidgets.DatabaseTagsLogicWidget("", "",index=len(self.replace_lines), completer=completer)
-            self.db.settings.add_tags_logic([], [], False)
-        one_widget.changedState.connect(lambda x: self.db.settings.tags_logics[x[0]].load(x[1]))
+            if not group_name:
+                self.db.settings.add_tags_logic([], [], False)
+            else:
+                self.db.groups[group_name].settings.add_tags_logic([], [], False)
+        if not group_name:
+            one_widget.changedState.connect(lambda x: self.db.settings.tags_logics[x[0]].load(x[1]))
+        else:
+            one_widget.changedState.connect(lambda x: self.db.groups[group_name].settings.tags_logics[x[0]].load(x[1]))
         one_widget.changedState.connect(lambda: self.changedDatabaseSettings.emit())
         one_widget.deleted.connect(self.remove_replace_line)
         self.replace_lines.append(one_widget)
         self.scrollAreaWidgetContents.layout().insertWidget(0, one_widget)
 
-    @Slot(int)
-    def remove_replace_line(self, index: int):
-        x = self.replace_lines.pop(index)
-        self.db.settings.remove_tags_logic(index)
+    @Slot(tuple)
+    def remove_replace_line(self, index_and_group_name: tuple[int, str]):
+        x = self.replace_lines.pop(index_and_group_name[0])
+        if not index_and_group_name[1]:
+            self.db.settings.remove_tags_logic(index_and_group_name[0])
+        else:
+            self.db.groups[index_and_group_name[1]].settings.remove_tags_logic(index_and_group_name[0])
         self.scrollAreaWidgetContents.layout().removeWidget(x)
         x.hide()
         x.destroy()
-        for i in range(index, len(self.replace_lines)):
+        for i in range(index_and_group_name[0], len(self.replace_lines)):
             self.replace_lines[i].change_index(i)
         self.changedDatabaseSettings.emit()
+
+    @Slot()
+    def edited_groups(self):
+        """
+        When a group name has changed, or a new one, or a deleted one
+        """
+        previous_name = self.comboBox_group_name_settings.currentText()
+        self.comboBox_group_name_settings.setCurrentIndex(0)
+        while self.comboBox_group_name_settings.count()>1:
+            self.comboBox_group_name_settings.removeItem(1)
+        self.comboBox_group_name_settings.addItems([group.group_name for group in self.db.groups.values()])
+        if previous_name in [group.group_name for group in self.db.groups.values()]:
+            new_i = self.comboBox_group_name_settings.findText(previous_name, flags=QtCore.Qt.MatchFlag.MatchExactly)
+            self.comboBox_group_name_settings.setCurrentIndex(new_i)
 
     @Slot()
     def export_settings(self):
@@ -908,6 +940,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
     selectedImagesChanges = Signal(list) # list of images index selected
     areDisplayedRectangles = Signal(bool)
     editedRectangle = Signal(tuple) # coordinates (top, left, width, height) and name of the created rect
+    editedGroups = Signal()
 
     def __init__(self, db: Database):
         super().__init__()
@@ -1231,6 +1264,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
         self.db.groups[user_input] = GroupElement(group_name=user_input)
         self.comboBox_group_name.addItem(user_input)
         parameters.log.info(f"New group: {user_input}")
+        self.editedGroups.emit()
 
     @Slot()
     def delete_group(self):
@@ -1243,6 +1277,24 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
         current_comb_index = self.comboBox_group_name.currentIndex()
         self.comboBox_group_name.setCurrentIndex(0)
         self.comboBox_group_name.removeItem(current_comb_index)
+        self.editedGroups.emit()
+
+    @Slot()
+    def history_changed(self):
+        """When the history changes, then we need to change the groups name mainly, the rest is not interesting for now"""
+        previous_name = self.comboBox_group_name.currentText()
+
+        if self.comboBox_group_name.count() != len(self.db.groups)+1 or not all([True if self.comboBox_group_name.findText(group.group_name, flags=QtCore.Qt.MatchFlag.MatchExactly)!=-1 else False for group in self.db.groups.values()]):
+            parameters.log.info("Changed Groups from History")
+            self.comboBox_group_name.setCurrentIndex(0)
+            while self.comboBox_group_name.count()>1:
+                self.comboBox_group_name.removeItem(1)
+            self.comboBox_group_name.addItems([group.group_name for group in self.db.groups.values()])
+            if previous_name in [group.group_name for group in self.db.groups.values()]:
+                new_i = self.comboBox_group_name.findText(previous_name, flags=QtCore.Qt.MatchFlag.MatchExactly)
+                self.comboBox_group_name.setCurrentIndex(new_i)
+            self.editedGroups.emit()
+
 
 
     def create_all_images_frames(self):
@@ -1782,6 +1834,9 @@ class DatabaseViewBase(QWidget):
         self.tags_view.editRectangleRequested.connect(self.image_view.edit_rectangle)
         self.image_view.editedRectangle.connect(self.tags_view.apply_rectangle_coordinates)
 
+        # Edited Groups
+        self.image_view.editedGroups.connect(self.database_tools.edited_groups)
+
     @Slot()
     def save_database(self):
         self.save_image()
@@ -1960,10 +2015,8 @@ class DatabaseViewBase(QWidget):
 
     def add_history_view(self, history_index):
         parameters.log.info(f"history_index: {history_index}")
-        parameters.log.info(f"history_buttons_len: {len(self.history_buttons.buttons())}")
         self.history_buttons.addButton(QRadioButton(f"{history_index}: {self.db_history[history_index-1][1]}"), id=history_index)
         self.database_tools.scrollAreaWidgetContents_history.layout().insertWidget(history_index,self.history_buttons.button(history_index))
-        parameters.log.info(f"history_buttons_len: {len(self.history_buttons.buttons())}")
 
     def remove_history_starting_from(self, history_index):
         """
@@ -1998,6 +2051,7 @@ class DatabaseViewBase(QWidget):
             self.image_view.db = self.db
             self.database_tools.db = self.db
             self.currently_selected_database = 0
+            self.image_view.history_changed()
             self.database_tools.init_tags_logic()
             self.selected_images_changed(self.selected_images, history=True)
             return
@@ -2006,6 +2060,7 @@ class DatabaseViewBase(QWidget):
         self.database_tools.db = self.db
         self.db.apply_changes(self.db_history[history_index-1][0])
         self.currently_selected_database = history_index
+        self.image_view.history_changed()
         self.database_tools.init_tags_logic()
         self.selected_images_changed(self.selected_images, history=True)
 

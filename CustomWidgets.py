@@ -441,10 +441,11 @@ class GlobalDatabaseItem(QWidget, global_database_item.Ui_Form):
 
 class DatabaseTagsLogicWidget(QWidget):
     changedState = Signal(tuple) #index, TagLogic save dict
-    deleted = Signal(int) #index
-    def __init__(self, conditions, added, index: int, keep_conditions=False, completer: QCompleter=None):
+    deleted = Signal(tuple) #index
+    def __init__(self, conditions, added, index: int, keep_conditions=False, completer: QCompleter=None, group_name=None):
         super().__init__()
-        self.index = index # an integer index for creating and storing where the TagsLogic is from
+        self.index = index # an integer index for creating and storing where the TagsLogic is from, in the manner of the list in the view
+        self.group_name = group_name # a string that is useful to know if a TagsLogic is in a group or not
         h_layout = QHBoxLayout()
 
         self.first_line_edit = QLineEdit()
@@ -516,5 +517,5 @@ class DatabaseTagsLogicWidget(QWidget):
 
     @Slot()
     def _delete_clicked(self):
-        self.deleted.emit(self.index)
+        self.deleted.emit((self.index, self.group_name))
 
