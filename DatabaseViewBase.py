@@ -1010,6 +1010,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
 
         # create new group
         self.pushButton_add_group.clicked.connect(self.create_group)
+        self.pushButton_edit_group_name.clicked.connect(self.edit_group_name)
         self.pushButton_deleted_group.clicked.connect(self.delete_group)
 
         # Single Image View
@@ -1133,7 +1134,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
             else:
                 return True
         else:
-            if len(self.db.images[image_index].groups)==0:
+            if self.db.images[image_index].groups_length()==0:
                 if self.current_search_tags:
                     if files.loose_tags_check(self.current_search_tags, tag_to_search_through):
                         return True
@@ -1262,8 +1263,24 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
         if not user_input or user_input in self.db.groups.keys():
             return False
         self.db.groups[user_input] = GroupElement(group_name=user_input)
-        self.comboBox_group_name.addItem(user_input)
-        parameters.log.info(f"New group: {user_input}")
+        self.edited_groups(user_input)
+        self.editedGroups.emit()
+
+    @Slot()
+    def edit_group_name(self):
+        if self.current_group == "All":
+            parameters.log.info("Select a group to edit its name")
+            return False
+        edit_group_dialog = InputDialog(default_text=self.current_group)
+        if edit_group_dialog.exec() == QDialog.DialogCode.Accepted:
+            user_input = edit_group_dialog.input_field.text()
+        else:
+            return False
+        if not user_input or user_input in self.db.groups.keys():
+            return False
+        parameters.log.info(f"Changing from {self.current_group} to {user_input}")
+        self.db.edit_group_name(current_group_name=self.current_group, new_group_name=user_input)
+        self.edited_groups(user_input)
         self.editedGroups.emit()
 
     @Slot()
@@ -1274,10 +1291,24 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
         if not confirmation_dialog(self):
             return False
         self.db.remove_group(self.current_group)
-        current_comb_index = self.comboBox_group_name.currentIndex()
-        self.comboBox_group_name.setCurrentIndex(0)
-        self.comboBox_group_name.removeItem(current_comb_index)
+        self.edited_groups()
         self.editedGroups.emit()
+
+    def edited_groups(self, preferred_group=""):
+        """
+        When a group name has changed, or a new one, or a deleted one
+        """
+        previous_name = self.comboBox_group_name.currentText()
+        self.comboBox_group_name.setCurrentIndex(0)
+        while self.comboBox_group_name.count()>1:
+            self.comboBox_group_name.removeItem(1)
+        self.comboBox_group_name.addItems([group.group_name for group in self.db.groups.values()])
+        if previous_name in [group.group_name for group in self.db.groups.values()]:
+            new_i = self.comboBox_group_name.findText(previous_name, flags=QtCore.Qt.MatchFlag.MatchExactly)
+            self.comboBox_group_name.setCurrentIndex(new_i)
+        if preferred_group in [group.group_name for group in self.db.groups.values()]:
+            new_i = self.comboBox_group_name.findText(preferred_group, flags=QtCore.Qt.MatchFlag.MatchExactly)
+            self.comboBox_group_name.setCurrentIndex(new_i)
 
     @Slot()
     def history_changed(self):

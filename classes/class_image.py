@@ -139,7 +139,7 @@ class ImageDatabase:
         return True
 
     def get_special_tags(self):
-        """returns additonal tags that are derived from other attributes like completeness and classification
+        """returns additional tags that are derived from other attributes like completeness and classification
 
         Returns:
             list[str]: list of additional tags
@@ -715,6 +715,49 @@ class ImageDatabase:
             group_name:
         """
         return group_name in self.groups
+
+    def add_group(self, group: GroupElement):
+        """
+        add the group or update it if in the image group list
+        Args:
+            group:
+        """
+        if self.is_in_group(group.group_name):
+            ex_group_index = [ex_group.group_name for ex_group in self.groups].index(group.group_name)
+            self.groups[ex_group_index] = group
+        else:
+            self.groups.append(group)
+
+    def remove_group(self, group: GroupElement|str):
+        """
+        remove the group or update it if in the image group list
+        Args:
+            group:
+        """
+        if isinstance(group, str):
+            if self.is_in_group(group):
+                self.groups.pop([ex_group.group_name for ex_group in self.groups].index(group))
+        elif isinstance(group, GroupElement):
+            if self.is_in_group(group.group_name):
+                self.groups.pop([ex_group.group_name for ex_group in self.groups].index(group.group_name))
+
+    def remove_all_groups(self):
+        """
+        Remove all groups from this image
+        """
+        self.groups = []
+
+    def sorted_group_name(self) -> str:
+        """
+        Returns: a single str that is the sorted group for the name
+        """
+        if self.groups_length() == 1:
+            return self.groups[0].group_name
+        elif self.groups_length() > 1:
+            return sorted(self.groups, key=lambda x: len(x.group_name))[0].group_name
+
+    def groups_length(self) -> int:
+        return len(self.groups)
 
     def reset_score(self):
         """

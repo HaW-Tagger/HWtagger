@@ -89,6 +89,14 @@ class SettingsDatabase:
         if init_dict:
             self.load(init_dict)
 
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return False
+        if len(self.tags_logics) != len(other.tags_logics):
+            return False
+        if any(tag_logic not in other.tags_logics for tag_logic in self.tags_logics) and len(self.tags_logics)>0:
+            return False
+        return True
 
     def save(self):
         result = {"tags_logics": []}

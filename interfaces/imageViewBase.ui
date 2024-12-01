@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>508</width>
+    <width>297</width>
     <height>844</height>
    </rect>
   </property>
@@ -58,6 +58,12 @@
          </property>
          <item>
           <widget class="QPushButton" name="pushButton_deleted_group">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>delete the group (doesn't delete the images)</string>
            </property>
@@ -68,6 +74,12 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushButton_add_group">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>create a new group</string>
            </property>
@@ -76,6 +88,13 @@
            </property>
            <property name="icon">
             <iconset theme="list-add"/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_edit_group_name">
+           <property name="text">
+            <string>Edit Name</string>
            </property>
           </widget>
          </item>
@@ -110,6 +129,18 @@
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QComboBox" name="comboBox_sort_type">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>128</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>sorting images view, some sorting requires calculations</string>
            </property>
@@ -117,6 +148,12 @@
          </item>
          <item>
           <widget class="QCheckBox" name="checkBox_reverse">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>reverse the sort</string>
            </property>
@@ -127,6 +164,12 @@
          </item>
          <item>
           <widget class="QCheckBox" name="checkBox_include_sentence">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>Sentence</string>
            </property>
@@ -213,6 +256,12 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox_toggle_ungrouped_images">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>show all images in the bottom group except if they belong to the top group</string>
             </property>
@@ -248,6 +297,12 @@
          </item>
          <item>
           <widget class="QCheckBox" name="checkBox_single_selection_mode">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>toggle single or multi-selection, tick the checkbox to disable multi-selection. You can only selcted one image at a time.</string>
            </property>
@@ -258,6 +313,12 @@
          </item>
          <item>
           <widget class="QCheckBox" name="checkBox_zoom_on_click">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>If checked, when selecting one image it will be shown large, wih buttons enabling you to slide right or left of the view</string>
            </property>

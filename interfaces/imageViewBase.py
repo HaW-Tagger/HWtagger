@@ -27,7 +27,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(508, 844)
+        Form.resize(297, 844)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(3, 3, 3, 3)
@@ -45,23 +45,35 @@ class Ui_Form(object):
         self.horizontalLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.pushButton_deleted_group = QPushButton(self.page)
         self.pushButton_deleted_group.setObjectName(u"pushButton_deleted_group")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButton_deleted_group.sizePolicy().hasHeightForWidth())
+        self.pushButton_deleted_group.setSizePolicy(sizePolicy)
 
         self.horizontalLayout.addWidget(self.pushButton_deleted_group)
 
         self.pushButton_add_group = QPushButton(self.page)
         self.pushButton_add_group.setObjectName(u"pushButton_add_group")
+        sizePolicy.setHeightForWidth(self.pushButton_add_group.sizePolicy().hasHeightForWidth())
+        self.pushButton_add_group.setSizePolicy(sizePolicy)
         icon = QIcon(QIcon.fromTheme(u"list-add"))
         self.pushButton_add_group.setIcon(icon)
 
         self.horizontalLayout.addWidget(self.pushButton_add_group)
 
+        self.pushButton_edit_group_name = QPushButton(self.page)
+        self.pushButton_edit_group_name.setObjectName(u"pushButton_edit_group_name")
+
+        self.horizontalLayout.addWidget(self.pushButton_edit_group_name)
+
         self.comboBox_group_name = QComboBox(self.page)
         self.comboBox_group_name.setObjectName(u"comboBox_group_name")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBox_group_name.sizePolicy().hasHeightForWidth())
-        self.comboBox_group_name.setSizePolicy(sizePolicy)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.comboBox_group_name.sizePolicy().hasHeightForWidth())
+        self.comboBox_group_name.setSizePolicy(sizePolicy1)
         self.comboBox_group_name.setEditable(False)
         self.comboBox_group_name.setMinimumContentsLength(1)
         self.comboBox_group_name.setFrame(True)
@@ -76,16 +88,26 @@ class Ui_Form(object):
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.comboBox_sort_type = QComboBox(self.page)
         self.comboBox_sort_type.setObjectName(u"comboBox_sort_type")
+        sizePolicy1.setHeightForWidth(self.comboBox_sort_type.sizePolicy().hasHeightForWidth())
+        self.comboBox_sort_type.setSizePolicy(sizePolicy1)
+        self.comboBox_sort_type.setMaximumSize(QSize(128, 16777215))
 
         self.horizontalLayout_5.addWidget(self.comboBox_sort_type)
 
         self.checkBox_reverse = QCheckBox(self.page)
         self.checkBox_reverse.setObjectName(u"checkBox_reverse")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.checkBox_reverse.sizePolicy().hasHeightForWidth())
+        self.checkBox_reverse.setSizePolicy(sizePolicy2)
 
         self.horizontalLayout_5.addWidget(self.checkBox_reverse)
 
         self.checkBox_include_sentence = QCheckBox(self.page)
         self.checkBox_include_sentence.setObjectName(u"checkBox_include_sentence")
+        sizePolicy2.setHeightForWidth(self.checkBox_include_sentence.sizePolicy().hasHeightForWidth())
+        self.checkBox_include_sentence.setSizePolicy(sizePolicy2)
 
         self.horizontalLayout_5.addWidget(self.checkBox_include_sentence)
 
@@ -118,23 +140,25 @@ class Ui_Form(object):
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.pushButton_add_selection_to_group = QPushButton(self.widget)
         self.pushButton_add_selection_to_group.setObjectName(u"pushButton_add_selection_to_group")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.pushButton_add_selection_to_group.sizePolicy().hasHeightForWidth())
-        self.pushButton_add_selection_to_group.setSizePolicy(sizePolicy1)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.pushButton_add_selection_to_group.sizePolicy().hasHeightForWidth())
+        self.pushButton_add_selection_to_group.setSizePolicy(sizePolicy3)
 
         self.horizontalLayout_2.addWidget(self.pushButton_add_selection_to_group)
 
         self.pushButton_remove_selection_from_group = QPushButton(self.widget)
         self.pushButton_remove_selection_from_group.setObjectName(u"pushButton_remove_selection_from_group")
-        sizePolicy1.setHeightForWidth(self.pushButton_remove_selection_from_group.sizePolicy().hasHeightForWidth())
-        self.pushButton_remove_selection_from_group.setSizePolicy(sizePolicy1)
+        sizePolicy3.setHeightForWidth(self.pushButton_remove_selection_from_group.sizePolicy().hasHeightForWidth())
+        self.pushButton_remove_selection_from_group.setSizePolicy(sizePolicy3)
 
         self.horizontalLayout_2.addWidget(self.pushButton_remove_selection_from_group)
 
         self.checkBox_toggle_ungrouped_images = QCheckBox(self.widget)
         self.checkBox_toggle_ungrouped_images.setObjectName(u"checkBox_toggle_ungrouped_images")
+        sizePolicy2.setHeightForWidth(self.checkBox_toggle_ungrouped_images.sizePolicy().hasHeightForWidth())
+        self.checkBox_toggle_ungrouped_images.setSizePolicy(sizePolicy2)
         self.checkBox_toggle_ungrouped_images.setTristate(False)
 
         self.horizontalLayout_2.addWidget(self.checkBox_toggle_ungrouped_images)
@@ -157,11 +181,15 @@ class Ui_Form(object):
 
         self.checkBox_single_selection_mode = QCheckBox(self.page)
         self.checkBox_single_selection_mode.setObjectName(u"checkBox_single_selection_mode")
+        sizePolicy2.setHeightForWidth(self.checkBox_single_selection_mode.sizePolicy().hasHeightForWidth())
+        self.checkBox_single_selection_mode.setSizePolicy(sizePolicy2)
 
         self.horizontalLayout_3.addWidget(self.checkBox_single_selection_mode)
 
         self.checkBox_zoom_on_click = QCheckBox(self.page)
         self.checkBox_zoom_on_click.setObjectName(u"checkBox_zoom_on_click")
+        sizePolicy2.setHeightForWidth(self.checkBox_zoom_on_click.sizePolicy().hasHeightForWidth())
+        self.checkBox_zoom_on_click.setSizePolicy(sizePolicy2)
 
         self.horizontalLayout_3.addWidget(self.checkBox_zoom_on_click)
 
@@ -177,36 +205,36 @@ class Ui_Form(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.single_image = PaintingImage(self.page_2)
         self.single_image.setObjectName(u"single_image")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.single_image.sizePolicy().hasHeightForWidth())
-        self.single_image.setSizePolicy(sizePolicy2)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.single_image.sizePolicy().hasHeightForWidth())
+        self.single_image.setSizePolicy(sizePolicy4)
 
         self.gridLayout.addWidget(self.single_image, 2, 0, 1, 3)
 
         self.pushButton_prev_image = QPushButton(self.page_2)
         self.pushButton_prev_image.setObjectName(u"pushButton_prev_image")
-        sizePolicy.setHeightForWidth(self.pushButton_prev_image.sizePolicy().hasHeightForWidth())
-        self.pushButton_prev_image.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.pushButton_prev_image.sizePolicy().hasHeightForWidth())
+        self.pushButton_prev_image.setSizePolicy(sizePolicy1)
 
         self.gridLayout.addWidget(self.pushButton_prev_image, 3, 0, 1, 1)
 
         self.single_info_label = QLabel(self.page_2)
         self.single_info_label.setObjectName(u"single_info_label")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.single_info_label.sizePolicy().hasHeightForWidth())
-        self.single_info_label.setSizePolicy(sizePolicy3)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.single_info_label.sizePolicy().hasHeightForWidth())
+        self.single_info_label.setSizePolicy(sizePolicy5)
         self.single_info_label.setAlignment(Qt.AlignCenter)
 
         self.gridLayout.addWidget(self.single_info_label, 1, 0, 1, 3)
 
         self.pushButton_next_image = QPushButton(self.page_2)
         self.pushButton_next_image.setObjectName(u"pushButton_next_image")
-        sizePolicy.setHeightForWidth(self.pushButton_next_image.sizePolicy().hasHeightForWidth())
-        self.pushButton_next_image.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.pushButton_next_image.sizePolicy().hasHeightForWidth())
+        self.pushButton_next_image.setSizePolicy(sizePolicy1)
 
         self.gridLayout.addWidget(self.pushButton_next_image, 3, 2, 1, 1)
 
@@ -218,8 +246,8 @@ class Ui_Form(object):
 
         self.label_image_md5 = QLabel(self.page_2)
         self.label_image_md5.setObjectName(u"label_image_md5")
-        sizePolicy3.setHeightForWidth(self.label_image_md5.sizePolicy().hasHeightForWidth())
-        self.label_image_md5.setSizePolicy(sizePolicy3)
+        sizePolicy5.setHeightForWidth(self.label_image_md5.sizePolicy().hasHeightForWidth())
+        self.label_image_md5.setSizePolicy(sizePolicy5)
         self.label_image_md5.setAlignment(Qt.AlignCenter)
         self.label_image_md5.setTextInteractionFlags(Qt.LinksAccessibleByMouse|Qt.TextSelectableByMouse)
 
@@ -248,6 +276,7 @@ class Ui_Form(object):
         self.pushButton_add_group.setToolTip(QCoreApplication.translate("Form", u"create a new group", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_add_group.setText(QCoreApplication.translate("Form", u"Add Group", None))
+        self.pushButton_edit_group_name.setText(QCoreApplication.translate("Form", u"Edit Name", None))
 #if QT_CONFIG(tooltip)
         self.comboBox_group_name.setToolTip(QCoreApplication.translate("Form", u"list of groups", None))
 #endif // QT_CONFIG(tooltip)

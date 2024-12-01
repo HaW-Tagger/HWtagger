@@ -143,12 +143,14 @@ class OutputWidget(QWidget, outputBase.Ui_Form):
         self.plainTextEdit_secondary_trigger_tags.setPlainText(secondary_tags)
 
 class InputDialog(QDialog):
-    def __init__(self):
+    def __init__(self, *, default_text=""):
         super().__init__()
 
         layout = QVBoxLayout()
 
         self.input_field = QLineEdit()
+        if default_text:
+            self.input_field.setText(default_text)
         layout.addWidget(self.input_field)
 
         ok_button = QPushButton('OK')

@@ -329,7 +329,7 @@ class VirtualDatabase:
     def get_all_original_md5(self):
         return [img.original_md5 for img in self.images]
 
-    def add_image_to_group(self, group_name, image_index):
+    def add_image_to_group(self, group_name: str, image_index: int):
         """
         create the group if necessary
         Args:
@@ -339,18 +339,13 @@ class VirtualDatabase:
         Returns: Nothing
 
         """
-        if group_name not in self.groups:
-            # todo: make groups store ImageDatabase access instead of md5
+        if group_name not in self.groups.keys():
             self.groups[group_name] = GroupElement(group_name=group_name, md5s=[self.images[image_index].md5])
 
-        # todo: make it so that it updates the group object
-        if self.images[image_index].md5 in self.groups[group_name].md5s:
-            return
-
         self.groups[group_name].append(self.images[image_index].md5)
-        self.images[image_index].groups.append(self.groups[group_name])
+        self.images[image_index].add_group(self.groups[group_name])
 
-    def add_images_to_group(self, group_name, images_index: list[int]):
+    def add_images_to_group(self, group_name: str, images_index: list[int]):
         """
         create the group if necessary
         Args:
@@ -363,7 +358,7 @@ class VirtualDatabase:
         for image_index in images_index:
             self.add_image_to_group(group_name, image_index)
 
-    def remove_image_from_group(self, group_name, image_index):
+    def remove_image_from_group(self, group_name: str, image_index: int):
         """
         remove the image from the group
         Args:
@@ -377,7 +372,7 @@ class VirtualDatabase:
             return
 
         self.groups[group_name].remove(self.images[image_index].md5)
-        self.images[image_index].groups.pop(self.images[image_index].groups.index(group_name))
+        self.images[image_index].remove_group(group_name)
 
     def remove_empty_groups(self):
         to_remove = []
@@ -388,6 +383,25 @@ class VirtualDatabase:
             return
         for group_name in to_remove:
             self.groups.pop(group_name)
+
+    def edit_group_name(self, *,current_group_name: str, new_group_name: str):
+        if current_group_name not in self.groups.keys():
+            return False
+        if new_group_name in self.groups.keys():
+            return False
+        new_md5s = copy.deepcopy(self.groups[current_group_name].md5s)
+        new_settings = copy.deepcopy(self.groups[current_group_name].settings)
+
+        # Edit the group_name
+        self.remove_group(current_group_name)
+        self.add_images_to_group(new_group_name, self.index_of_images_by_md5(new_md5s))
+        if new_group_name in self.groups.keys():
+            self.groups[new_group_name].settings = new_settings
+        # In case the group is empty, create it
+        else:
+            self.groups[new_group_name] = GroupElement(group_name=new_group_name)
+            self.groups[new_group_name].settings = new_settings
+
 
     def create_images_objects(self, max_image_size):
         if parameters.PARAMETERS["view_load_images"]:
@@ -515,7 +529,7 @@ class VirtualDatabase:
         """
         self.groups = {}
         for image in self.images:
-            image.groups = []
+            image.remove_all_groups()
 
     def remove_group(self, group_name):
         """
@@ -523,8 +537,8 @@ class VirtualDatabase:
         """
         del self.groups[group_name]
         for image in self.images:
-            if group_name in image.groups:
-                image.groups.remove(group_name)
+            if image.is_in_group(group_name):
+                image.remove_group(group_name)
 
     def change_md5_of_image(self, image_index, new_md5):
         """
@@ -537,8 +551,6 @@ class VirtualDatabase:
             if self.images[image_index].md5 in group.md5s:
                 group[self.images[image_index].md5] = new_md5
         self.images[image_index].md5 = new_md5
-        for group in self.images[image_index].groups:
-            group[self.images[image_index].md5] = new_md5
 
     def purge_manual_tags(self, images_index: list[int]):
         """
@@ -794,7 +806,7 @@ class VirtualDatabase:
             return False
         return True
 
-    def get_changes(self, other):
+    def get_changes(self, other) -> dict:
         """
         Returns a dict close to the saving dict (except that it uses images index instead of md5 to save) that contains only the entries that are changed from the other database
         Args:
@@ -803,6 +815,9 @@ class VirtualDatabase:
         Returns:
             dict that contains ony the different entry for the database
         """
+        if not isinstance(other, type(self)):
+            parameters.log.warning(f"Incompatible changes type, should be Database, but is {type(other)}")
+            return {}
         result = defaultdict(lambda:{})
         for k in range(len(self.images)):
             image_result = self.images[k].get_changes(other.images[k])
@@ -1053,7 +1068,7 @@ class Database(VirtualDatabase):
                                 img_index = md5_list.index(image_md5)
                             else: # backup is the original md5
                                 img_index = org_md5_list.index(image_md5)
-                            self.images[img_index].groups.append(group)
+                            self.images[img_index].add_group(group)
                         except ValueError:
                             parameters.log.error(f"Error on md5 search for image: {image_md5}, image doesn't exists in the database")
                 except KeyError:
@@ -1558,11 +1573,11 @@ class Database(VirtualDatabase):
         images_tuples: list[tuple[int, str,str]]=[]
         for image_index in range(len(self.images)):
             current_path = os.path.normpath(self.images[image_index].path)
-            if self.images[image_index].groups: # in group
-                if len(self.images[image_index].groups)==1:
-                    images_tuples.append((image_index, current_path, os.path.join(self.folder, self.images[image_index].groups[0].group_name, os.path.basename(current_path))))
+            if self.images[image_index].groups_length()>0: # in group
+                if self.images[image_index].groups_length()==1:
+                    images_tuples.append((image_index, current_path, os.path.join(self.folder, self.images[image_index].sorted_group_name(), os.path.basename(current_path))))
                 else: # taking the one when sorting
-                    images_tuples.append((image_index, current_path, os.path.join(self.folder, sorted(self.images[image_index].groups, key= lambda x: len(x.group_name))[0].group_name, os.path.basename(current_path))))
+                    images_tuples.append((image_index, current_path, os.path.join(self.folder, self.images[image_index].sorted_group_name(), os.path.basename(current_path))))
             else:
                 images_tuples.append((image_index, current_path, os.path.join(self.folder, os.path.basename(current_path))))
         for paths in images_tuples:
