@@ -467,7 +467,7 @@ class BaseImageView(QtGui.QStandardItemModel):
             return self.item(index.row()).data(QtGui.Qt.ItemDataRole.BackgroundRole)
 
     def db_index(self, index):
-        return self.itemData(index)[0]
+        return int(self.itemData(index)[0])
 
 class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
     clickedBatchFunction = Signal(tuple)
@@ -1143,7 +1143,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
 
     @Slot()
     def clicked_images_changed(self):
-        selected_indexes = [int(self.listView_groups.model().db_index(index)) for index in self.listView_groups.selectedIndexes()]
+        selected_indexes = [self.listView_groups.model().db_index(index) for index in self.listView_groups.selectedIndexes()]
         self.apply_selection_gradient(self.listView_groups.selectedIndexes())
         self.update_selected_images_changed(selected_indexes)
 
@@ -1231,7 +1231,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
             parameters.log.info("No images selected.")
             return False
         for w_index in self.listView_groups.selectedIndexes():
-            image_index = int(self.listView_groups.model().db_index(w_index))
+            image_index = self.listView_groups.model().db_index(w_index)
             self.db.remove_image_from_group(self.current_group, image_index)
         self.listView_groups.clearSelection()
         self.update_sorting()
@@ -1246,7 +1246,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
             parameters.log.info("No images selected.")
             return False
         for w_index in self.listView_other.selectedIndexes():
-            image_index = int(self.listView_other.model().db_index(w_index))
+            image_index = self.listView_other.model().db_index(w_index)
             self.db.add_image_to_group(self.current_group, image_index)
         self.listView_other.clearSelection()
         self.update_sorting()
@@ -1336,7 +1336,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
         """
         Returns: list of indexes of all visible images
         """
-        return [int(self.listView_groups.model().db_index(self.listView_groups.model().index(index, 0))) for index in range(self.listView_groups.model().rowCount())]
+        return [self.listView_groups.model().db_index(self.listView_groups.model().index(index, 0)) for index in range(self.listView_groups.model().rowCount())]
 
 
     def visualise_rectangles(self, rects: list[RectElement]):
