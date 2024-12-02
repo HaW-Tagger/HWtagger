@@ -351,6 +351,7 @@ class ImageDatabase:
         create the txt files, need a keep token separator option
         currently the trigger tags are removed if they are in a sentence
         """
+        self.filter()
         result = ""
         if use_sentence:
             segments = self.sentence_description.get_output_info()
