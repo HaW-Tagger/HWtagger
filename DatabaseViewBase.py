@@ -427,6 +427,16 @@ class BaseImageView(QtGui.QStandardItemModel):
         for x in self.images_dict.keys():
             item = self.create_item(x)
             self.appendRow(item)
+        self.selected_images: list[int] = [] # The index of the image from the database
+        gradient = QtGui.QRadialGradient(0, 20, 100)
+        gradient.setColorAt(0, QtCore.Qt.GlobalColor.red)
+        gradient.setColorAt(0.2, QtCore.Qt.GlobalColor.yellow)
+        gradient.setColorAt(0.4, QtCore.Qt.GlobalColor.green)
+        gradient.setColorAt(0.6, QtCore.Qt.GlobalColor.cyan)
+        gradient.setColorAt(0.8, QtCore.Qt.GlobalColor.blue)
+        gradient.setColorAt(1.0, QtCore.Qt.GlobalColor.magenta)
+        self.gradient_brush = QBrush(gradient)
+        self.blank_brush = QBrush(QtGui.QColor(214, 214, 214, 255))
 
     def rowCount(self, parent=None):
         return self.row_count
@@ -444,13 +454,13 @@ class BaseImageView(QtGui.QStandardItemModel):
     def create_item(self, image_index, attribute=""):
         item = QStandardItem(str(image_index))
         item.setIcon(self.images_dict[image_index][0])
-        if os.path.exists(self.images_dict[image_index][1].path):
-            date_modified = datetime.datetime.fromtimestamp(os.path.getmtime(self.images_dict[image_index][1].path))
-            date_created = datetime.datetime.fromtimestamp(os.path.getctime(self.images_dict[image_index][1].path))
-        else:
-            date_modified = "DISCARDED"
-            date_created = "DISCARDED"
         if parameters.PARAMETERS["database_view_tooltip"]:
+            if os.path.exists(self.images_dict[image_index][1].path):
+                date_modified = datetime.datetime.fromtimestamp(os.path.getmtime(self.images_dict[image_index][1].path))
+                date_created = datetime.datetime.fromtimestamp(os.path.getctime(self.images_dict[image_index][1].path))
+            else:
+                date_modified = "DISCARDED"
+                date_created = "DISCARDED"
             if attribute and hasattr(self.images_dict[image_index][1], attribute):
                 tooltip = f'<b>{getattr(self.images_dict[image_index][1], attribute)}</b>\npath: {self.images_dict[image_index][1].path}, width: {self.images_dict[image_index][1].image_width}, height: {self.images_dict[image_index][1].image_height}, date modified: {date_modified}, date created: {date_created}<br><img src="{self.images_dict[image_index][1].path}" width={768 * self.images_dict[image_index][1].image_ratio} height={768}>'
             else:
@@ -464,10 +474,16 @@ class BaseImageView(QtGui.QStandardItemModel):
         if role == QtGui.Qt.ItemDataRole.ToolTipRole:
             return self.item(index.row()).data(QtGui.Qt.ItemDataRole.ToolTipRole)
         if role == QtGui.Qt.ItemDataRole.BackgroundRole:
-            return self.item(index.row()).data(QtGui.Qt.ItemDataRole.BackgroundRole)
+            if self.db_index(index) in self.selected_images:
+                return self.gradient_brush
+            else:
+                return self.blank_brush
 
-    def db_index(self, index):
+    def db_index(self, index) -> int:
         return int(self.itemData(index)[0])
+
+    def update_selected_images(self, selected_indexes: list[QtCore.QModelIndex]):
+        self.selected_images = [self.db_index(i) for i in selected_indexes]
 
 class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
     clickedBatchFunction = Signal(tuple)
@@ -1148,22 +1164,8 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
         self.apply_selection_gradient(self.listView_groups.selectedIndexes())
         self.update_selected_images_changed(selected_indexes)
 
-    def apply_selection_gradient(self, selected_model_indexes):
-        gradient = QtGui.QRadialGradient(0, 20, 100)
-        gradient.setColorAt(0, QtCore.Qt.GlobalColor.red)
-        gradient.setColorAt(0.2, QtCore.Qt.GlobalColor.yellow)
-        gradient.setColorAt(0.4, QtCore.Qt.GlobalColor.green)
-        gradient.setColorAt(0.6, QtCore.Qt.GlobalColor.cyan)
-        gradient.setColorAt(0.8, QtCore.Qt.GlobalColor.blue)
-        gradient.setColorAt(1.0, QtCore.Qt.GlobalColor.magenta)
-        brush = QBrush(gradient)
-        blank_brush = QBrush(QtGui.QColor(214, 214, 214, 255))
-        for base_index in range(self.listView_groups.model().rowCount()):
-            index = self.listView_groups.model().index(base_index, 0)
-            if index in selected_model_indexes:
-                self.listView_groups.model().setData(index, brush, QtGui.Qt.ItemDataRole.BackgroundRole)
-            else:
-                self.listView_groups.model().setData(index, blank_brush, QtGui.Qt.ItemDataRole.BackgroundRole)
+    def apply_selection_gradient(self, selected_model_indexes:  list[QtCore.QModelIndex]):
+        self.listView_groups.model().update_selected_images(selected_model_indexes)
 
     def update_selected_images_changed(self, selected_indexes):
         """
