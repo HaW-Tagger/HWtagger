@@ -51,6 +51,20 @@ https://github.com/HaW-Tagger/HWtagger/wiki/How-to-use-(basic-tutorial)
 
 # Changelog
 
+## 13/11/24
+This update has been brewing for a while and I wanted to release it since the development for a few features has been slower or simply not worth it to implement (they are mostly hidden for this release since they are extremely experimentals)
+Basically:
+conda environnements install possible and easy
+CTRL+C copy of full tags as visible in the view
+face, hands and person detection (experimental and not fully implemented how we wanted it implemented)
+faster image loading and more options for not loading the thumbnails
+history (what you changed with the current load) SHOULD work but is kinda weird in some aspects so feedback is appreciated (what you want to improve or correct)
+auto download for the different models
+streamlined backend for adding new models and ways to add them
+direct danbooru wiki for the tooltip (ugly formatting though)
+open folder dialogue button for loading databases
+probably a lot more that I can't remember
+
 ## 14/07/24
 Added:
  - Rare tags count sort (less than 2% frequency)
