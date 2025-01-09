@@ -33,25 +33,33 @@ completer.setMaxVisibleItems(5)
 
 
 class UniqueTagsView(QtCore.QAbstractListModel):
-    def __init__(self, display_tags: TagsList, image: ImageDatabase, uncommon_tags: dict):
+    def __init__(self, display_tags: TagsList, image: ImageDatabase, uncommon_tags: dict[TagElement: float]):
         super().__init__()
         self.display_tags = TagsList(tags=display_tags)
         self.display_tags.priority_sort()
         self.image = image # Only used for the tooltips
-        self.uncommon_tags = uncommon_tags # Uncommon tags are tags that are present in some of the grouped images but not all of them
-        self.uncommon_tags_list = list(uncommon_tags.keys()) # Uncommon tags are tags that are present in some of the grouped images but not all of them
+        self.uncommon_tags: dict[TagElement: float]  = uncommon_tags # Uncommon tags are tags that are present in some of the grouped images but not all of them
+        self.uncommon_tags_list: list[TagElement] = list(uncommon_tags.keys()) # Uncommon tags are tags that are present in some of the grouped images but not all of them
         if self.uncommon_tags_list:
             self.uncommon_tags_list.sort(key=lambda x: uncommon_tags[x], reverse=True)
+            for tag in self.uncommon_tags_list:
+                tag.init_display_properties(color=tag_categories.COLOR_DICT[tag.tag] if tag.tag in tag_categories.COLOR_DICT.keys() else (255,255,255,255))
 
     def rowCount(self, parent=None):
         return len(self.display_tags)+len(self.uncommon_tags_list)
 
-    def data(self, index, role):
+    def data(self, index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, role: int = QtGui.Qt.ItemDataRole.DisplayRole):
         if index.row() >= len(self.display_tags):
             tag = self.uncommon_tags_list[index.row()-len(self.display_tags)]
 
             if role == QtGui.Qt.ItemDataRole.DisplayRole:
                 return tag.tag
+
+            if role == QtGui.Qt.ItemDataRole.ForegroundRole:
+                red, green, blue, alpha = tag.color
+                brush = QtGui.QBrush()
+                brush.setColor(QtGui.QColor.fromRgb(red, green, blue, alpha))
+                return brush
 
             if role == QtGui.Qt.ItemDataRole.FontRole:
                 font = QtGui.QFont()
@@ -61,7 +69,7 @@ class UniqueTagsView(QtCore.QAbstractListModel):
                 return font
 
             if role == QtGui.Qt.ItemDataRole.ToolTipRole:
-                return self.image.uncommon_tags_tooltip(tag)
+                return self.image.uncommon_tags_tooltip(tag.tag)
         else:
             tag = self.display_tags[index.row()]
 
@@ -118,7 +126,7 @@ class ConflictTagsView(QtCore.QAbstractItemModel):
     def columnCount(self, parent=QtCore.QModelIndex()):
         return 1
 
-    def data(self, index, role):
+    def data(self, index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, role: int = QtGui.Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
 
@@ -188,7 +196,7 @@ class FrequencyTagsView(QtCore.QAbstractListModel):
     def rowCount(self, parent=None):
         return len(self.display_tags)
 
-    def data(self, index, role):
+    def data(self, index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, role: int = QtGui.Qt.ItemDataRole.DisplayRole):
         tag, freq = self.display_tags[index.row()]
         if role == QtGui.Qt.ItemDataRole.DisplayRole:
             return f"{freq}: {tag}"
@@ -458,7 +466,7 @@ class BaseImageView(QtGui.QStandardItemModel):
             item.setToolTip(tooltip)
         return item
 
-    def data(self, index, role):
+    def data(self, index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, role: int = QtGui.Qt.ItemDataRole.DisplayRole):
         if role == QtGui.Qt.ItemDataRole.DecorationRole:
             return self.item(index.row()).data(QtGui.Qt.ItemDataRole.DecorationRole)
         if role == QtGui.Qt.ItemDataRole.ToolTipRole:

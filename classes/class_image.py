@@ -94,7 +94,7 @@ class ImageDatabase:
         self.image_name = None
         self.auto_tags_merged_confidence: dict[str: float] = {}
         self.rare_tags_count = 0
-        self.uncommon_tags: dict[str:float] = {}
+        self.uncommon_tags: dict[TagElement:float] = {}
 
         # pixel related, one time calc done together
         self.brightness_value = None

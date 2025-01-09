@@ -775,7 +775,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             parameters.log.warning("No valid path entered.")
             return False
         temp_db = Database(folder_path)
-        #temp_db.check_existence_images()
+        temp_db.check_existence_images()
         self.add_db_tab_widget(temp_db)
 
     @Slot()
