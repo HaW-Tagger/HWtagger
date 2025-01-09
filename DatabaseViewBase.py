@@ -1771,8 +1771,8 @@ class DatabaseViewBase(QWidget):
         All functions that do any changes to a specific index should report it to this function
         If it applies only to the selected image it's not necessary though
         """
-        if any(changed_index in self.selected_images for changed_index in changed_indexes):
-            self.selected_images_changed(self.selected_images)
+        # if any(changed_index in self.selected_images for changed_index in changed_indexes):
+        self.selected_images_changed(self.selected_images, history=True)
 
     @Slot(list)
     def selected_images_changed(self, image_indexes, history=False):
@@ -1788,7 +1788,7 @@ class DatabaseViewBase(QWidget):
             self.tags_view.view_image(common_image)
 
     def save_image(self):
-        if self.selected_images:
+        if len(self.selected_images)>1:
             current_image = self.tags_view.return_image()
             self.db.changed_common_image(current_image, self.selected_images)
 
@@ -1866,7 +1866,10 @@ class DatabaseViewBase(QWidget):
         if not selected_indexes:
             parameters.log.info("No valid images selected for batch button")
             return False
+        if replace_info[1] == "Current Selection" and len(selected_indexes) > 1:
+            self.save_image()
         for image_index in selected_indexes:
+            # Todo: convert the selection combobox to an enum
             for replace_tags in replace_info[0].values():
                 from_tags: list[str] = replace_tags["from_tags"]
                 to_tags: list[str] = replace_tags["to_tags"]
@@ -1884,6 +1887,7 @@ class DatabaseViewBase(QWidget):
 
                     self.db.images[image_index].remove_manual_tags(from_tags)
                     self.db.images[image_index].append_rejected_manual_tags(from_tags)
+
 
         # todo: better history name
         self.add_db_to_history("Replace "+str(replace_info[0])+"on "+replace_info[1])
