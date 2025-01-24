@@ -1,0 +1,39 @@
+torch>=2.5.1 #caformer
+torchvision>=0.20.1 #caformer
+torchaudio>=2.5.1 #caformer
+transformers
+diffusers
+datasets
+
+accelerate>=0.25.0
+aiofiles>=23.2.1
+einops>=0.6.1 #caformer
+fairscale>=0.4.13
+ftfy>=6.1.1
+
+omegaconf
+onnx>=1.17.0  #1.14.1
+onnxruntime-gpu>=1.20.1 #1.16.0
+protobuf>=5.29.3
+
+safetensors>=0.4.2
+toml>=0.10.2
+scipy>=1.11.4
+timm>=0.6.12 #caformer
+ImageHash>=4.2.1 # similarity
+rich # logging tool
+loguru
+tqdm
+matplotlib
+PySide6>=6.8.1.1
+qdarkstyle
+cloudscraper
+scikit-learn #caformer
+numpy
+seaborn
+pandas
+imagesize>=1.4.1
+opencv-python>=4.7.0.68
+pillow
+dghs-imgutils[gpu]>=0.9.0 #dghs version 0.4.1
+git+https://github.com/openai/CLIP.git

@@ -64,7 +64,7 @@ class FictionnalArgs:
         self.image_size = IMAGE_SIZE
         self.keep_ratio = False # this is not helpful for this model
         self.base_tagger = False
-        
+
     def add_args_for_tagger(self, thresh, char_thresh, char_tag=False, character_only=False):
         self.thresh = thresh
         self.char_thresh = char_thresh
@@ -277,6 +277,49 @@ class Swinv2v3TaggingDemo(BaseDemo):
 
         return tag_dict
 
+# Wasted 5 hours of our lives on stupid code that doesn't work, for some reason the checkpoint version work but the onnx version doesn't, we checked: input order, output vector looks correct, we observed that there are less tags and they are obviously wrong
+"""class CaformerTaggingDemo(BaseDemo):
+    def __init__(self, args):
+        super().__init__(args)
+
+        tags_map: dict[int: str] = {int(k): v for k, v in files.get_dict_caformer_tag_frequency().items()}
+        self.tags_class_json = files.get_dict_caformer_tag_frequency()
+        self.general_indexes = list(tags_map.keys())
+        self.general_indexes.sort()
+        self.general_tags = [tags_map[i] for i in self.general_indexes]
+
+       # https://huggingface.co/spaces/SmilingWolf/wd-tagger/tree/main
+
+    @classmethod
+    def sigmoid(cls, z):
+        return 1.0 / (1.0 + np.exp(-z))
+
+    def load_data(self, path):
+        img = Image.open(path).convert('RGB')
+        img = self.trans(img)
+        return img
+
+    @torch.no_grad()
+    def infer_batch(self, paths, bs, thresh, num_classes=10861):
+        tag_dict = {}
+        dataset = PathDataset_test(paths, self.trans, convert_bhwc=False, convert_bgr=False, to_np=True, fill_transaprent=True)
+        loader = torch.utils.data.DataLoader(dataset,batch_size=bs, num_workers=min(int(len(paths)/bs), 4 if len(paths)>200 else 2), shuffle=False, collate_fn=custom_collate, pin_memory=True if torch.cuda.is_available() else False)
+
+        #np.set_printoptions(suppress=True)
+        for imgs, path_list in tqdm(loader):
+            imgs = np.transpose(np.array(imgs), axes=[0,3,1,2])
+            probs = self.ort_session.run([self.output_name], {self.input_name:imgs})[0] # onnx output numpy
+            print(probs.shape)
+            for f_path, prob_vec in zip(path_list, probs):
+                prob_vec = self.sigmoid(prob_vec)
+                #pairs = sorted([(self.tags_class_json[i], ratio) for i, ratio in enumerate(prob_vec)], key=lambda x: (-x[1], x[0]))
+                #return {tag: float(ratio) for tag, ratio in pairs if ratio >= threshold}
+                tags = [(self.general_tags[tag_index], round(float(prob_vec[tag_index]), 3)) for tag_index in self.general_indexes if prob_vec[tag_index] > thresh]
+                tags.sort(reverse=True, key=lambda x: x[1])
+                tag_dict[f_path] = tags
+
+        return tag_dict"""
+
 
 class Eva02LargeV3TaggingDemo(BaseDemo):
     def __init__(self, args):
@@ -337,6 +380,16 @@ def image_scoring(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_s
     demo = ImageScoringDemo(args)
     tag_dict = demo.infer_batch(args.data, args.batch_size, args.model_dir)
     return tag_dict
+"""
+def caformer_tagging(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_size"]):
+    threshold=parameters.PARAMETERS["caformer_threshold"]
+    ckpt = os.path.join(model_pth, "model.onnx")
+    parameters.log.info(f"Loading Caformer, Batch:{batch_size}, using ONNX and torch")
+    args = FictionnalArgs(data, model_pth, ckpt,  batch_size)
+    args.add_args_for_tagger(threshold, 0)
+    demo = CaformerTaggingDemo(args)
+    tag_dict = demo.infer_batch(args.data, args.batch_size, args.thresh ,args.num_classes)
+    return tag_dict"""
 
 def image_classify(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_size"]):
     # model is the base model used in imguitls
@@ -359,7 +412,7 @@ def image_completeness(data, model_pth, batch_size=parameters.PARAMETERS["max_ba
     return tag_dict
 
 def swinv2v3_tagging(data, model_pth, character_only=False, batch_size=parameters.PARAMETERS["max_batch_size"]):
-    threshold=parameters.PARAMETERS["swinv2_threshold"], 
+    threshold=parameters.PARAMETERS["swinv2_threshold"],
     character_threshold=parameters.PARAMETERS["swinv2_character_threshold"],
     ckpt = os.path.join(model_pth, "model.onnx") 
     CHARACTERS = parameters.PARAMETERS["swinv2_enable_character"]

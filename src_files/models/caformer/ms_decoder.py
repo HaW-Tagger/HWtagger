@@ -8,7 +8,7 @@ from .metaformer_baselines import Attention
 
 try:
     use_xformers = os.getenv('USE_XFORMERS')
-    from xformers.components import MultiHeadDispatch, build_attention
+    from xformers.components import build_attention
 except:
     use_xformers = False
     print('xformers not find')

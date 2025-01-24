@@ -531,7 +531,7 @@ def find_near_duplicates(images_paths: list[str],*, threshold: float=0.9, hash_s
     near_duplicates.sort(key=lambda x: x[2], reverse=True)
     return near_duplicates
 
-def get_dict_caformer_tag_frequency():
+def get_dict_caformer_tag_frequency() -> dict[int: str]:
     # get caformer (rule34) from json
     ca_model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["caformer_folder"])
     if not os.path.exists(ca_model_folder):
