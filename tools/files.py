@@ -24,35 +24,56 @@ def load_database(folder):
     return db
 
 def save_database(database: dict, folder):
-    add_history(folder)
-    backup_database_file(folder)
-    with open(os.path.join(folder, parameters.DATABASE_FILE_NAME), 'w') as f:
-        json.dump(database, f)
+    if database:
+        add_history(folder)
+        backup_database_file(folder)
+        with open(os.path.join(folder, parameters.DATABASE_FILE_NAME), 'w') as f:
+            json.dump(database, f)
 
 def check_database_exist(folder):
     # return bool, if database.json exists
+    if folder.endswith(parameters.DATABASE_FILE_NAME):
+        return os.path.exists(folder)
     return os.path.exists(os.path.join(folder, parameters.DATABASE_FILE_NAME))
 
-def create_database_file(folder):
+def create_database_file(folder): # todo : check why we need this?
     with open(os.path.join(folder, parameters.DATABASE_FILE_NAME), 'w') as f:
         json.dump({}, f)
     parameters.log.info("Created database file")
 
 def backup_database_file(folder):
-    files = os.listdir(folder)
+    max_backups = parameters.PARAMETERS['max_databases_view_backup']
+    if max_backups > 999:
+        parameters.log.info("Max backups is 999, exiting backup sequence")
+        return False
+    db_file_name = parameters.DATABASE_FILE_NAME
+    # get only the databases and backups in the current directory
+    files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
     backups = []
-    for file in files:
-        if parameters.DATABASE_FILE_NAME+".bak" in file:
-            backups.append(file)
-    backups.sort(key=lambda x: int(x[x.index(".bak")+4:]))
+    
+    for f in files:
+        if (db_file_name+".bak" in f or db_file_name in f):
+            backups.append(f)
+    # string sort, numbered bak files are in increasing order, and base database is at the end
+    backups = sorted(backups)
+    if db_file_name in backups: # we move the base database folder up front
+        backups.remove(db_file_name)
+        backups.insert(0, db_file_name)
+    
     while len(backups)>0:
-        if len(backups) >= parameters.PARAMETERS['max_databases_view_backup']:
+        if len(backups) >= max_backups: # remove backups above the max number
             os.remove(os.path.join(folder, backups[-1]))
-        else:
-            dst_path = os.path.join(folder,backups[-1][:backups[-1].index(".bak")+4] + str(int(backups[-1][backups[-1].index(".bak")+4:])+1).zfill(3))
-            os.rename(os.path.join(folder, backups[-1]), dst_path)
-        backups.pop()
-    os.rename(os.path.join(folder, parameters.DATABASE_FILE_NAME), os.path.join(folder, parameters.DATABASE_FILE_NAME+".bak"+'001'))
+        else: # numbered backup files, rename file by adding +1 to backup number
+            curr_file = backups[-1]
+            db_file_dir = os.path.join(folder, db_file_name)
+            if curr_file == db_file_name:
+                os.rename(db_file_dir, db_file_dir + ".bak"+'001')
+            else: # bak files
+                bak_file = os.path.join(folder, curr_file)
+                backup_number = int(curr_file[curr_file.index(".bak")+4:])
+                dst_path = db_file_dir + ".bak"+ str(backup_number+1).zfill(3)
+                os.rename(bak_file, dst_path)
+        backups.pop()  
 
 def get_all_images_in_folder(folder, image_ext=resources.parameters.IMAGES_EXT, rejected_folders=resources.parameters.PARAMETERS["discard_folder_name_from_search"]):
     """
@@ -92,10 +113,12 @@ def get_all_databases_folder(folder, rejected_folders=resources.parameters.PARAM
     return S
 
 def read_history():
+    # history is just a dict containing the path and the datetime it was last modified
     try:
         with open("history.json", 'r') as f:
             history = json.load(f)
     except FileNotFoundError:
+        parameters.log.info("creating new history.json file in project directory")
         create_history()
         history = {}
     return history
@@ -108,7 +131,6 @@ def add_history(database_path):
     history = read_history()
     if database_path not in history.keys():
         ct = datetime.datetime.now()
-        history[database_path] = {}
         history[database_path] = {'date': [ct.year, ct.month, ct.day, ct.hour]}
         with open("history.json", 'w') as f:
             json.dump(history, f)
