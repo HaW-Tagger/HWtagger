@@ -179,7 +179,7 @@ def border_transparency(img: pathlib.Path, crop_empty_space=True, crop_empty_bor
             if is_row_approximately_similar2(pixels_data[bottom_row-jump,:,:]):
                 bottom_row-=(jump+1)
             
-        while is_row_approximately_similar2(pixels_data[:,right_col,:]) and right_col < half_ow+10:
+        while is_row_approximately_similar2(pixels_data[:,right_col,:]) and right_col > half_ow+10:
             right_col -= 1
             if is_row_approximately_similar2(pixels_data[:,right_col-jump,:]):
                 right_col-=(jump+1)
