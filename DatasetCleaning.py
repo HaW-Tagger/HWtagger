@@ -45,9 +45,10 @@ def print_char_overlap():
 if len(file_phrase) != len(secondary_tag):
     parameters.log.info("BAD!, check file phrases")
 
+#not used, but might be useful if needed to separate some elements with a smaller font
 w_font_font = parameters.PARAMETERS['font_name'] 
 w_font_size = int(parameters.PARAMETERS['font_size'])
-base_font = "font: {w_font}; font-size: {w_font_size};"
+base_font = "font: {w_font_font}; font-size: {w_font_size};"
 
 def make_combination(modifiers, base_tag):
     sub_category = [c + " " + cloth for cloth in base_tag for c in modifiers]
@@ -389,8 +390,8 @@ class DatasetCleaningView(QWidget, dataset_cleaning.Ui_Form):
             # create sub groups
 
             
-            for group_name in self.temp_database.groups.keys():
-                md5s = self.temp_database.groups[group_name]["images"]
+            for group_name, group_obj in self.temp_database.groups.items():
+                md5s = group_obj.md5s
                 for md5 in md5s:
                     
                     img_index = self.temp_database.index_of_image_by_md5(md5)
