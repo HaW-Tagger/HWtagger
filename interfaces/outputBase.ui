@@ -16,22 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="3" column="1">
-      <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Include the quality tags from the aesthetic scores and place them into the main trigger tag section.</string>
-       </property>
-       <property name="text">
-        <string>Aesthetic scores in token separator</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QCheckBox" name="checkBox_use_separator">
        <property name="sizePolicy">
@@ -57,8 +41,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QCheckBox" name="checkBox_use_sentence">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="checkBox_trigger_tags">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -66,32 +50,13 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>include any sentences/caption in the export.  If no captions were set, they're not added to the exported file(s)</string>
+        <string>put trigger tags at the front</string>
        </property>
        <property name="text">
-        <string>Sentence</string>
+        <string>Trigger Tags</string>
        </property>
        <property name="checked">
         <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QCheckBox" name="checkBox_export_aesthetic_score">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lookup what aesthetic score values map to any quality tags, then export the aesthetic/quality tag with the other tags.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Aesthetic scores</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -114,6 +79,41 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Include the quality tags from the aesthetic scores and place them into the main trigger tag section.</string>
+       </property>
+       <property name="text">
+        <string>Aesthetic scores in token separator</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="checkBox_use_sentence">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>include any sentences/caption in the export.  If no captions were set, they're not added to the exported file(s)</string>
+       </property>
+       <property name="text">
+        <string>Sentence</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="0" colspan="2">
       <widget class="QCheckBox" name="checkBox_remove_tags_in_sentence">
        <property name="toolTip">
@@ -127,8 +127,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="checkBox_trigger_tags">
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="checkBox_export_aesthetic_score">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -136,26 +136,13 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>put trigger tags at the front</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lookup what aesthetic score values map to any quality tags, then export the aesthetic/quality tag with the other tags.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Trigger Tags</string>
+        <string>Aesthetic scores</string>
        </property>
        <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="2">
-      <widget class="QCheckBox" name="checkBox_shuffle_tags">
-       <property name="toolTip">
-        <string>HIGHLY RECOMMENDED FOR LORA TRAINING</string>
-       </property>
-       <property name="text">
-        <string>Shuffle Tags</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -205,6 +192,13 @@
      </property>
      <property name="placeholderText">
       <string>Secondary Tag(s), Separated with &quot;,&quot;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBox_current_group">
+     <property name="text">
+      <string>For Currently Selected Group</string>
      </property>
     </widget>
    </item>

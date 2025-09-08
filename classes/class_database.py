@@ -1,41 +1,71 @@
 import concurrent.futures
-import copy
 import html
 import json
 import os
 import pathlib
 import shutil
+import time
 from collections import Counter
-import tqdm
+import copy
 
-import tools
-import tools.images
+import cloudscraper
+from tqdm import tqdm
+
 from classes.class_image import *
-from resources import parameters, tag_categories
+from classes.class_elements import *
+
 from tools import files, tagger_caller
-from tools.misc_func import tqdm_parallel_map, order_tag_prompt
+from tools.misc_func import tqdm_parallel_map, order_tag_prompt, tree_print
+import tools
+from resources import parameters, tag_categories
+from clip import tokenize
+import numpy as np
+import tools.images
+from datetime import datetime
+import inspect
+import textwrap
 
+VALID_TRIGGER_KEYS = ["main_tags", "secondary_tags"]
 
+def key_checker(keys:str|list[str]|set[str]):
+    # returns True if key is valid, otherwise raise TypeError
+    if isinstance(keys, str):
+        if not keys in VALID_TRIGGER_KEYS:
+            raise KeyError(f"invalid key used to get trigger tags: {type(keys)}")
+    if isinstance(keys, (list, set)):
+        invalid = [k for k in keys if k not in VALID_TRIGGER_KEYS]
+        if invalid:
+            raise KeyError(f"invalid keys used to get trigger tags: {invalid}")
+    return True
+    
 class VirtualDatabase:
     def __init__(self):
         self.images: list[ImageDatabase] = []
         self.duplicate_paths = []
         self.similar_images: list[tuple[set[int], float]] = []
-        self.trigger_tags = {
-            'main_tags': [],
-            'secondary_tags': []
+        self.trigger_tags:dict[str:list] = {
+            "main_tags": [],
+            "secondary_tags": []
         }
         self.groups: dict[str: GroupElement] = {}
+        self.note = ""
+        self.report = ""
 
         #Temp Info
         self.rare_tags = set()
 
-    def append_images_dict(self, image_dict) -> bool:
-        is_dupe = image_dict["md5"] in self.get_all_md5()
+    def check_image_dict(self, image_dict) -> bool:
+        # returns if it's a dupe or not
+        for img in self.images:
+            if image_dict["md5"] == img.md5 or image_dict["path"] == img.path:
+                return True      
+        return False
+    
+    def append_images_dict(self, image_dict, skip_check=False) -> bool:
+        # skip_check is here if the check_image_dict was checked previously (ex: add_img_to_db with rename_to_md5)
+        is_dupe = False if skip_check else self.check_image_dict(image_dict)
         if not is_dupe:
-            is_dupe = image_dict["path"] in self.get_all_paths()
-            if not is_dupe:
-                self.images.append(ImageDatabase(image_dict))
+            self.images.append(ImageDatabase(image_dict))
         return is_dupe
 
     def index_of_image_by_md5(self, image_md5) -> int:
@@ -59,6 +89,59 @@ class VirtualDatabase:
         # todo: return -1 in case of failure
         return self.get_all_paths().index(image_path)
 
+    def check_jpeg_artifacts(self, image_path):
+        # this detects jpeg artifacts and adds it to the list of tags
+        parameters.log.info("detecting jpeg artifacts")
+        
+        if not image_path:
+            parameters.log.info("No image to check for jpeg artifacts")
+            return
+        
+        no_png = True
+        if no_png:
+            image_path = [p for p in image_path if not p.endswith(".png")]
+            parameters.log.info(f"ignoring png images, processing {len(image_path)}")
+            
+        
+        detection_results = tools.images.detect_jpeg_artifacts(image_path)
+        index_dict = self.get_img_path_index_dict()
+        
+        for img_path in image_path: # clean up previous run
+            self.images[index_dict[img_path]].remove_manual_tags("jpeg artifact")
+        
+        for img_path, results in detection_results.items():
+            """ this is what's returned in results
+                {
+                "file_size_kb": round(file_size_kb, 2),
+                "sharpness (Laplacian Variance)": round(laplacian_var, 2),
+                "blockiness": round(artifact_score, 2), int 0~5 for regular images, 5~10+ for bad compression
+                "compression_severity": ["low", "medium", "high"]
+                }
+            """
+            
+            img_obj = self.images[index_dict[img_path]] 
+            
+            # ignore monochrome images (specifically comics), bc they use "tones" which can be confused as jpeg artifacts
+            # we also ignore very large images, bc the effects are negligible
+            
+            
+            
+            if not img_obj.image_width:
+                img_obj.load_image_parameters()
+            
+            if img_obj.image_width > 1536 or img_obj.image_height > 1536 or "monochrome" in img_obj.get_full_only_tags():
+                continue
+            
+            if img_path.endswith(".png") and img_obj.image_width > 1024 and img_obj.image_height > 1024:
+                continue
+            
+            if results["compression_severity"] not in ("low", "N/A"):
+                
+                add_to_numerical = ["sharpness (Laplacian Variance)", "blockiness"]
+                
+                self.images[index_dict[img_path]].add_misc_numerical([(k, float(v)) for k, v in results.items() if k in add_to_numerical])
+                self.images[index_dict[img_path]].append_manual_tags("jpeg artifact")
+    
     def multi_tagger_call(self, image_paths: list[str], tagging_models:list[str], extra_args=None):
         """
         this is only called by the call_models function below, this gets the results and interpert the values
@@ -83,7 +166,7 @@ class VirtualDatabase:
                         "confidence":c
                     } for ((x0, y0, x1, y1), n, c) in detection_list]
             return data
-  
+        
         tagger_models_str = []
         for t in tagging_models:
             if not isinstance(t, str): # if it's a enum thing
@@ -98,8 +181,6 @@ class VirtualDatabase:
         # results = {tagging_model_name: {img_path : tagged_result}}
         # the tagged_result can be different structure or types depending on the model
         results = tagger_caller.multi_model_caller(image_paths, tagger_models_str, extra_args=extra_args)
-
-
 
         # here we list the way we update the internal values based on results
         if "anime_aesthetic" in results: # update scores
@@ -122,14 +203,12 @@ class VirtualDatabase:
             for img_path, new_tags in results["Swinv2v3"].items():
                 # characters are merged to pre-existing tags of the same model,otherwise newly initialized
                 image_index = index_dict[img_path]
-                if characters_only: # tagging only characters
-                    if "Swinv2v3" in self.images[image_index].auto_tags.names():
-                        result = {"auto_tags": {"Swinv2v3": list(set(self.images[image_index].auto_tags["Swinv2v3"] + new_tags))}}
-                    else:
-                        result = {"auto_tags": {"Swinv2v3": new_tags}}
-                    self.images[image_index].init_image_dict(result)
-                else:
-                    self.images[index_dict[img_path]].init_image_dict({"auto_tags": {"Swinv2v3": new_tags}})
+                result = {"auto_tags": {"Swinv2v3": new_tags}}
+                if characters_only and "Swinv2v3" in self.images[image_index].auto_tags.names():
+                    result = {"auto_tags": {
+                            "Swinv2v3": list(set(self.images[image_index].auto_tags["Swinv2v3"].simple_tags() + new_tags))}}
+                self.images[image_index].init_image_dict(result)
+                
         if "Eva02_largev3" in results:  # update swin tags, two cases for char only vs normal case
             characters_only = False
             if extra_args and "Eva02_largev3" in extra_args:
@@ -141,7 +220,7 @@ class VirtualDatabase:
                 if characters_only:  # tagging only characters
                     if "Eva02_largev3" in self.images[image_index].auto_tags.names():
                         result = {"auto_tags": {
-                            "Eva02_largev3": list(set(self.images[image_index].auto_tags["Eva02_largev3"] + new_tags))}}
+                            "Eva02_largev3": list(set(self.images[image_index].auto_tags["Eva02_largev3"].simple_tags() + new_tags))}}
                     else:
                         result = {"auto_tags": {"Eva02_largev3": new_tags}}
                     self.images[image_index].init_image_dict(result)
@@ -149,34 +228,47 @@ class VirtualDatabase:
                     self.images[index_dict[img_path]].init_image_dict({"auto_tags": {"Eva02_largev3": new_tags}})
         if "detect_people" in results:
             #parameter.log.info(results["detect_people"])
+            # detection list is ((x0, y0, x1, y1), n, c) coords, name, and confidence
             for img_path, detection_list in results["detect_people"].items():
                 self.images[index_dict[img_path]].init_image_dict({"rects": convert_detection(detection_list)})
+                #self.images[index_dict[img_path]].prune_overlapping_rect("person")
         if "detect_head" in results:
             #parameter.log.info(results["detect_head"])
             for img_path, detection_list in results["detect_head"].items():
                 self.images[index_dict[img_path]].init_image_dict({"rects": convert_detection(detection_list)})
+                #self.images[index_dict[img_path]].prune_overlapping_rect("head")
         if "detect_hand" in results:
             #parameter.log.info(results["detect_hand"])
             for img_path, detection_list in results["detect_hand"].items():
                 self.images[index_dict[img_path]].init_image_dict({"rects": convert_detection(detection_list)})
+                #self.images[index_dict[img_path]].prune_overlapping_rect("hand")
+        if "detect_text" in results:
+            for img_path, detection_list in results["detect_text"].items():
+                self.images[index_dict[img_path]].init_image_dict({"rects": convert_detection(detection_list)})
+                self.images[index_dict[img_path]].merge_text_rects()
         if "florence_caption"in results:
             for img_path, captions in results["florence_caption"].items():
                 self.images[index_dict[img_path]].init_image_dict({"sentence_description": captions})
 
+        # we do the jpeg artifact checker last because we may want to check monochrome and other conditions that may
+        # help filter out the jpeg_artifact miss identification
+        if "jpeg_artifacts" in tagger_models_str:
+            self.check_jpeg_artifacts(image_paths)
 
     def call_models(self, image_paths: list[str]=None, tag_images=False,  tag_only_character=False,
                  score_images=False, classify_images=False, grade_completeness=False, detect_people=False, 
-                 detect_head=False, detect_hand=False, caption_image=False):
+                 detect_head=False, detect_hand=False, detect_text=False, caption_image=False, jpeg_artifacts=False, tag_image_list=[]):
         """use this function to call the tagger/detection models, you can set the bools for the models you want to run
         This function preps the list of models passed to the real model caller
   
         Args:
             image_paths (list[str], None): if None, this will process all images, otherwise this takes a list of paths
             The rest are bools for which models to run
+            ...
+            tag_image_list: if this is non-empty, then it will overwrite the models ran for the tagger
    
         Returns: nothing
         """
-  
         if image_paths is None: # a check to use all paths
             image_paths = self.get_all_paths()
 
@@ -184,7 +276,7 @@ class VirtualDatabase:
         model_calls = []
         extra_args = None
         if tag_images:
-            model_calls.extend(parameters.PARAMETERS["automatic_tagger"])
+            model_calls.extend(tag_image_list if tag_image_list else parameters.PARAMETERS["automatic_tagger"])
         if tag_only_character:
             model_calls.append("Swinv2v3")
             extra_args = {"Swinv2v3":{"characters_only":True}}
@@ -200,8 +292,13 @@ class VirtualDatabase:
             model_calls.append("detect_head")
         if detect_hand:
             model_calls.append("detect_hand")
+        if detect_text:
+            model_calls.append("detect_text")
+        if jpeg_artifacts:
+            model_calls.append("jpeg_artifacts")
         if caption_image:
             model_calls.append("florence_caption")
+        
 
         parameters.log.info(f"Running the following models {model_calls}")
         if any(model_calls):
@@ -212,16 +309,16 @@ class VirtualDatabase:
 
     def re_call_models(self, image_indices: list[int]=None, tag_images=False,  tag_only_character=False,
                     score_images=False, classify_images=False, grade_completeness=False,
-                    detect_people=False, detect_head=False, detect_hand=False, caption_image=False
+                    detect_people=False, detect_head=False, detect_hand=False, detect_text=False, caption_image=False
                     ):
         """This prints a message for what is reapplied to the images and calls the model callers
         """
         image_paths = self._get_reapplied_paths(image_indices) # if none, get all paths
 
         message_type = ["retagged", "retagged (characters only)", "rescored", "reclassified",
-                        "regraded", "redetect people", "redetect head", "redetect hands", "recaption"]
+                        "regraded", "redetect people", "redetect head", "redetect hands", "redetect text", "recaption"]
         message_bools = [tag_images, tag_only_character, score_images, classify_images,
-                   grade_completeness, detect_people, detect_head, detect_hand, caption_image]
+                   grade_completeness, detect_people, detect_head, detect_hand, detect_text, caption_image]
         used_models_message = [mt for mt, mb in zip(message_type, message_bools) if mb]
 
         if len(used_models_message) > 1: # add and for multiple items
@@ -235,8 +332,44 @@ class VirtualDatabase:
 
         self.call_models(image_paths, tag_images=tag_images, tag_only_character=tag_only_character, score_images=score_images,
                    classify_images=classify_images, grade_completeness=grade_completeness, detect_people=detect_people,
-                    detect_head=detect_head, detect_hand=detect_hand, caption_image=caption_image)
+                    detect_head=detect_head, detect_hand=detect_hand, detect_text=detect_text, caption_image=caption_image)
 
+    def re_call_models_on_missing_data(self, image_indices: list[int]=None, tag_images=False,  tag_only_character=False,
+                    score_images=False, classify_images=False, grade_completeness=False,
+                    detect_people=False, detect_head=False, detect_hand=False, detect_text=False, caption_image=False):
+        # we will check each image content and re-tag/re-classify them if that data is not present
+        pass
+    
+    def re_apply_threshold(self):
+        parameters.log.info("applying new threshold")
+        tagger_thresh = [
+            (parameters.AvailableTaggers.WDEVA02LARGEV3.value, parameters.PARAMETERS["wdeva02_large_threshold"]),
+            (parameters.AvailableTaggers.SWINV2V3.value, parameters.PARAMETERS["swinv2_threshold"]),
+            (parameters.AvailableTaggers.CAFORMER.value, parameters.PARAMETERS["caformer_threshold"])
+            ]
+        for image in self.images:
+            image.auto_tags.prune_under_threshold(tagger_thresh)
+            
+    
+    def check_duplicate_tags_in_manual_rejected(self):
+        # only available via filter_all in database_edit_page
+        # fix a problem where the same tag is in both manual and rejected
+        # this cannot be fixed by the filter system because there's no change in the built tags
+        # and this may need human intervention so we need to document/tally each change
+        overlap_frequency = Counter()
+        for image in self.images:
+            overlap = set(image.manual_tags.simple_tags()).intersection(set(image.rejected_manual_tags.simple_tags()))
+            if overlap:
+                overlap_frequency.update(overlap)
+                parameters.log.debug(f"Duplicate tags {overlap} in manual and rejected for {image.path}")
+                # prioritize the manual tags
+                image.rejected_manual_tags -= overlap
+        
+        for tag, count in overlap_frequency.most_common():
+            parameters.log.info(f"Tag {tag} was in both manual and rejected {count} times")
+                
+        
+        
     def filter_all(self):
         if len(self.images) < 100:
             for image in self.images:
@@ -286,17 +419,81 @@ class VirtualDatabase:
         for image_index in images_index:
             self.images[image_index].reset_score()
 
-    def create_txt_files(self, add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator="|||", use_trigger_tags=True, use_aesthetic_score=False, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True, shuffle_tags=True):
+    def get_triggers(self, keys:str|list[str]|set[str]="main_tags"):
+        """returns the trigger words assigned to the given keys:
+            # helps with debugging and we have a proper interface to get values
+            # valid_keys will check for basic typos
+            
+            a string will return the value stored in the dict
+            a list/set of keys will return a dictonary with only matching k-v pairs
+            
+        Args:
+            keys (str | list[str] | set[str], optional): _description_. Defaults to "main_tags".
+
+        Returns:
+            (set | dict[str:list]): _description_
+        """
+        if key_checker(keys):
+            if isinstance(keys, str):
+                return self.trigger_tags.get(keys, [])
+            elif isinstance(keys, (list, set)):
+                return {k: self.trigger_tags.get(k, []) for k in keys}
+        else:
+            KeyError(f"Unknown Key uses {type(keys)}")
+    
+    def set_triggers(self, keys="main_tags", tags=[], splitter=","):
+        """handles many key - tags(value) pairings
+            single keys: str-list, str-str
+            multiple_keys: list-list[list[str]], list-dict, set-dict
+            other setups will raise errors
+        Args:
+            keys (str | list[str] | set[str], optional): _description_. Defaults to [].
+            tags (str | list[str] | set[str] | dict[list], optional): _description_. Defaults to [].
+            splitter (str, optional): _description_. Defaults to ",".
+        """
+        # processes and set values to trigger tags, splits via default comma
+        if key_checker(keys):
+            if isinstance(keys, str):
+                if isinstance(tags, str):
+                    tags = [t.strip() for t in tags.split(splitter)]
+                    tags = [t for t in tags if t]
+                    self.trigger_tags[keys] = tags
+                elif isinstance(tags, (list, set)):
+                    tags = [t.strip() for t in tags]
+                    tags = [t for t in tags if t]
+                    self.trigger_tags[keys] = tags
+                else:
+                    raise TypeError(f"Invalid argument combination: {type(keys)}, {type(tags)}")
+            elif isinstance(keys, list):
+                if isinstance(tags, dict):
+                    for k in keys: # ignoring length difference and other weird instances
+                        self.trigger_tags[k] = [tag for tag in tags.get(k, []) if tag]
+                elif isinstance(tags, list):
+                    for k, tag_list in zip(keys, tags):
+                        tag_list = [v for v in tag_list if v]
+                        self.trigger_tags[k] = tag_list
+                else:
+                    raise TypeError(f"Invalid argument combination: {type(keys)}, {type(tags)}")
+            elif isinstance(keys, set):# python sets are ordered, but for logic sake, we handle it as unordered
+                if isinstance(tags, dict):
+                    for k in keys:
+                        self.trigger_tags[k] = [tag for tag in tags.get(k, []) if tag]
+                else:
+                    raise TypeError(f"Invalid argument combination: {type(keys)}, {type(tags)}")
+        
+    def create_txt_files(self, add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator="|||", use_trigger_tags=True, use_aesthetic_score=False, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True, specific_indexes=[]):
         token_keeper = keep_tokens_separator
         if not token_separator:
             token_keeper = ""
-        main_tags = self.trigger_tags["main_tags"]
-        secondary_tags = self.trigger_tags["secondary_tags"]
+        main_tags = self.get_triggers("main_tags")
+        secondary_tags = self.get_triggers("secondary_tags")
         if not use_trigger_tags:
             main_tags = []
             secondary_tags = []
-        for image in self.images:
-
+        for i, image in enumerate(self.images):
+            if specific_indexes and i not in specific_indexes:
+                continue # skip image if index is not in specific_indexes
+            
             to_write = image.create_output(add_backslash_before_parenthesis=add_backslash_before_parenthesis,
                                            keep_tokens_separator=token_keeper,
                                            main_tags=main_tags,
@@ -305,8 +502,7 @@ class VirtualDatabase:
                                            use_sentence=use_sentence,
                                            sentence_in_trigger=sentence_in_trigger,
                                            remove_tags_in_sentence=remove_tags_in_sentence,
-                                           score_trigger=score_trigger,
-                                           shuffle_tags=shuffle_tags
+                                           score_trigger=score_trigger
                                            )
             with open(os.path.join(os.path.splitext(image.path)[0] + ".txt"), 'w') as f:
                 f.write(to_write + "\n")
@@ -315,9 +511,20 @@ class VirtualDatabase:
     def get_img_path_index_dict(self):
         return {img.path: i for i, img in enumerate(self.images)}
 
+    def get_img_md5_index_dict(self, include_original_md5=True):
+        table = {img.md5 : i for i, img in enumerate(self.images)}
+        if include_original_md5:
+            for i, img in enumerate(self.images):
+                if img.original_md5 not in table:
+                    table[img.original_md5] = i
+        return table
+
     def get_all_paths(self):
         return [img.path for img in self.images]
 
+    def get_last_added_order(self):
+        return max([img.order_added for img in self.images] + [-1])
+    
     def get_all_image_indices(self):
         return list(range(len(self.images)))
 
@@ -340,11 +547,12 @@ class VirtualDatabase:
         if group_name not in self.groups:
             self.groups[group_name] = GroupElement(group_name=group_name, md5s=[self.images[image_index].md5])
 
-        if self.images[image_index].md5 in self.groups[group_name].md5s:
+        if self.images[image_index].md5 in self.groups[group_name]:
             return
 
-        self.groups[group_name].append(self.images[image_index].md5)
-        self.images[image_index].groups.append(self.groups[group_name])
+        # add info to relevant sections (checks happen within the obejcts)
+        self.groups[group_name].add_item(self.images[image_index].md5)
+        self.images[image_index].add_to_group(group_name)
 
     def add_images_to_group(self, group_name, images_index: list[int]):
         """
@@ -369,19 +577,49 @@ class VirtualDatabase:
         if group_name not in self.groups:
             return
 
-        if self.images[image_index].md5 not in self.groups[group_name].md5s:
+        if self.images[image_index].md5 not in self.groups[group_name]:
             return
 
-        self.groups[group_name].remove(self.images[image_index].md5)
-        self.images[image_index].groups.pop(self.images[image_index].groups.index(group_name))
+        self.groups[group_name].remove_item(self.images[image_index].md5)
+        self.images[image_index].remove_from_group(group_name)
+
+    def update_image_groups(self, group_list=[], image_indicies:int|list[int]=[]):
+        #parameters.log.info(f"new group {group_list}, {image_indicies}")
+        
+        if isinstance(image_indicies, int):
+            image_indicies = [image_indicies]
+            
+        existing_names = self.get_group_names()
+        unknown_group_names = [g for g in group_list if g not in existing_names]
+        if unknown_group_names:
+            parameters.log.info(f"unknown group name detected: {unknown_group_names}, ignoring unknown")
+        
+        group_list = set(group_list)
+        
+        for index in image_indicies:
+            md5 = self.images[index].md5
+            img_group = self.images[index].group_names # this is a set
+            if group_list == img_group:
+                continue # skip this image if group info is the same
+            
+            add_to_group = group_list - img_group
+            remove_from_group = img_group - group_list
+        
+            for group_name in existing_names:
+                if group_name in add_to_group:
+                    self.add_image_to_group(group_name, index)
+                elif group_name in remove_from_group:
+                    self.remove_image_from_group(group_name, index)
+                    
+                    
+            parameters.log.info(f"after operation: {self.images[index].group_names}")       
+    
+    def get_group_names(self):
+        return [group.group_name for group in self.groups.values()]
 
     def remove_empty_groups(self):
-        to_remove = []
-        for group_name in self.groups.keys():
-            if not len(self.groups[group_name]):
-                to_remove.append(group_name)
-        if not to_remove:
-            return
+        # get names of empty groups
+        to_remove = [g_name for g_name, g_obj in self.groups.items() if not len(g_obj)]
         for group_name in to_remove:
             self.groups.pop(group_name)
 
@@ -424,7 +662,8 @@ class VirtualDatabase:
 
     def remove_images_by_path(self, path_list):
         db_index_dict = self.get_img_path_index_dict() # speed things up with a reverse dict search
-        path_indexes = [db_index_dict[p] for p in path_list]
+        path_indexes = [db_index_dict[p] for p in path_list if p in db_index_dict]
+        
         self.remove_images_by_index(path_indexes)
 
     def remove_images_by_md5(self, md5_list):
@@ -433,6 +672,8 @@ class VirtualDatabase:
         self.remove_images_by_index(path_indexes)
 
     def remove_images_by_index(self, index_list):
+        """given a list of indexes to remove, automatically sort and remove from the back to avoid index issues
+        """
         index_list.sort(reverse=True)
         for idx in index_list:
             del self.images[idx]
@@ -491,6 +732,9 @@ class VirtualDatabase:
 
         # sort by len of similarity group (bigger groups are first)
         self.similar_images.sort(key=lambda x: (x[1], len(x[0])))
+        
+        
+        
         self.add_similarity_group_to_image()
         return True
 
@@ -498,43 +742,54 @@ class VirtualDatabase:
         if not self.similar_images:
             return False
         for image in self.images:
+            image.related_md5s = []
             image.similarity_group = 0
             image.similarity_probability = 0.0
-        for k in range(len(self.similar_images)):
-            for i in self.similar_images[k][0]:
+        for k, value in enumerate(self.similar_images):
+            for i in value[0]:
+                self.images[i].add_related_md5s([self.images[x].md5 for x in value[0] if x != i])
                 self.images[i].similarity_group = k+1
-                self.images[i].similarity_probability = self.similar_images[k][1]
+                self.images[i].similarity_probability = value[1]
 
     def remove_groups(self):
         """
         remove all occurrences of existing groups
         """
         self.groups = {}
+        
         for image in self.images:
-            image.groups = []
+            image.groups = {}
 
     def remove_group(self, group_name):
         """
         remove all occurrences of existing group
         """
         del self.groups[group_name]
+        
         for image in self.images:
             if group_name in image.groups:
                 image.groups.remove(group_name)
 
-    def change_md5_of_image(self, image_index, new_md5):
+    def change_md5_of_image(self, image_index, provided_md5s=""):
         """
         update all locations in where the md5 is used in the database and update the md5 of the image
         Args:
             image_index:
             new_md5:
         """
-        for group in self.groups.values():
-            if self.images[image_index].md5 in group.md5s:
-                group[self.images[image_index].md5] = new_md5
-        self.images[image_index].md5 = new_md5
-        for group in self.images[image_index].groups:
-            group[self.images[image_index].md5] = new_md5
+        if provided_md5s:
+            new_md5 = provided_md5s
+            old_md5 = self.images[image_index].md5
+            self.images[image_index].md5 = provided_md5s
+        else:
+            (old_md5, new_md5) = self.images[image_index].update_md5()
+        
+        if old_md5 != new_md5:
+            for group in self.groups.values():
+                if old_md5 in group:
+                    group.remove_item(old_md5)
+                    group.add_item(new_md5)
+        
 
     def purge_manual_tags(self, images_index: list[int]):
         """
@@ -596,7 +851,7 @@ class VirtualDatabase:
         HTTP_HEADERS = {'User-Agent': USER_AGENT}
         scraper = cloudscraper.create_scraper()
         successful_retrievals = 0
-        for index in tqdm.tqdm(images_index):
+        for index in tqdm(images_index):
             image = self.images[index]
             url = f'{api_url}?md5={image.original_md5}'
             response = scraper.get(url=url, headers=HTTP_HEADERS)
@@ -625,7 +880,7 @@ class VirtualDatabase:
         all_accepted_tags = all_accepted_tags.union(set(tag_categories.LOW2TAGS_KEYSET.union(tag_categories.TAG2HIGH_KEYSET)))
         all_accepted_tags = all_accepted_tags.union(set(tag_categories.DESCRIPTION_TAGS.keys()))
 
-        for index in tqdm.tqdm(images_index):
+        for index in tqdm(images_index):
             image = self.images[index]
             all_tags = []
             url = f'{api_url}?page=dapi&s=post&q=index&json=1&tags=md5:{image.original_md5}'
@@ -665,7 +920,7 @@ class VirtualDatabase:
         all_accepted_tags = all_accepted_tags.union(set(tag_categories.LOW2TAGS_KEYSET.union(tag_categories.TAG2HIGH_KEYSET)))
         all_accepted_tags = all_accepted_tags.union(set(tag_categories.DESCRIPTION_TAGS.keys()))
 
-        for index in tqdm.tqdm(images_index):
+        for index in tqdm(images_index):
             image = self.images[index]
             all_tags = []
             url = f'{api_url}?page=dapi&s=post&q=index&json=1&tags=md5:{image.original_md5}'
@@ -705,7 +960,7 @@ class VirtualDatabase:
                 dst_path = os.path.splitext(image.path)[0]+".png"
                 if files.convert_image_to_png(image.path, dst_path):
                     image.path=dst_path
-                    self.change_md5_of_image(index, files.get_md5(image.path))
+                    self.change_md5_of_image(index)
 
     def rename_images_to_md5(self, images_index: list[int]):
         for index in images_index:
@@ -718,17 +973,28 @@ class VirtualDatabase:
                     if not os.path.exists(dst_path):
                         os.rename(image.path, dst_path)
                         image.path = dst_path
-                        self.change_md5_of_image(index, file_md5)
+                        self.change_md5_of_image(index)
 
-    def get_frequency_of_all_tags(self) -> list[tuple[str, int]]:
+    def get_frequency_of_all_tags(self, group:list[str]|str="") -> list[tuple[str, int]]:
         """Use a Counter object to collect frequency, then returns the dict version of the results, sorted by most common
 
         Returns:
             list[tuple[str, int]]: tags : frequency count
         """
         c = Counter()
-        for image in self.images:
-            c.update([str(tag) for tag in image.get_full_tags()])
+        if not group:
+            for image in self.images:
+                c.update([str(tag) for tag in image.get_full_tags()])
+        else:
+            if isinstance(group, str):
+                group = [group]
+            #parameters.log.info(f"Getting frequency of tags for group {group}") 
+            for g in group:
+                if g in self.groups:
+                    for md5 in self.groups[g].md5s:
+                        index = self.index_of_image_by_md5(md5)
+                        c.update([str(tag) for tag in self.images[index].get_full_tags()])
+        
         return c.most_common()
 
     def refresh_unsafe_tags(self, images_index: list[int]):
@@ -766,6 +1032,23 @@ class VirtualDatabase:
             self.rare_tags = low_frequency_tags
         return self.rare_tags
 
+    def get_related_tags(self, md5s: list[str]):
+        """part of building recommendation tags, get all manual tags from related images
+        Args:
+            md5s: list of md5s of related images
+        """
+        
+        related_tags = TagsList()
+        for image in self.images:
+            if image.md5 in md5s:
+                related_tags += image.manual_tags
+                
+                # remove the md5 from the list and break once it's empty
+                md5s.remove(image.md5)
+                if not md5s:
+                    break
+        return related_tags.simple_tags()
+    
     def __eq__(self, other):
         # test if correct object
         if not isinstance(other, type(self)):
@@ -774,10 +1057,10 @@ class VirtualDatabase:
         if self.groups != other.groups:
             return False
         # test if same main trigger tags, order matters
-        if self.trigger_tags['main_tags'] != other.trigger_tags['main_tags']:
+        if self.get_triggers("main_tags") != other.get_triggers("main_tags"):
             return False
         # test if same secondary trigger tags, order doesn't matter
-        if set(self.trigger_tags['secondary_tags']) != set(other.trigger_tags['secondary_tags']):
+        if set(self.get_triggers("secondary_tags")) != set(other.get_triggers("secondary_tags")):
             return False
         # test if same amount of images
         if len(self.images) != len(other.images):
@@ -803,15 +1086,21 @@ class VirtualDatabase:
             if image_result:
                 result["images"][k] = image_result
         # test if same main trigger tags, order matters
-        if self.trigger_tags['main_tags'] != other.trigger_tags['main_tags']:
-            result["trigger_tags"]["main_tags"] = self.trigger_tags['main_tags']
+        if self.get_triggers("main_tags") != other.get_triggers("main_tags"):
+            result["trigger_tags"]["main_tags"] = self.get_triggers("main_tags")
         # test if same secondary trigger tags, order doesn't matter
-        if set(self.trigger_tags['secondary_tags']) != set(other.trigger_tags['secondary_tags']):
-            result["trigger_tags"]["secondary_tags"] = self.trigger_tags['secondary_tags']
+        if set(self.get_triggers("secondary_tags")) != set(other.get_triggers("secondary_tags")):
+            result["trigger_tags"]["secondary_tags"] = self.get_triggers("secondary_tags")
 
         if self.groups != other.groups:
             for group in self.groups.values():
                 result["groups"][group.group_name] = group.save()
+                
+        if self.note != other.note:
+            result["note"] = self.note
+        if self.report != other.report:
+            result["report"] = self.report
+                
         return copy.deepcopy(result)
 
     def apply_changes(self, changes: dict):
@@ -833,6 +1122,10 @@ class VirtualDatabase:
                 self.remove_groups()
                 for group_name, group in changes["groups"].items():
                     self.add_images_to_group(group_name, group["images"])
+        if "note" in changes.keys():
+            self.note = changes["note"]
+        if "report" in changes.keys():
+            self.report = changes["report"]
 
     def apply_all_changes(self, all_changes: list[dict]):
         """
@@ -844,23 +1137,27 @@ class VirtualDatabase:
             self.apply_changes(change)
 
     def get_saving_dict(self):
-        result = {"images":{}}
+        result = {}
+        result["trigger_tags"] = self.trigger_tags
+        result["note"] = self.note
+        result["report"] = self.report
+        result["images"] = {}
+        
         for image in self.images:
             result["images"][image.md5] = image.get_saving_dict()
-        result["trigger_tags"] = self.trigger_tags
+        
         result["groups"] = {}
         for group in self.groups.values():
             result["groups"][group.group_name] = group.save()
         return result
 
     def get_common_image(self, images_index: list[int]) -> ImageDatabase:
-        """
+        """create an ImageDatabase instance that is the collection of multiple image indices 
         Args:
             images_index: list of images index
 
         Returns:
-            - an image database,
-            - an uncommon tags list, the tags that are not common between all the images
+            an image database
         """
         common_image = ImageDatabase()
         common_image.auto_tags = copy.deepcopy(self.images[images_index[0]].auto_tags)
@@ -869,7 +1166,6 @@ class VirtualDatabase:
         common_image.rejected_manual_tags = copy.deepcopy(self.images[images_index[0]].rejected_manual_tags)
         common_image.secondary_rejected_tags = copy.deepcopy(self.images[images_index[0]].secondary_rejected_tags)
         common_image.secondary_new_tags = copy.deepcopy(self.images[images_index[0]].secondary_new_tags)
-
         for image_index in images_index[1:]:
             image = self.images[image_index]
             common_image.auto_tags = common_image.auto_tags.common_tags(image.auto_tags)
@@ -882,21 +1178,14 @@ class VirtualDatabase:
         common_image.manually_reviewed = True if all(self.images[index].manually_reviewed for index in images_index) else False
         common_image.score_label = self.images[0].score_label if all(self.images[index].score_label == self.images[0].score_label for index in images_index) else TagElement("")
         common_image.classify_label = self.images[0].classify_label if all(self.images[index].classify_label == self.images[0].classify_label for index in images_index) else TagElement("")
+        
         common_image.filter()
-
-        common_image.uncommon_tags = defaultdict(lambda:0.0)
-        iterate_per_step = 1/len(images_index)
-
-        for image_index in images_index:
-            for tag in self.images[image_index].get_full_tags():
-                if tag not in common_image.full_tags:
-                    common_image.uncommon_tags[tag] += iterate_per_step
 
         return common_image
 
     def changed_common_image(self, new_image: ImageDatabase, selected_indexes: list[int]):
         """
-        Changes data in images with the common data changed
+        Changes data in images with the common data changed, define what happens when changes are present in multi-selcted images
         Args:
             new_image:
             selected_indexes:
@@ -936,16 +1225,23 @@ class VirtualDatabase:
             changes_happened = True
             for index in selected_indexes:
                 self.images[index].manually_reviewed = new_image.manually_reviewed
-        if previous_image.score_label != new_image.score_label:
-            changes_happened = True
-            for index in selected_indexes:
-                self.images[index].score_label = new_image.score_label
-        if previous_image.score_label != new_image.score_label:
+        
+        
+        if previous_image.score_label != new_image.score_label and new_image.score_label:
             changes_happened = True
             for index in selected_indexes:
                 self.images[index].score_label = new_image.score_label
 
+        # update group only if it's not empty bc there's no easy way to show different groups
+        # so the default is None for multiple images
+        if previous_image.group_names != new_image.group_names and new_image.group_names:
+            changes_happened = True
+            for index in selected_indexes:
+                self.update_image_groups(new_image.group_names, index)
+
+
         return changes_happened
+
 
 class Database(VirtualDatabase):
     def __init__(self, folder):
@@ -961,7 +1257,7 @@ class Database(VirtualDatabase):
 
     def load_database(self):
         if not os.path.exists(os.path.join(self.folder, parameters.DATABASE_FILE_NAME)):
-            files.create_database_file(self.folder)
+            #files.create_database_file(self.folder)
             parameters.log.info("Database path empty, created database.")
             return False
         db = files.load_database(self.folder)
@@ -970,11 +1266,14 @@ class Database(VirtualDatabase):
             parameters.log.info("Empty Database.")
             return False
 
+        self.report = db.get("report", "")
+        self.note = db.get("note", "")
+        
+        
         old_score_system = False # needs to be removed when time will come
 
-
-
         self.images = [ImageDatabase(image_dict) for image_dict in db["images"].values()]
+        
         for image in self.images:
             if not old_score_system:
                 try:
@@ -985,7 +1284,7 @@ class Database(VirtualDatabase):
 
         # trigger tags for the database
         try:
-            self.trigger_tags = db["trigger_tags"]
+            self.trigger_tags = {k: [v for v in value if v] for k,value in db["trigger_tags"].items()}
         except KeyError:
             parameters.log.error(f"Empty data for secondary/main trigger tags: {self.folder}")
 
@@ -996,7 +1295,7 @@ class Database(VirtualDatabase):
             org_md5_list = self.get_all_original_md5()
             md5_set = set(md5_list)
             original_md5_set = set(org_md5_list)
-            for group in self.groups.values():
+            for group_name, group in self.groups.items():
                 try:
                     for image_md5 in group.md5s:
                         try:
@@ -1005,9 +1304,10 @@ class Database(VirtualDatabase):
                                 img_index = md5_list.index(image_md5)
                             else: # backup is the original md5
                                 img_index = org_md5_list.index(image_md5)
-                            self.images[img_index].groups.append(group)
+                            
+                            self.images[img_index].add_to_group(group_name)
                         except ValueError:
-                            parameters.log.error(f"Error on md5 search for image: {image_md5}, image doesn't exists in the database")
+                            parameters.log.error(f"Error on md5 search for image: {image_md5}, image doesn't exists in the database, removed from group")
                 except KeyError:
                     pass
         except KeyError:
@@ -1025,17 +1325,25 @@ class Database(VirtualDatabase):
         if len(img_names) != len(set(img_names)):
             c = Counter()
             c.update(img_names)
-            psudo_dupe_names = []
+            psudo_dupe_names = []# store path + filename without extensions that are duplicates
             for key, val in c.most_common():
                 if val == 1:
                     break
                 psudo_dupe_names.append(key)
-                parameters.log.error(f"duplicate name with different extensions found, please resolve: {psudo_dupe_names}")
+            parameters.log.error(f"duplicate name with different extensions found, please resolve: {psudo_dupe_names}")
+        img_md5s = [i.md5 for i in self.images]
+        org_md5s = [i.original_md5 for i in self.images]
+        if len(img_md5s) != len(set(img_md5s)):
+            parameters.log.error(f"duplicate md5 found, please resolve: {img_md5s}")
 
     def save_database(self):
         result = self.get_saving_dict()
-        files.save_database(result, self.folder)
-        parameters.log.info("Saved Database")
+        #tree_print(result) # debug function, prints datatypes
+        if result:
+            files.save_database(result, self.folder)
+            parameters.log.info("Saved Database")
+        else:
+            parameters.log.info("Skipping Saving Empty Database")
 
     def check_existence_images(self):
         """
@@ -1049,6 +1357,9 @@ class Database(VirtualDatabase):
         for image in self.images:
             if image.is_image_in_path():
                 to_keep.append(image)
+            if image.auto_tags:
+                image.auto_tags.normalize()
+            
         if len(to_keep) == 0:
             parameters.log.warning("All images should be deleted, so none are")
         if len(to_keep) < len(self.images):
@@ -1058,15 +1369,122 @@ class Database(VirtualDatabase):
             kept_md5s = set(self.get_all_md5())
             for group_name in self.groups.keys():
                 new_group_images = GroupElement(group_name=group_name)
-                for group_md5 in self.groups[group_name]:
+                for group_md5 in self.groups[group_name].md5s:
                     if group_md5 in kept_md5s:
-                        new_group_images.append(group_md5)
+                        new_group_images.add_item(group_md5)
                 self.groups[group_name] = new_group_images
 
         elif len(to_keep) == len(self.images):
             parameters.log.info(f"All {len(self.images)} images exists")
+        
+        path_list = [i.path for i in self.images]
+        if len(self.images) != len(set(path_list)):
+            parameters.log.info(f"Duplicate paths found, merging contents")
+            merge=True
+            if merge:
+                c = Counter()
+                c.update(path_list)
+                for k, v in c.most_common():
+                    if v < 2:
+                        continue
+                    parameters.log.info(f"{k} used {v} times")
+                    indices = [i for i, x in enumerate(self.images) if x.path == k]
+                    primary = indices[0]
+                    secondaries = indices[1:]
+                    for i in secondaries:
+                        self.images[primary].add_new_contents(self.images[i])
+                    self.remove_images_by_index(secondaries)
+                parameters.log.info(f"Finished merging duplicate paths")
+        else:
+            parameters.log.info(f"For {len(self.images)} images, no duplicate paths exists")
+    
+    def md5_check(self):
+        md5s = self.get_all_md5()
+        if len(set(md5s)) == len(md5s):
+            parameters.log.info(f"All md5s are unique")
+        else:
+            parameters.log.info(f"Duplicate md5s found, need to check")
+        counter = Counter(md5s)
+        non_unique_md5s = [k for k, v in counter.most_common() if v > 1]
+        
+        parameters.log.info(f"Trying to update stored md5s for conflicting images")
+        for img in self.images:
+            if img.md5 in non_unique_md5s:
+                try: # try updating the md5
+                    img.md5 = files.get_md5(img.path)
+                except:
+                    # file not found, and wasn't able to update
+                    pass
+        new_md5s = self.get_all_md5()
+        if len(set(new_md5s)) == len(new_md5s):
+            parameters.log.info(f"All md5s are unique")
+        else:
+            parameters.log.info(f"Problem still exists, Duplicate md5s found, need extra checking/processing")
+        
+    def recheck_image_paths(self):
+        # we check all files in the cwd and compare it to the stored paths in the database, and check if it needs updating
+        all_img_paths = files.get_all_images_in_folder(self.folder) # no dupes here
+        curr_img_paths = self.get_all_paths() # dupes are possible, cause it's stored paths
+        if set(all_img_paths) == set(curr_img_paths):# early exit if all paths in directory is same as in db, no new images to add
+            parameters.log.info("All images paths are correct")
+            return
+        
+        clean_md5s = []
+        modified_tup = [] # stores tuple (index, path, md5, original_md5) in database but not found in cwd via path
+        for i, img in enumerate(self.images):
+            if img.path in all_img_paths:
+                clean_md5s.append(img.md5)
+                all_img_paths.remove(img.path)
+            else:
+                modified_tup.append((i, img.path, img.md5, img.original_md5))
+        
+        if not modified_tup: # early exit if all paths are correct, but there are new images to be added to db
+            parameters.log.info(f"All images paths are correct, proceeding with adding {len(all_img_paths)} new images")
+            return
+        
+        # all_img_paths are leftover in cwd but not in db, and we have missing or modified paths in db
+        parameters.log.info(f"Found {len(all_img_paths)} imgs in project dir not in db, and missing {len(modified_tup)} imgs in db but path not found in curr project dir")
+        parameters.log.info("Checking md5 and rematching paths stored in db")
+        leftover_paths_md5s = files.get_multiple_md5(all_img_paths) # stores list of (md5, path)
+        
+        no_match = []
+        multi_match = []
+        
+        for i, path, md5, original_md5 in modified_tup:
+            obj_idx = [(i, tup) for i, tup in enumerate(leftover_paths_md5s) if tup[0] == md5]
+            if len(obj_idx) == 1: # exactly one match
+                self.images[i].path = obj_idx[0][1][1] #[(md5, path)]
+                leftover_paths_md5s.remove(obj_idx[0][1])
+                clean_md5s.append(md5)
+            elif len(obj_idx) > 1: #multiple candidates
+                # we will first check if any files matches the same base filenames, and sort by length (depth of folder location)
+                parameters.log.info(f"Multiple candidates for {path} with md5 {md5}")
+                base_name = os.path.splitext(os.path.basename(path))[0]
+                sorted_obj_idx = sorted(obj_idx, key=lambda x: (os.path.splitext(os.path.basename(x[1][1]))[0] == base_name, len(x[1][1])))
+                
+                self.images[i].path = sorted_obj_idx[0][1][1] #[(md5, path)]
+                leftover_paths_md5s.remove(sorted_obj_idx[0][1])
+                clean_md5s.append(md5)
+                multi_match.append([tup for (i, tup) in sorted_obj_idx])
+                
+            else: # no match for md5
+                no_match.append((i, path, md5, original_md5))
+        
+        if multi_match:
+            parameters.log.info(f"Found {len(multi_match)} conflicting data in db that have multiple matches in cwd")
+            parameters.log.info("The following are the multiple matches:")
+            for t in multi_match:
+                parameters.log.info(f"{t}")
+                
+        if no_match:
+            parameters.log.info(f"Found {len(no_match)} imgs in db that doesn't have a match in cwd")
+            for i, path, md5, original_md5 in no_match:
+                parameters.log.info(f"Image {i} with path {path} and md5 {md5} and original md5 {original_md5} doesn't have a match in cwd")
 
-    def add_images_to_db(self, image_paths: list[str], from_txt=False, grouping_from_path=False, move_dupes=False):
+        if not no_match and not multi_match:
+            parameters.log.info(f"All {len(modified_tup)} images paths are fixed!") 
+    
+    def add_images_to_db(self, image_paths: list[str]|set[str], from_txt=False, grouping_from_path=False, move_dupes=False, rename_to_md5=False):
         """_summary_
 
         Args:
@@ -1078,23 +1496,77 @@ class Database(VirtualDatabase):
         Return: list of img_paths added to db
         """
         parameters.log.info(f"{len(image_paths)} images are going to be added to the database. (Before dupe check)")
-        current_paths = set(self.get_all_paths())
+        db_stored_paths = set(self.get_all_paths()) # gets the image paths in the database
+
+        order_added = self.get_last_added_order() +1
+ 
         duplicate_paths = []
         if len(image_paths) < 1:
             return False
         new_paths = []
+        
+        def rename_file_to_md5(image_path, md5):
+            # the md5 was precomputed and stored in db
+            renamed = False
+            new_path = image_path
+            if os.path.splitext(os.path.basename(image_path))[0] != md5: # if it wasn't renamed already
+                dst_path = os.path.join(os.path.dirname(image_path), md5+os.path.splitext(image_path)[1])
+                if not os.path.exists(dst_path):
+                    # since we moved dupes
+                    try:
+                        os.rename(image_path, dst_path)
+                        renamed = True
+                        new_path = dst_path
+                    except Exception as e: # most likely move dupe is turned off
+                        pass
+            return renamed, new_path
+        
+        parameters.log.info(f"Checking MD5 hash and adding {len(image_paths)} images to database")
+        main_bar = tqdm(total=len(image_paths), desc="Adding Images", leave=True)
         for image_path in image_paths:
-            if image_path not in current_paths:
+            if image_path not in db_stored_paths:
                 image_md5 = files.get_md5(image_path)
-
-                is_dupe = self.append_images_dict({"md5": image_md5, "original_md5": image_md5, "path": image_path})
-                if not is_dupe:
-                    new_paths.append(image_path)
-                else:
+                img_dict = {"md5": image_md5, "original_md5": image_md5, 
+                            "path": image_path, "order_added":order_added}
+                to_add = not self.check_image_dict(img_dict)
+                if to_add: # new img, add to db
+                    if rename_to_md5:
+                        renamed, new_path = rename_file_to_md5(image_path, image_md5)
+                        if renamed:
+                            new_paths.append(new_path)
+                            img_dict["path"] = new_path
+                        else:
+                            new_paths.append(image_path)
+                    else:
+                        new_paths.append(image_path)
+                    
+                    self.append_images_dict(img_dict, to_add) #skip dupe check cause we already did it 
+                else: # dupe
                     duplicate_paths.append(image_path)
-
+            main_bar.update(1)
+        main_bar.refresh()
         parameters.log.info(f"{len(new_paths)} images are going to be added to the database. (ignoring duplicate copies)")
-
+        
+        
+        if move_dupes and duplicate_paths:
+            parameters.log.info(f"moving {len(duplicate_paths)} duplicates")
+            files.export_images(duplicate_paths, self.folder, "DUPLICATES")
+        elif duplicate_paths:
+            parameters.log.info(f"there are {len(duplicate_paths)} unmoved duplicates")
+        
+        if rename_to_md5 and new_paths: # rename images added to db
+            path_idx_dict = self.get_img_path_index_dict()
+            renamed_paths = []
+            failed_renamed = []
+            for np in new_paths:
+                renamed, new_path = rename_file_to_md5(np, self.images[path_idx_dict[np]].md5)
+                if renamed:
+                    self.images[path_idx_dict[np]].path = new_path
+                    renamed_paths.append(new_path)
+                else:
+                    failed_renamed.append(np)
+            
+        
         if from_txt:
             for image_path in new_paths:
 
@@ -1115,10 +1587,6 @@ class Database(VirtualDatabase):
         if grouping_from_path:
             self.add_image_to_groups_by_path(new_paths)
 
-        if move_dupes:
-            if duplicate_paths:
-                files.export_images(duplicate_paths, self.folder, "DUPLICATES")
-
         self.check_img_integrity()
         return new_paths
 
@@ -1132,11 +1600,11 @@ class Database(VirtualDatabase):
                 self.add_image_to_group(relative_dir, image_index)
 
     def create_json_file(self,add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator=parameters.PARAMETERS["keep_token_tags_separator"],
-                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True, shuffle_tags=True):
+                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True):
         image_dict = {}
         token_keeper = keep_tokens_separator if token_separator else ""
-        main_tags = self.trigger_tags["main_tags"]
-        secondary_tags = self.trigger_tags["secondary_tags"]
+        main_tags = self.get_triggers("main_tags")
+        secondary_tags = self.get_triggers("secondary_tags")
         if not use_trigger_tags:
             main_tags = []
             secondary_tags = []
@@ -1150,7 +1618,6 @@ class Database(VirtualDatabase):
                                            use_sentence = use_sentence,
                                            sentence_in_trigger = sentence_in_trigger,
                                            remove_tags_in_sentence = remove_tags_in_sentence,
-                                           shuffle_tags=shuffle_tags
                                            )
             image_dict[image.path] = {}
             image_dict[image.path]["tags"] = to_write
@@ -1158,7 +1625,43 @@ class Database(VirtualDatabase):
             json.dump(image_dict, f, indent=4)
         parameters.log.info("Created .json for exporting data for checkpoint")
 
-    def create_sample_toml(self, export_width=1024, export_height=1024, bucket_steps=64, token_len=77):
+    def get_resolution_info(self, selected_resolution):
+        # dict stores (height, width, bucket step, neg_prompt, quality tag(s))
+        resolution_dict = {
+            "SDXL x1.5": (1536, 1536, 64, parameters.PARAMETERS['export_negative_prompt_SDXL_x1.5'], parameters.PARAMETERS['export_prepend_positive_prompt_SDXL_x1.5']),
+            "SDXL": (1024, 1024, 64, parameters.PARAMETERS['export_negative_prompt_SDXL'], parameters.PARAMETERS['export_prepend_positive_prompt_SDXL']),
+            "SD1.5": (768, 768, 64, parameters.PARAMETERS['export_negative_prompt_SD1.5'], parameters.PARAMETERS['export_prepend_positive_prompt_SD1.5']),
+            "SD1.0": (512, 512, 64, parameters.PARAMETERS['export_negative_prompt_SD1.0'], parameters.PARAMETERS['export_prepend_positive_prompt_SD1.0']),
+            "Custom": (parameters.PARAMETERS['custom_export_width'],
+                       parameters.PARAMETERS['custom_export_height'],
+                       parameters.PARAMETERS['custom_export_bucket_steps'],
+                       parameters.PARAMETERS['export_negative_prompt_Custom'],
+                       parameters.PARAMETERS['export_prepend_positive_prompt_Custom'])
+        }
+        if selected_resolution in resolution_dict:
+            res_info = resolution_dict[selected_resolution]
+        else:
+            parameters.log.error("Resolution string not found, defaulting to SDXL")
+            res_info = resolution_dict["SDXL"]
+        return res_info
+
+    def create_sample_toml(self, export_width=1024, export_height=1024, bucket_steps=64, token_len=77, model_type="", prepend_tags="", negative_prompts=""):
+        """This function samples x (from paramaters) amount  of prompt from the database. 
+        The sampling considers the token len and the required and blacklisted, then the post_filter is applied 
+        Additionally, this puts the negative prompts, image dimension, and other info in the exported toml file
+
+        Args:
+            export_width (int, optional): _description_. Defaults to 1024.
+            export_height (int, optional): _description_. Defaults to 1024.
+            bucket_steps (int, optional): _description_. Defaults to 64.
+            token_len (int, optional): _description_. Defaults to 77.
+            model_type (str, optional): _description_. Defaults to "".
+
+        Returns:
+            _type_: _description_
+        """
+        
+        
         # use tuple for or
         required_tags = [("1girl","1boy"), ("solo", "solo focus")]
         # samples with these tags are removed
@@ -1169,8 +1672,8 @@ class Database(VirtualDatabase):
                             "blurry",
                             "though bubble", "speech bubble", 'empty speech bubble', "watermark", "navel", "collarbone"]
 
-        main_tags = self.trigger_tags["main_tags"]
-        secondary_tags = self.trigger_tags["secondary_tags"]
+        main_tags = self.get_triggers("main_tags")
+        secondary_tags = self.get_triggers("secondary_tags")
 
 
         from sklearn.feature_extraction.text import TfidfVectorizer
@@ -1202,8 +1705,8 @@ class Database(VirtualDatabase):
             parameters.log.info(f"We have {len(idx_list)} potential source images for samples")
 
         # limit the sample count and df size to 5 or less based on number of filtered samples
-        desired_sample_count = parameters.PARAMETERS["toml_sample_max_count"] if len(idx_list) > desired_sample_count else len(idx_list)
-        min_df = 5 if len(idx_list) > min_df else len(idx_list)
+        desired_sample_count = min(len(idx_list), parameters.PARAMETERS["toml_sample_max_count"] )
+        min_df = min(len(idx_list), 5)
 
         corpus = [", ".join(self.images[i].get_full_only_tags()) for i in idx_list]
 
@@ -1281,10 +1784,10 @@ class Database(VirtualDatabase):
         prompts = []
         bucket_sizes = []
         for i in sample_indices:
-            parameters.log.info(f"Used sample: {self.images[i].path}")
+            parameters.log.debug(f"Used sample: {self.images[i].path}")
             full_tags = self.images[i].get_full_only_tags()
             full_tags_under_conf = self.images[i].get_full_tags_under_confidence(confidence=0.65)
-            sample = order_tag_prompt(full_tags, model_prefix_tags=[parameters.PARAMETERS['export_prepend_positive_prompt']],
+            sample = order_tag_prompt(full_tags, model_prefix_tags=[prepend_tags],
                                        keep_token_tags=main_tags+secondary_tags, remove_tags=post_filter_tags,
                                        tags_under_conf=full_tags_under_conf)
             resized_resolution = self.images[i].get_bucket_size(export_width, export_height, bucket_steps)
@@ -1313,11 +1816,12 @@ class Database(VirtualDatabase):
 
         # code to export the prompt:
         import toml
+        import imagesize
         toml_path = self.folder
         toml_name = "exported_samples.toml"
         toml_full_path = os.path.join(toml_path, toml_name)
 
-        neg_prompt = parameters.PARAMETERS['export_negative_prompt']
+        neg_prompt = negative_prompts
 
         # default prompt setting
         data_dict = {
@@ -1339,12 +1843,50 @@ class Database(VirtualDatabase):
 
         parameters.log.info(f"Samples are added in {toml_full_path}")
 
+    def print_tfidf_comparison(self, top_n=100,  min_freq=2):
+        # we calculate the tfidf for the current database and the general danbooru dataset,
+        # we compare the result and print the tags that have a big difference
+        swin_df = files.get_pd_swinbooru_tag_frequency()
+        swin_dataset_image_count = 7220105
+        from resources.tag_categories import KAOMOJI
+        swin_dict = dict(zip([t.replace("_", " ") if len(t) > 3 and t not in KAOMOJI else t for t in swin_df["name"]], 
+                             swin_df["count"]))
+        
+        db_counter = Counter()
+        for img in self.images:
+            db_counter.update(img.get_full_tags().simple_tags())
+        
+        total_doc = len(self.images)
+        
+        tag_freq_scores = {}
+        for tag, freq in db_counter.most_common():
+            if freq < min_freq:
+                continue
+            base_df = swin_dict.get(tag, 1) # global frequency
+            if base_df/swin_dataset_image_count > 0.1:
+                print(f"skipping: {tag}")
+                continue
+            
+            lora_tf = freq/total_doc
+            
+            idf = math.log(swin_dataset_image_count/base_df)
+            tag_freq_scores[tag] = (freq, lora_tf * idf)
+            
+        top_n_by_score = sorted(tag_freq_scores.items(), key=lambda x: x[1][1], reverse=True)[:top_n]
+        unpacked_sorted_by_freq = sorted([(tag, freq, score) for tag, (freq, score) in top_n_by_score], 
+                                         key=lambda x: x[1], reverse=True)
+        for tag, freq, score in unpacked_sorted_by_freq:
+            print(f"{tag} : {freq} : {score}")
+        
+        
+        
+    
     def create_jsonL_file(self,add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator=parameters.PARAMETERS["keep_token_tags_separator"],
-                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True, shuffle_tags=True):
+                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True):
         jsonL_name = "dataset.jsonl"
         token_keeper = keep_tokens_separator if token_separator else ""
-        main_tags = self.trigger_tags["main_tags"]
-        secondary_tags = self.trigger_tags["secondary_tags"]
+        main_tags = self.get_triggers("main_tags")
+        secondary_tags = self.get_triggers("secondary_tags")
         if not use_trigger_tags:
             main_tags = []
             secondary_tags = []
@@ -1362,8 +1904,7 @@ class Database(VirtualDatabase):
                             score_trigger=score_trigger,
                             use_sentence = use_sentence,
                             sentence_in_trigger = sentence_in_trigger,
-                            remove_tags_in_sentence = remove_tags_in_sentence,
-                            shuffle_tags=shuffle_tags
+                            remove_tags_in_sentence = remove_tags_in_sentence
                         ),
                         model_prefix_tags=[],
                         keep_token_tags= main_tags + secondary_tags,
@@ -1425,6 +1966,7 @@ class Database(VirtualDatabase):
         except ValueError:
             images_index = images_index
 
+        # if no images are left, we are done
         if not images_index:
             if corrected_images:
                 parameters.log.info(f"{corrected_images} were missing due to the moving of the database folder.")
@@ -1471,10 +2013,13 @@ class Database(VirtualDatabase):
 
 
         temp_images_index = []
+        max_order_added = self.get_last_added_order() + 1
         for k in images_index:
             if self.images[k].md5 in all_md5_in_database_folder:
+                # this runs when file was moved within database folder
                 path_index = all_md5_in_database_folder.index(self.images[k].md5)
                 self.images[k].path = all_absolute_paths_in_database_folder[path_index]
+                self.images[k].order_added = max_order_added
                 #self.images[k].relative_path = os.path.relpath(all_absolute_paths_in_database_folder[path_index], self.folder)
             else:
                 temp_images_index.append(k)
@@ -1500,15 +2045,15 @@ class Database(VirtualDatabase):
             remove_relative_images: doesn't matter if remove_absolute_and_relative is set to True
         """
         images_tuples: list[tuple[int, str,str]]=[]
-        for image_index in range(len(self.images)):
-            current_path = os.path.normpath(self.images[image_index].path)
-            if self.images[image_index].groups: # in group
-                if len(self.images[image_index].groups)==1:
-                    images_tuples.append((image_index, current_path, os.path.join(self.folder, self.images[image_index].groups[0].group_name, os.path.basename(current_path))))
-                else: # taking the one when sorting
-                    images_tuples.append((image_index, current_path, os.path.join(self.folder, sorted(self.images[image_index].groups, key= lambda x: len(x.group_name))[0].group_name, os.path.basename(current_path))))
-            else:
-                images_tuples.append((image_index, current_path, os.path.join(self.folder, os.path.basename(current_path))))
+        for image_index, img_obj in enumerate(self.images):
+            current_path = os.path.normpath(img_obj.path)
+            basename = os.path.basename(current_path)
+            # default is the project dir
+            folder_path = os.path.join(self.folder, basename)
+            if img_obj.group_names: # img in group, use first sorted folder as path
+                folder_path = os.path.join(self.folder, sorted(img_obj.group_names)[0], basename)
+            images_tuples.append((image_index, current_path, folder_path))
+            
         for paths in images_tuples:
             if pathlib.Path(paths[1]) != pathlib.Path(paths[2]):
                 if not os.path.isdir(os.path.dirname(paths[2])):
@@ -1618,3 +2163,342 @@ class Database(VirtualDatabase):
                         if not export_database.images[export_index].external_tags and to_export_image.external_tags:
                             export_database.images[export_index].original_md5 = to_export_image.original_md5
         export_database.save_database()
+
+    def merge_databases(self, sub_database_dir:list[str]=[], prioritize_primary_content:bool=False, single_group_membership:bool=True, union=True, print_changes=False):
+        """
+        We assume the following:
+        database file can be accessed but not the orginal img file (so no hash business)
+
+        Args:
+            sub_database_dir (list, optional): _description_. Defaults to [].
+            prioritize_primary_content (bool, optional): unused so far, may be removed
+            single_group_membership (bool, optional): _description_. Defaults to True.
+            union : merge all contents to primary, if set to false it will do a "left join" operation, 
+                    basically adding new info to preexisting entries in the primary database
+        """
+        
+        if not sub_database_dir:
+            parameters.log.error("No sub_database(s) to be merged")
+            return
+        good_sub_db = [f for f in sub_database_dir if files.check_database_exist(f)]
+        bad_sub_db = [f for f in sub_database_dir if f not in good_sub_db]
+        if bad_sub_db:
+            parameters.log.info(f"The following dir will not be acted upon, No database file found: {bad_sub_db}")
+        
+        
+        
+        main_bar = tqdm(total=len(good_sub_db), desc="database loop", position=0, leave=True)
+        sub_bar = tqdm(total=100, desc="Image Loop", position=1, leave=True)
+        
+        # store md5s that are already assigned to a group, md5s in here will skip group assignment
+        md5s_in_group = set()
+        for _, group_content in self.groups.items():
+            md5s_in_group.update([md5 for md5 in group_content.md5s])
+        
+        # iterate databases and merge image contents to primary database (self)
+        for i, sec_db_loc in enumerate(good_sub_db):
+            if sec_db_loc.endswith(parameters.DATABASE_FILE_NAME):
+                sec_db_loc = os.path.dirname(sec_db_loc)
+
+              
+            sec_db = Database(sec_db_loc)
+            parameters.log.info(f"loaded {sec_db_loc}")
+            # refresh tqdm loop counter for image progress
+            sub_bar.n = 0
+            sub_bar.refresh()
+            # notify user if secondary database has trigger tags that they might want to know.
+            if sec_db.get_triggers("main_tags") or sec_db.get_triggers("secondary_tags"):
+                parameters.log.info("Secondary database had the following trigger tags, but they're merged as regular tags, update primary database's trigger tags if needed")
+                parameters.log.info(f"PRIMARY: {sec_db.get_triggers('main_tags')}, SECONDARY: {sec_db.get_triggers('secondary_tags')}")
+
+            # first, merge images
+            primary_md5_dict = self.get_img_md5_index_dict()
+            #only_curr_md5s = self.get_img_md5_index_dict(include_original_md5=False)
+            #primary_original_md5_only = {md5_hash for md5_hash in primary_md5_dict if md5_hash not in only_curr_md5s}
+            sec_total = len(sec_db.images)
+            unused_md5s =[]
+            merged_something = False
+            manual_tags_added = Counter()
+            for sec_i, sec_img in enumerate(sec_db.images):
+                
+                if sec_img.md5 in primary_md5_dict:
+                    merged_something = True
+                    primary_index = primary_md5_dict[sec_img.md5]
+                    manual_tag_pre = self.images[primary_index].manual_tags.simple_tags()
+                    self.images[primary_index].add_new_contents(sec_img)
+                    manual_tag_post = self.images[primary_index].manual_tags.simple_tags()
+                    manual_tags_added.update([t for t in manual_tag_post if t not in manual_tag_pre])
+                    
+                elif sec_img.original_md5 in primary_md5_dict:
+                    merged_something = True
+                    primary_index = primary_md5_dict[sec_img.original_md5]
+                    manual_tag_pre = self.images[primary_index].manual_tags.simple_tags()
+                    self.images[primary_index].add_new_contents(sec_img)
+                    manual_tag_post = self.images[primary_index].manual_tags.simple_tags()
+                    manual_tags_added.update([t for t in manual_tag_post if t not in manual_tag_pre])
+                    
+                elif union: # new img, add img contents
+                    merged_something = True
+                    self.images.append(ImageDatabase(sec_img.get_saving_dict()))
+                    manual_tags_added.update(self.images[-1].manual_tags.simple_tags())
+                else:
+                    merged_img = False
+                    unused_md5s.append(sec_img.md5)
+                
+
+                # else: no union, so we ignore adding this image info
+
+                # update sub var
+                if sec_i % max(1, sec_total//100) == 0:
+                    sub_bar.update(1) 
+            if merged_something:
+                # second, merge trigger tokens
+                for k, v in sec_db.trigger_tags.items():
+                    if v: # for non-empty triggerwords
+                        if k in self.trigger_tags:
+                            # merge contents
+                            new_val = [t for t in v if t not in self.trigger_tags[k]]
+                            self.trigger_tags[k] += new_val
+                        else:
+                            self.trigger_tags[k] = v
+                
+                # merge groups
+                unused_md5s = set(unused_md5s)
+            
+                if sec_db.groups:
+                    for group_key, group_elem in sec_db.groups.items():
+                        if not union:
+                            group_elem.md5s = {g for g in group_elem.md5s if g in primary_md5_dict}
+                        
+                        if group_elem: # for non-empty groups
+                            if group_key in self.groups: # pre-existing groups
+                                if single_group_membership:# one image can only be in one group
+                                    unassigned_md5s = [md5 for md5 in group_elem.md5s if md5 not in md5s_in_group]
+                                    self.groups[group_key].add_item(unassigned_md5s)
+                                else:
+                                    self.groups[group_key].add_item(group_elem)
+                            else: # new group
+                                if single_group_membership:
+                                    group_elem.md5s = {g for g in group_elem.md5s if g not in md5s_in_group}
+                                if group_elem:
+                                    self.groups[group_key] = group_elem
+                                
+                            if group_key in self.groups:
+                                md5s_in_group.update(self.groups[group_key].md5s)
+
+            main_bar.update(1)
+
+        
+        
+        main_bar.n = main_bar.total
+        sub_bar.n = sub_bar.total
+        main_bar.refresh()
+        sub_bar.refresh()
+        
+        # close removes the bar from console
+        #main_bar.close()
+        #sub_bar.close()
+        if print_changes:
+            parameters.log.info(f"Manual tags added:\n{manual_tags_added.most_common()}")
+        
+        parameters.log.info(f"finished merging {len(good_sub_db)} sub-databases to primary")
+        
+        
+          
+        
+    def print_db_info(self):
+        separator = "-"*20
+        parameters.log.info(f"{separator}")
+        parameters.log.info(f"Database Info: {self.folder}")
+        parameters.log.info(f"Images: {len(self.images)}")
+        
+        # print group elem count
+        parameters.log.info(f"Groups: {len(self.groups)}, Group names : {self.get_group_names()}")
+        for group in self.groups.values():
+            parameters.log.info(f"Group: {group.group_name}, count: {len(group.md5s)}")
+        
+        parameters.log.info(f"{separator}")
+        
+        parameters.log.info(f"Trigger Tags: {self.trigger_tags['main_tags']}")
+        parameters.log.info(f"Secondary trigger tags: {self.trigger_tags['secondary_tags']}")
+        parameters.log.info(f"{separator}")
+        #tag_frequency = self.get_frequency_of_all_tags()
+        # separate manual tags
+        manual_tags = Counter()
+        secondary_tags = Counter()
+        for image in self.images:
+            manual_tags.update(image.manual_tags)
+            secondary_tags.update(image.secondary_new_tags)
+        
+        parameters.log.info(f"printing manual and secondary tags with frequency > 1")
+        for manual_tag, count in manual_tags.most_common():
+            if count < 2:
+                break
+            parameters.log.info(f"Manual tag: {manual_tag}, count: {count}")    
+        parameters.log.info(f"{separator}")
+        for secondary_tag, count in secondary_tags.most_common():
+            if count < 2:
+                break
+            parameters.log.info(f"Secondary tag: {secondary_tag}, count: {count}")
+        parameters.log.info(f"{separator}")
+    
+    def print_unknown_recommendations(self):
+        """This prints all the recommendations that are not in the tag categories
+        """
+        from tools.tag_pairing import print_unknown_recommendations
+        for img in self.images:
+            img.filter(update_review=True)
+            img.get_recommendations()
+            
+        print_unknown_recommendations()
+         
+    def get_conflict_counts(self):
+        """Return Tag length (list), Conflict length (list), and 3 counter objects, for tags, rejected tags, and # of conflicts
+
+        Returns:
+            _type_: _description_
+        """
+        tag_len, tag_conflict_len= [], []
+        tag_counter, rejected_counter,tag_conflict_counter  = Counter(), Counter(), Counter()
+        
+        for img in self.images:
+            tags = img.get_full_tags().simple_tags()
+            rejected_tags = img.get_rejected_tags().simple_tags()
+            tag_conflict_categ = img.get_unresolved_conflicts()
+            tag_conflict_len.append(len(tag_conflict_categ))
+            tag_counter.update(tags)
+            rejected_counter.update(rejected_tags)
+            tag_conflict_counter.update(list(tag_conflict_categ.keys()))
+            tag_len.append(len(tags))
+        return tag_len, tag_conflict_len, tag_counter, rejected_counter, tag_conflict_counter
+     
+    def generate_report(self):
+        """auto-generates a report of the database, contains the following and more: 
+        number of images, number of unique tags, number of groups, group info (number of images in each group),
+        basic stats like quality distributions, western vs real vs anime images, trigger tags, etc 
+        """
+        tag_len, conflict_len, tag_counter, rejected_counter, conflict_counter = self.get_conflict_counts()
+        
+        self.tokenize_all_images()
+        token_lens = [img.full_tags.token_length for img in self.images]
+        max_token_count, min_token_count = max(token_lens), min(token_lens)
+        avg_token_count = np.mean(token_lens)
+        
+        tag_series = np.array(tag_len)
+        tag_conflict_series = np.array(conflict_len)
+        
+        # calculate percentiles and drop decimals after few digits
+        tag_percentiles = [5, 25, 50, 75, 95]
+        tag_percentiles = np.around(np.percentile(tag_series, tag_percentiles), 2)
+        conflict_percentiles = [25, 50, 75]
+        conflict_percentiles = np.around(np.percentile(tag_conflict_series, conflict_percentiles), 2)
+        
+        qual_labels = [img.score_label for img in self.images]
+        qual_pair = [(q, qual_labels.count(q)) for q in tag_categories.QUALITY_LABELS]
+        qual_percent_pair = [(q, round(v/len(self.images)*100, 2)) for q, v in qual_pair]
+        
+        style_tags = [("western style", "cartoon style", "western art", "cartoon coloring"), ("photorealistic", "realistic")]
+        western_count = sum([1 for img in self.images if any([t in img.get_full_tags().simple_tags() for t in style_tags[0]])])
+        real_count = sum([1 for img in self.images if any([t in img.get_full_tags().simple_tags() for t in style_tags[1]])])
+        anime_count = len(self.images) - western_count - real_count
+        
+        
+        Bucket_list = [img.get_bucket_size(parameters.PARAMETERS["bucket_size"], 
+                                       parameters.PARAMETERS["bucket_size"], 
+                                       parameters.PARAMETERS["bucket_steps"]) for img in self.images]
+        Bucket_counter = Counter()
+        Bucket_counter.update(Bucket_list)
+        Sorted_bucket = [str(kv_pair) for kv_pair in sorted(Bucket_counter.items(), key=lambda item: item[0])]
+        Sorted_bucket_str = "\n".join(Sorted_bucket)
+        
+        triggers = self.trigger_tags['main_tags'] + self.trigger_tags['secondary_tags']
+        top_tags = [t for t in tag_counter.most_common() if t[0] not in triggers] 
+        top_tags = top_tags[:min(20, len(top_tags))]
+        
+        group_counts = [(group.group_name, len(group)) for group in self.groups.values()]
+        
+        report_dict ={
+            "folder": self.folder,
+            "num_images": len(self.images),
+            "num_groups": len(self.groups),
+            "group_counts": group_counts,
+            "Unique Tags": len(tag_counter),
+            "Unique rejected tags": len(rejected_counter),
+            "token_mean": avg_token_count,
+            "token_max": max_token_count,
+            "token_min": min_token_count,
+            "tag_mean": np.mean(tag_len),
+            "tag_max": max(tag_len),
+            "tag_min": min(tag_len),
+            "tag_percentiles": tag_percentiles,
+            "conflict_mean": np.mean(conflict_len),
+            "conflict_max": max(conflict_len),
+            "conflict_min": min(conflict_len),
+            "conflict_percentiles": conflict_percentiles,
+            "quality_distribution": qual_pair,
+            "quality_percentages": qual_percent_pair,
+            "western_count": western_count,
+            "real_count": real_count,
+            "anime_count": anime_count,
+            "bucket_distribution": Sorted_bucket_str,
+            "top_tags": top_tags,
+            "conflict_counter": conflict_counter,
+            "tag_counter": tag_counter,
+            "rejected_counter": rejected_counter,
+            "Jpeg_Artifact": {tag_counter['jpeg artifact']},
+            "Western": {western_count},
+            "Real_and_Semi-Real": {real_count},
+            "Anime": {anime_count}
+        }
+        
+        
+        # the indent is removed cause the triple quotes has some fuckery with indents with f-strings
+        report_template = f"""\
+## Database report: {self.folder}
+Last updated: {datetime.now()}
+
+Number of images: {len(self.images)} ; Number of Groups: {len(self.groups)}
+
+## Tag info:
+{len(tag_counter)} Unique Tags ; {len(rejected_counter)} Unique rejected tags
+
+Token Count Percentile Data:
+Mean: {avg_token_count:.4f} 
+(Max, Min) : ({max_token_count}, {min_token_count})
+
+Tag Count Percentile Data:
+Mean: {np.mean(tag_len):.4f} 
+(Max, 95%, 75%, 50%, 25%, 5%, Min) : ({max(tag_len)}, {tag_percentiles[4]}, {tag_percentiles[3]}, {tag_percentiles[2]}, {tag_percentiles[1]}, {tag_percentiles[0]}, {min(tag_len)})
+
+Top 20 Tags (excluding trigger tags): {top_tags}
+
+# Conflicting Categories:
+Total conflicts: {sum(conflict_len)} ; mean: {np.mean(conflict_len):.2f}
+(Max, 75%, 50%, 25%, Min) : ({max(conflict_len)}, {conflict_percentiles[2]}, {conflict_percentiles[1]}, {conflict_percentiles[0]}, {min(conflict_len)})
+
+Trigger Tags: {self.trigger_tags['main_tags']} ; Secondary Trigger Tags: {self.trigger_tags['secondary_tags']}
+
+Quality Distribution:
+{qual_pair}
+Percentages:
+{qual_percent_pair}
+
+Jpeg Artifacts Count: {tag_counter['jpeg artifact']} ; Western: {western_count} ; Real/Semi-Real: {real_count} ; Anime: {anime_count}
+
+Image Bucket Size Distribution:
+{Sorted_bucket_str}
+
+Group Info:
+{group_counts}
+        """
+        
+        self.report = inspect.cleandoc(report_template)
+        
+        return self.report, report_dict
+
+    def set_reports(self, report):
+        
+        self.report = report
+        
+    def set_notes(self, note):
+        self.note = note

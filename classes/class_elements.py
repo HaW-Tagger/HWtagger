@@ -1,15 +1,31 @@
+from __future__ import annotations
+# annotation used for type hinting and self forward referencing
+
+from resources import parameters
+
 import re
 from collections import defaultdict
 
 import cloudscraper
 import numpy as np
 
-from resources import tag_categories
+from resources import tag_categories, wiki_info
 from clip import tokenize
 
+from tools.images import overlapping_area, overlapping_area_ratio
+
+curr_wiki_info = wiki_info.load_wiki_info()
+def load_wiki_info():
+    global curr_wiki_info
+    parameters.log.info("Reloading wiki info")
+    curr_wiki_info = wiki_info.load_wiki_info()
+
+
+# todo : add correct error codes to raise default error codes:
+# https://docs.python.org/3/library/exceptions.html#exception-hierarchy
 
 class RectElement:
-    def __init__(self, name, top=0, left=0, width=0, height=0, confidence=1, color=""):
+    def __init__(self, name="rect", top=0, left=0, width=0, height=0, confidence=1, color=""):
         self.top = top
         self.left = left
         self.width = width
@@ -33,9 +49,13 @@ class RectElement:
         # Future values:
         self.color: str = color #Hexadecimal color value of the rect
 
-
+    def __copy__(self):
+        return self.get_copy()
 
     def apply_from_dict(self, save_dict):
+        """
+        loads data fromsave dict, this also return a reference to self
+        """
         saved_keys = save_dict.keys()
         apply_filter = False
         if "name" in saved_keys:
@@ -43,10 +63,7 @@ class RectElement:
         if "color" in saved_keys:
             self.color = save_dict["color"]
         if "coordinates" in saved_keys:
-            self.top = save_dict["coordinates"][0]
-            self.left = save_dict["coordinates"][1]
-            self.width = save_dict["coordinates"][2]
-            self.height = save_dict["coordinates"][3]
+            (self.top, self.left, self.width, self.height) = save_dict["coordinates"]
         if "confidence" in saved_keys:
             self.confidence = save_dict["confidence"]
         if "sentence" in saved_keys:
@@ -62,6 +79,7 @@ class RectElement:
             apply_filter = True
         if apply_filter:
             self.filter()
+        return self
 
     def apply_coordinates(self, top: int, left: int, width: int, height: int):
         """
@@ -188,6 +206,29 @@ class RectElement:
         """
         return [tag.tag for tag in self.get_full_tags()]
 
+    def get_coords(self): 
+        """Returns: (top, left, width, height)
+        """
+        return (self.top, self.left, self.width, self.height)
+    
+    def get_area(self):
+        return self.width * self.height
+    
+    def get_overlapping_area(self, coords):
+        # coords is the same  format as (top, left, width, height)
+        # math is easier if the rectangle is defined with (minX, minY) and (MaxX, MaxY)
+        return overlapping_area(self.get_coords(), coords)
+    
+    def get_overlapping_area_ratio(self, coords):
+        # coords is the same format as (top, left, width, height)
+        return overlapping_area_ratio(self.get_coords(), coords)
+        
+    def get_copy(self):
+        r = RectElement()
+        save_dict = self.save()
+        r.apply_from_dict(save_dict)
+        return r
+    
     def create_output(self, add_backslash_before_parenthesis=False, keep_tokens_separator: str= "|||", main_tags: list[str]=[], secondary_tags: list[str]=[], use_sentence=True, shuffle_tags=True):
         result = ""
         if use_sentence:
@@ -252,13 +293,15 @@ class RectElement:
 
 
 class SentenceElement:
-    def __init__(self, sentence=""):
+    def __init__(self, sentence="", sentence_splitter=","):
         if isinstance(sentence, str):
             self.sentence = sentence
         elif isinstance(sentence, SentenceElement):
             self.sentence = sentence.sentence
         self.token_length: int = 0
         self.sentence_length: int = 0
+        # nor normal langauge it's a period, but for tagging purpose we use the default comma
+        self.splitter = sentence_splitter
 
     def __bool__(self):
         return bool(self.sentence)
@@ -271,7 +314,25 @@ class SentenceElement:
             return True
         return False
 
-
+    def __iadd__(self, other): # handles the += operator
+        splitter = " " if self.sentence.endswith(self.splitter) else self.splitter
+        if isinstance(other, SentenceElement) and other.sentence:
+            self.sentence+= splitter + other.sentence
+        elif isinstance(other, str) and other:
+            self.sentence+= splitter + other
+        else:
+            raise TypeError(f"Unsupported type, trying to add {type(self)} with {type(other)}")
+        return self
+    
+    def __add__(self, other):
+        new_sen = SentenceElement(sentence=self.sentence, sentence_splitter=self.splitter)
+        splitter = " " if new_sen.sentence.endswith(new_sen.splitter) else new_sen.splitter
+        if isinstance(other, SentenceElement) and other.sentence:
+            new_sen.sentence+= splitter + other.sentence
+        elif isinstance(other, str) and other:
+            new_sen.sentence+= splitter + other
+        return new_sen
+        
     def get_token_length(self):
         if self.sentence:
             self.token_length: int = len(tokenize(self.sentence, context_length=500, truncate=True).nonzero()) - 2
@@ -316,15 +377,17 @@ class SentenceElement:
 
 
 class GroupElement:
-    def __init__(self, *, group_name: str="", md5s: list[str]=None):
-        if md5s is None:
-            md5s = []
+    def __init__(self, *, group_name: str="", md5s: list[str] | set[int] =[]):
+        """
+        stores md5s that are in this group
+        """
         self.group_name: str = group_name
-        self.md5s: list[str] = md5s
+        # todo update to use sets?
+        self.md5s: set[str] = set(md5s)
 
     def __len__(self):
         return len(self.md5s)
-
+        
     def __getitem__(self, key):
         if isinstance(key, str):
             return self.md5s[self.md5s.index(key)] or key == self.group_name
@@ -338,9 +401,12 @@ class GroupElement:
         elif isinstance(key, str):
             self.md5s[self.md5s.index(key)] = value
             return
-        print(key, value)
+        parameters.log.info(f"printing for checking, used to set groups: {type(key)}, {type(value)}")
         self.md5s[key] = value
-
+    
+    def __bool__(self):
+        return bool(self.md5s)
+    
     def __eq__(self, other):
         if isinstance(other, str):
             return other == self.group_name
@@ -353,17 +419,41 @@ class GroupElement:
             if all(md5 in self.md5s for md5 in other):
                 return True
         return False
+    
+    def __sub__(self, other): # add is not impliemented bc it's not required for now
+        if isinstance(other, GroupElement):
+            return self.md5s - other.md5s
+        elif isinstance(other, set):
+            return self.md5s - other
+        elif isinstance(other, list):
+            return self.md5s - set(other)
+        elif isinstance(other, str):
+            return self.md5s - {other}
+        
+    def __contain__(self, md5):
+        return md5 in self.md5s
 
-    def append(self, item):
+    def __iter__(self):
+        return iter(self.md5s)
+    
+    def add_item(self, item: str | list[str] | set[str]):
         if isinstance(item, str) and item not in self.md5s:
-            self.md5s.append(item)
+            self.md5s.add(item)
+        elif isinstance(item, list) or isinstance(item, set):
+            for i in item:
+                if isinstance(i, str) and i not in self.md5s:
+                    self.md5s.add(i)
 
-    def remove(self, item):
+    def remove_item(self, item: str | list[str] | set[str]):
         if isinstance(item, str) and item in self.md5s:
             self.md5s.remove(item)
+        elif isinstance(item, list) or isinstance(item, set):
+            for i in item:
+                if isinstance(i, str) and i not in self.md5s:
+                    self.md5s.remove(i)
 
     def save(self):
-        result = {"images": self.md5s}
+        result = {"images": list(self.md5s)}
         return result
 
 class TagsLists:
@@ -375,13 +465,13 @@ class TagsLists:
             tags_list = []
         self.tags_lists: list[TagsList] = tags_list
         self.name: str = name
-        self.tags_confidence: TagsList = TagsList(name="tags_over_confidence")
+        self.merged_tags: TagsList = TagsList(name="merged tag list")
 
     def __repr__(self):
         return "TagsLists("+str(self.tags_lists)+", name="+self.name+")"
 
     def __bool__(self):
-        return all([bool(x) for x in self.tags_lists])
+        return any([bool(x) for x in self.tags_lists])
 
     def __len__(self):
         return len(self.tags_lists)
@@ -406,7 +496,9 @@ class TagsLists:
         if isinstance(key, int):
             return self.tags_lists[key]
         elif isinstance(key, str):
-            return self.tags_lists[self.names().index(key)]
+            return self.tags_lists[self.name_index(key)]
+        else:
+            raise KeyError("Unknown type used as index")
 
     def __setitem__(self, key, value):
         """
@@ -420,7 +512,7 @@ class TagsLists:
         """
         if isinstance(key, str):
             if key in self.names():
-                key = self.names().index(key)
+                key = self.name_index(key)
             else:
                 if isinstance(value, TagsList):
                     self.tags_lists.append(value)
@@ -431,6 +523,8 @@ class TagsLists:
             self.tags_lists[key] = value
         elif isinstance(value, list):
             self.tags_lists[key] = TagsList(tags=value, name=self.tags_lists[key].name)
+        else:
+            raise TypeError("unknown key-value pair used to set item")
 
     def overwrite(self, other):
         """
@@ -439,21 +533,59 @@ class TagsLists:
             other: a dict of a new thing to add, {"name":[[tag, 0.5]]}
         """
         if isinstance(other, dict):
-            for key, value in other.items():
-                applied = False
-                for i in range(len(self)):
-                    if key == self[i].name:
-                        self[i] = value
-                        applied = True
-                        break
-                if not applied:
-                    self.tags_lists.append(TagsList(tags=value, name=key))
+            for key, tag_pair in other.items():
+                if key not in self.names():
+                    self.tags_lists.append(TagsList(tags=tag_pair, name=key))
+                else:
+                    self.tags_lists[self.name_index(key)]=TagsList(tags=tag_pair, name=key)            
         elif isinstance(other, TagsList):
             if other.name not in self.names():
                 self.tags_lists.append(other)
             else:
                 self[other.name] = other
+        elif isinstance(other, list):
+            # this is probably a legacy system where tags were all merged and stored
+            # ex: [[tag1, prob], [tag2, prob]]
+            parameters.log.info(f"skipping adding tags to {self.name}, tag stored in legacy list")
+        else:
+            # uncomment to check parent item containing this img dict
+            #print(f"{self.name}, {self.tags_lists}")
+            #import gc
+            #refs = gc.get_referrers(self)
+            #from classes.class_image import ImageDatabase
+            #for ref in refs:
+            #    print("Found parent Images instance:", ref)
+            raise TypeError(f"unknown type for other: {type(other)}, {other}")
 
+    def add_data(self, other):
+        """add data, doesn't overwrite if it's the same name, just add missing data
+
+        Args:
+            other (dict, TagsList, TagsList):  a dict of a new thing to add, {"name":[[tag, 0.5]]}
+        """
+        if isinstance(other, dict):
+            for key, tag_pair in other.items():
+                if key not in self.names(): #easy, new data add to list
+                    self.tags_lists.append(TagsList(tags=tag_pair, name=key))
+                else: # overlapping names, add new data from other onto self
+                    self.tags_lists[self.name_index(key)]+=tag_pair
+        elif isinstance(other, TagsLists): # for each taglist, used to merge tagslists in merge_databases
+            for tl in other.tags_lists:
+                if tl.name in self.names():
+                    self.tags_lists[self.name_index(tl.name)]+=tl
+                else:
+                    self.tags_lists.append(TagsList(tags=tl.save(), name = tl.name))
+        elif isinstance(other, TagsList): # either update taglist with same name or add a new taglist
+            if other.name in self.names():
+                self.tags_lists[self.name_index(other.name)]+=other
+            else:
+                self.tags_lists.append(TagsList(tags=other.save(), name = other.name))
+        else:
+            raise TypeError("Unknown type ti add to self")
+            
+    def name_index(self, key):
+        return self.names().index(key)
+    
     def names(self):
         return [tags_list.name for tags_list in self.tags_lists]
 
@@ -470,9 +602,10 @@ class TagsLists:
         return result
 
     def simple_tags(self):
+        """merge all tagslist into one and return a combined tagslist"""
         simple_tags = TagsList()
         simple_tags += self.tags_lists
-        return simple_tags.simple_tags()
+        return simple_tags.simple_tags() #convert to list of strings
 
     def refresh_unsafe_tags(self, all_accepted_tags):
         for tags_list in self.tags_lists:
@@ -485,33 +618,22 @@ class TagsLists:
                     new_accepted = TagsList(name=self[len("rejected") + 1:].name, tags=[])
                     self[tags_list.name[len("rejected") + 1:]] = new_accepted
 
-    def tags_over_confidence(self, confidence: float):
+    def build_merged_tags(self):
+        for tlist in self.tags_lists:
+            self.merged_tags+=tlist
+
+    def tags_over_confidence(self, confidence: float) -> TagsList:
+        # build merged confidence if it wasn't made
+        if not self.merged_tags:
+            self.build_merged_tags()
+        return self.merged_tags.tags_over_confidence(confidence)
+
+    def tags_under_confidence(self, confidence: float) -> TagsList:
 
         # build merged confidence if it wasn't made
-        if not self.tags_confidence:
-            for tags_list in self.tags_lists:
-                for tag in tags_list.tags:
-                    if tag not in self.tags_confidence.tags:
-                        self.tags_confidence += tag
-                    else:  # take the higher confidence
-                        if self.tags_confidence[tag].probability < tag.probability:
-                            self.tags_confidence[tag] = tag
-
-        return self.tags_confidence.tags_over_confidence(confidence)
-
-    def tags_under_confidence(self, confidence: float):
-
-        # build merged confidence if it wasn't made
-        if not self.tags_confidence:
-            for tags_list in self.tags_lists:
-                for tag in tags_list.tags:
-                    if tag not in self.tags_confidence.tags:
-                        self.tags_confidence += tag
-                    else:  # take the higher confidence
-                        if self.tags_confidence[tag].probability < tag.probability:
-                            self.tags_confidence[tag] = tag
-
-        return self.tags_confidence.tags_under_confidence(confidence)
+        if not self.merged_tags:
+            self.build_merged_tags()
+        return self.merged_tags.tags_under_confidence(confidence)
 
     def all_tags_in(self, other):
         """
@@ -544,10 +666,56 @@ class TagsLists:
         combined = TagsLists([combined_tags], name=self.name)
         return combined
 
-
+    def get_tags_in(self, key): # similar to get method, but adds an empty return if out of bound or not found
+        if isinstance(key, int) and key < len(self.tags_lists):
+            return self.tags_lists[key]
+        elif isinstance(key, str) and key in self.names():
+            return self.tags_lists[self.name_index(key)]
+        else:
+            return TagsList(name="empty")
+        
+    def get_tags_unique_in(self, key):
+        
+        if isinstance(key, int) and key < len(self.tags_lists):
+            key_index = key
+        elif isinstance(key, str) and key in self.names():
+            key_index = self.name_index(key)
+        else:
+            return TagsList(name="empty")
+        
+        unique = TagsList(name="Unique "+self.name)
+        key_tags = {tag.tag for tag in self.tags_lists[key_index]}
+        non_key_tags = {tag.tag  for i, list_tags in enumerate(self.tags_lists) for tag in list_tags if i != key_index}
+        unique+=(key_tags.difference(non_key_tags))
+        return unique
+   
+    def prune_under_threshold(self, kv_pairs):
+        # kv_pair is a list or iterable with ("name for tags list", threshold prob)    
+        for tl in self.tags_lists:
+            for k, threshold in kv_pairs:
+                if tl.name == k:
+                    tl.tags = [t for t in tl.tags if (t not in tag_categories.CHARACTERS_TAG and t.probability > threshold) or 
+                               (t in tag_categories.CHARACTERS_TAG and t.probability > parameters.PARAMETERS["swinv2_character_threshold"])]
+    
+    def normalize(self):
+        # clean up tagsList names, add misc checks in here
+        # legacy used lowercase caformer, we now use Caformer, we also merge to Caformer if it exists
+        remove_indices = []
+        names = self.names()
+        for i, tl in enumerate(self.tags_lists):
+            if tl.name == "caformer" and "Caformer" in names:
+                self["Caformer"] += tl
+                remove_indices.append(i)
+            elif tl.name == "caformer":
+                tl.name = "Caformer"
+        
+        for i in sorted(remove_indices, reverse=True):
+            self.tags_lists.pop(i)
+                  
 class TagsList:
     def __init__(self,*, tags=None, name=""):
         # manual_tags, manual_rejected_tags, rule34, rejected_rule34, Caformer, SwinV2V3, filtered_new_tags, filtered_rejected_tags
+        # no probability involved, tagElement stores prob 
         if tags is None:
             tags = []
         self.tags = []
@@ -559,44 +727,110 @@ class TagsList:
     def __repr__(self):
         return "TagsList(name="+self.name+",tags="+str(self.tags)+")"
 
-
+    def __iter__(self):
+        return iter(self.tags)
+    
     def __bool__(self):
         return bool(self.tags)
 
-    def __add__(self, other):
-        new = TagsList(name=self.name, tags=self.tags)
-
+    def __iadd__(self, other): # this does the += operator, modifies in place
         if isinstance(other, type(self)):
-            new.tags += [tag for tag in other.tags if tag not in new.tags]
+            self.tags += [tag for tag in other.tags if tag not in self.tags]
         elif isinstance(other, (list, set)):
-            new.tags += [TagElement(tag) for tag in other if TagElement(tag) not in new.tags]
-        elif isinstance(other, TagElement) and other not in new.tags:
-            new.tags += [other]
-        elif isinstance(other, str) and other not in new.tags:
-            new.tags += [TagElement(other)]
+            for elem in other:
+                
+                if isinstance(elem, TagsList):
+                    
+                    self.tags += [tag for tag in elem if tag not in self.tags]
+                elif TagElement(elem) not in self.tags: # other was list of str or list of tagelements    
+                    
+                    self.tags += [TagElement(elem)]
+        elif isinstance(other, TagElement):
+            if other not in self.tags: #only add new tags
+                self.tags += [other]
+        elif isinstance(other, str):
+            if other not in self.simple_tags(): #only add new tags
+                self.tags += [TagElement(other)]
         elif isinstance(other, TagsLists):
             for other_tag_list in other.tags_lists:
-                if "rejected" not in other_tag_list.name:
-                    new.tags += [tag for tag in other_tag_list if tag not in new.tags]
-
+                self.tags += [tag for tag in other_tag_list if tag not in self.tags]
+        elif isinstance(other, TagElement):
+            self.tags += [TagElement(tag) for tag in other]
+        elif other is None:
+            raise TypeError("__iadd__ with none type")
+        else:
+            raise TypeError(f"Unsupported __iadd__ operator for {type(self)} and {type(other)}")
+        return self
+    
+     
+    def __extend__(self, other):
+        """calls the iadd method since the operations are similar, return self"""
+        return self.__iadd__(other)
+        
+    def __add__(self, other):
+        new = TagsList(name=self.name, tags=self.tags)
+        
+        if isinstance(other, type(self)):
+            
+            new.tags += [tag for tag in other.tags if tag.tag not in new]
+        elif isinstance(other, (list, set)):
+            
+            # here we have to be careful if the list contains TagElements or str
+            new.tags += [TagElement(tag) for tag in other 
+                         if (isinstance(tag, str) and tag not in new) or
+                         (isinstance(tag, TagElement) and tag.tag not in new)]
+            
+        elif isinstance(other, TagElement):
+            
+            if other.tag not in new.tags:
+                
+                new.tags += [other]
+        elif isinstance(other, str):
+            if other not in new.tags:
+                
+                new.tags += [TagElement(other)]
+        elif isinstance(other, TagsLists):
+            # we only merge similar purposed tagslists
+            # rejected + rejected
+            # not rejected + not rejected
+            for other_tag_list in other.tags_lists:
+                if (("rejected" in self.name and "rejected" in other_tag_list.name) or
+                    ("rejected" not in self.name and "rejected" not in other_tag_list.name)): 
+                    # change behaviors if the taglist's purpose if for storing or filtering
+                    new.tags += [tag for tag in other_tag_list if tag.tag not in new]
+        else:
+            raise TypeError(f"Unsupported __add__ operator for {type(self)} and {type(other)}")
+        
         return new
+    
     def __sub__(self, other):
         new = TagsList(name=self.name)
 
         if isinstance(other, type(self)):
-            new.tags = [tag for tag in self.tags if tag not in other.tags]
+            
+            simple_other = other.simple_tags()
+            new.tags = [tag for tag in self.tags if tag.tag not in simple_other]
         elif isinstance(other, (list, set)):
+            
             proper_other = TagsList(tags=other)
-            new.tags = [tag for tag in self.tags if tag not in proper_other]
+            new.tags = [tag for tag in self.tags if tag.tag not in proper_other]
         elif isinstance(other, TagElement):
-            new.tags = [tag for tag in self.tags if tag != other]
+          
+            new.tags = [tag for tag in self.tags if tag.tag != other.tag]
+          
         elif isinstance(other, str):
+            
             new.tags = [tag for tag in self.tags if tag.tag != other]
         elif isinstance(other, TagsLists):
+            
+            # here we don't check for similar purposed tagslist because most operations are additive
+            # and removal is used only for rejected and manual fixes
             combined = TagsList()
             combined += other.tags_lists
-            new.tags = [tag for tag in self.tags if tag not in combined.tags]
-
+            new.tags = [tag for tag in self.tags if tag.tag not in combined]
+        else:
+            raise TypeError(f"Unsupported __sub__ operator for {type(self)} and {type(other)}")
+        
         return new
 
     def __eq__(self, other):
@@ -619,6 +853,8 @@ class TagsList:
             return self.tags[[tag.tag for tag in self.tags].index(key.tag)]
         elif isinstance(key, str):
             return self.tags[[tag.tag for tag in self.tags].index(key)]
+        else:
+            raise KeyError(f"Unknown key type {type(key)}")
 
     def __setitem__(self, key, value):
         if isinstance(value, TagElement):
@@ -631,11 +867,26 @@ class TagsList:
                 self.tags[self.tags.index(key)] = TagElement(value)
             else:
                 self.tags.append(TagElement(value))
-
+        else:
+            raise TypeError(f"Unknown key-value pair types {type(key)}, {type(value)}")
 
     def __len__(self):
         return len(self.tags)
 
+    def __contains__(self, item):
+        if isinstance(item, TagElement):
+            for tag in self.tags:
+                if tag.tag == item.tag:
+                    return True
+            return False
+        elif isinstance(item, str):
+            for tag in self.tags:
+                if tag.tag == item:
+                    return True
+            return False
+        else:
+            return False
+    
     def pop(self, index):
         """
         Same behaviour as a list pop
@@ -677,17 +928,16 @@ class TagsList:
             new_tags = []
         return TagsList(name=self.name, tags=new_tags)
 
-
     def save(self):
         return [x.save() for x in self.tags]
 
     def save_tuple(self):
+        # saves the tag and probability (if applicable) and returns a list of items or tuples
         return [x.save_tuple() for x in self.tags]
 
-    def simple_tags(self):
-        result = [x.tag for x in self.tags]
-        return result
-
+    def simple_tags(self) -> list[str]:
+        return  [x.tag for x in self.tags]
+        
     def clear(self):
         self.tags = []
 
@@ -721,6 +971,15 @@ class TagsList:
                 result += tag
         return result
 
+    def get_low_for_tag(self, specific_tag):
+        # this is ussually runed only on full tags
+        result = TagsList()
+        for tag in self.tags:
+            
+            if specific_tag in tag_categories.LOW2TAGS.get(tag.tag, []):
+                result += tag
+        return result
+    
     def hard_rejected_tags(self):
         """
         Returns: all tags that are hard rejected in the list
@@ -752,6 +1011,7 @@ class TagsList:
                         all([y[1:] not in self for y in x if y[0] == "-" and len(y) > 3])
                 ):
                     recommendations+=recommended_tag
+                                 
         return recommendations
 
     def init_display_properties(self, highlight_tags=None):
@@ -779,18 +1039,63 @@ class TagsList:
                 tag.rejected = tag in rejected_tags
 
     def init_highlight_display_properties(self, highlight_tags):
+        """Takes a bool or a list of tags that should be highlighted.
+        All tags are highlighted if the argument is a bool.
+        """
         if isinstance(highlight_tags, bool):
             for tag in self.tags:
                 tag.highlight = highlight_tags
         elif isinstance(highlight_tags, TagsList|list|set):
             for tag in self.tags:
-                tag.highlight = tag in highlight_tags
+                tag.highlight = (tag in highlight_tags) or (any(u in tag for u in tag_categories.UNRELIABLE_SMALL_TAGS))
 
     def priority_sort(self):
         """
         Sort the tags in place so that the tag with the highest priority is first
         """
         self.tags.sort(key=lambda x: x.sort_priority, reverse=False)
+
+    def loose_match(self, tags)->TagsList:
+        """
+        Args:
+            tags [str|list|set|TagsList] : list of tags to match
+
+        Returns: all tags that are in the self that are in a tag_categories
+        """
+        if tags:
+            if isinstance(tags, str):
+                tags = [tags]
+            elif isinstance(tags, TagsList):
+                tags = tags.simple_tags()
+            elif isinstance(tags, (set, list)):
+                tags = list(tags)
+            return TagsList(tags=[tag for tag in self.tags if any([t in tag.tag for t in tags])])
+        else:
+            return TagsList()
+    
+    def loose_string_check(self, search_tags, require_all=True) -> bool:
+        """similar to loose_match but returns a bool if a loose match is found
+
+        Returns: bool: if tags are found
+        """
+        if search_tags:
+            if isinstance(search_tags, str):
+                search_tags = [search_tags]
+            elif isinstance(search_tags, TagsList):
+                search_tags = search_tags.simple_tags()
+            elif isinstance(search_tags, (set, list)):
+                search_tags = list(search_tags)
+            
+            if len(search_tags) > 1 and require_all:
+                # check if all tags in the search requirement are present
+                return all([any(t in tag.tag for tag in self.tags) for t in search_tags])
+            else:
+                return any([any([t in tag.tag for t in search_tags]) for tag in self.tags])
+        else:
+            return False
+
+    def clean_empty(self):
+        self.tags = [tag for tag in self.tags if tag.tag]
 
 class TagElement:
     def __init__(self, tag: str|tuple|list, *, probability: float=0.0):
@@ -812,7 +1117,8 @@ class TagElement:
                 if hasattr(tag, "wiki_page"):
                     self.wiki_page = tag.wiki_page
         else:
-            print(f"EXTREMELY WRONG, DON'T SAVE ANYTHING, PLEASE REPORT ANYTHING YOU DID TO COME HERE: {tag}")
+            raise TypeError(f"EXTREMELY WRONG, DON'T SAVE ANYTHING, PLEASE REPORT ANYTHING YOU DID TO COME HERE: \nUnknown type for tag: {type(tag)}")
+            
 
     def __str__(self):
         return self.tag
@@ -832,6 +1138,9 @@ class TagElement:
     def __float__(self):
         return self.probability
 
+    def __contains__(self, item): # the "x in tag" operator 
+        return item in self.tag
+    
     def __eq__(self, other):
 
         if isinstance(other, type(self)):
@@ -867,25 +1176,11 @@ class TagElement:
         if hasattr(self, "wiki_page"):
             return self.wiki_page
         else:
-            self.wiki_page = ""
-            api_url = "https://danbooru.donmai.us/wiki_pages.json"
-            USER_AGENT = "HaW Tagger"
-            HTTP_HEADERS = {'User-Agent': USER_AGENT}
-            scraper = cloudscraper.create_scraper()
-            url = f'{api_url}?search[title]={self.tag.replace(" ", "_")}'
-            response = scraper.get(url=url, headers=HTTP_HEADERS)
-            if response.status_code == 200:
-                data = response.json()
-                try:
-                    self.wiki_page = data[0]["body"]
-                    if "h4" in self.wiki_page and "[Expand=" in self.wiki_page:
-                        self.wiki_page = self.wiki_page[:min(self.wiki_page.index("h4"),self.wiki_page.index("[Expand="))].strip()
-                    elif "h4" in self.wiki_page:
-                        self.wiki_page = self.wiki_page[:self.wiki_page.index("h4")].strip()
-                    elif "[Expand=" in self.wiki_page:
-                        self.wiki_page = self.wiki_page[:self.wiki_page.index("[Expand=")].strip()
-                    else:
-                        self.wiki_page = self.wiki_page[:500].strip()
-                    return self.wiki_page
-                except (IndexError, KeyError):
-                    return self.wiki_page
+            # check if we already have the wiki page
+            if self.tag in curr_wiki_info:
+                self.wiki_page = curr_wiki_info[self.tag]
+                return self.wiki_page
+            parameters.log.info(f"Getting wiki page for {self.tag}")
+            self.wiki_page = wiki_info.get_wiki_page(self.tag)
+            # updating wiki_info happens elsewhere in batches
+            return self.wiki_page

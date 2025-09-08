@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>781</width>
+    <width>706</width>
     <height>640</height>
    </rect>
   </property>
@@ -33,27 +33,7 @@
    </item>
    <item row="1" column="0" colspan="2">
     <layout class="QGridLayout" name="gridLayout_4">
-     <item row="1" column="0" colspan="2">
-      <widget class="QPushButton" name="pushButton_reapply_to_database">
-       <property name="toolTip">
-        <string>Re-applies the tagging/processes below to images currently in the database.</string>
-       </property>
-       <property name="text">
-        <string>Re-Apply to Database</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="pushButton_add_new_images">
-       <property name="toolTip">
-        <string>Use this to add new images to a pre-existing database.  Load a database and select the tagging criterions and click on this.</string>
-       </property>
-       <property name="text">
-        <string>Add New Images</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="2">
+     <item row="6" column="0" colspan="2">
       <widget class="QPushButton" name="pushButton_create_database">
        <property name="toolTip">
         <string>Create a database using the enabled settng below.  If nothing is enabled it'll just make a database with the images with no tag/caption assigned to them.</string>
@@ -63,17 +43,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="pushButton_load_database">
-       <property name="toolTip">
-        <string>Enter a database directory, and this will load any database in the folder.</string>
-       </property>
-       <property name="text">
-        <string>Load Database</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" colspan="2">
+     <item row="8" column="0" colspan="2">
       <widget class="QPushButton" name="pushButton_save_database">
        <property name="toolTip">
         <string>Saves the created or loaded database.</string>
@@ -83,17 +53,54 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="Line" name="line_4">
+     <item row="2" column="1">
+      <widget class="QPushButton" name="pushButton_reapply_lacking">
+       <property name="text">
+        <string>Re-apply only to lacking portion of Database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="pushButton_reapply_to_database">
+       <property name="toolTip">
+        <string>Re-applies the tagging/processes below to images currently in the database.</string>
+       </property>
+       <property name="text">
+        <string>Re-Apply to Database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="pushButton_add_new_images">
+       <property name="toolTip">
+        <string>Use this to add new images to a pre-existing database.  Load a database and select the tagging criterions and click on this.</string>
+       </property>
+       <property name="text">
+        <string>Add New Images</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="2">
+      <widget class="Line" name="line_5">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2">
-      <widget class="Line" name="line_5">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="pushButton_load_database">
+       <property name="toolTip">
+        <string>Enter a database directory, and this will load any database in the folder.</string>
+       </property>
+       <property name="text">
+        <string>Load Database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="pushButton_process_all_ckpt_images">
+       <property name="text">
+        <string>Load checkpoint Data</string>
        </property>
       </widget>
      </item>
@@ -272,6 +279,53 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="verticalGroupBox">
+         <property name="title">
+          <string>Misc</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_secondary_dir">
+            <property name="placeholderText">
+             <string>Enter directory to prune duplicate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_prune_duplicate">
+            <property name="text">
+             <string>Prune Dupes</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_NA">
+            <property name="placeholderText">
+             <string>NA</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_B">
+            <property name="text">
+             <string>Button B</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_C">
+            <property name="text">
+             <string>Button C</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -308,6 +362,51 @@
             <property name="text">
              <string>Use taggers</string>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="horizontalGroupBox">
+            <property name="title">
+             <string>Check to overwrite default tagger</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>20</number>
+             </property>
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QCheckBox" name="checkBox_eva02">
+               <property name="text">
+                <string>Eva02_large</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_caformer">
+               <property name="text">
+                <string>Caformer</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_swinV2">
+               <property name="text">
+                <string>SwinV2</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -370,6 +469,20 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_detect_text">
+            <property name="text">
+             <string>Detect Text(s) [Only boxed detection, not text reading]</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_detect_jpeg">
+            <property name="text">
+             <string>Detect jpeg artifact(s) [basic algorithm]</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -385,16 +498,6 @@
           <string>Pre &amp; Post tagging options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_rename_to_png">
-            <property name="toolTip">
-             <string>convert image to png (post tagging)</string>
-            </property>
-            <property name="text">
-             <string>Convert Images to PNG</string>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="0" colspan="2">
            <widget class="QCheckBox" name="checkBox_groups_from_folders">
             <property name="toolTip">
@@ -402,6 +505,16 @@
             </property>
             <property name="text">
              <string>Create groups following folder structure</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBox_rename_to_md5">
+            <property name="toolTip">
+             <string>Updates the filename to the exact md5 hash (post tagging)</string>
+            </property>
+            <property name="text">
+             <string>Rename Images to MD5</string>
             </property>
            </widget>
           </item>
@@ -415,13 +528,20 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_rename_to_md5">
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBox_rename_to_png">
             <property name="toolTip">
-             <string>Updates the filename to the exact md5 hash (post tagging)</string>
+             <string>convert image to png (post tagging)</string>
             </property>
             <property name="text">
-             <string>Rename Images to MD5</string>
+             <string>Convert Images to PNG</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="checkBox_filter_all_images">
+            <property name="text">
+             <string>Apply tag filter</string>
             </property>
            </widget>
           </item>

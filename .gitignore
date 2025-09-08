@@ -4,6 +4,7 @@ venv/
 database/
 .idea/
 heatmaps/
+models/
 *.pyc
 starthere.bat
 starthere2.bat
@@ -12,6 +13,8 @@ resources/favourites.txt
 resources/config.ini
 config.ini
 *history.json
+install.bat
+run.bat
 venv_scripts.py
 resources/tag_categories.csv
 resources/filtertags.csv
@@ -21,3 +24,4 @@ resources/danbooru_implications.csv
 *__pycache__*
 update_interface.bat
 /models/
+.DS_store

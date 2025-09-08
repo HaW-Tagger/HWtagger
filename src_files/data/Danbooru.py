@@ -3,7 +3,6 @@ from torch.utils.data import Dataset
 import json
 from PIL import Image
 from PIL import ImageFile
-import cv2
 import os
 import numpy as np
 from copy import deepcopy, copy

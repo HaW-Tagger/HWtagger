@@ -298,6 +298,20 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="4" column="1">
+                    <widget class="QPushButton" name="pushButton_reapply_threshold">
+                     <property name="text">
+                      <string>Re-apply Autotag threshold</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <widget class="QPushButton" name="pushButton_gen_report">
+                     <property name="text">
+                      <string>Generate Report</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -374,6 +388,34 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="4" column="0">
+                    <widget class="QLineEdit" name="lineEdit_merge_downstream_database">
+                     <property name="placeholderText">
+                      <string>Enter main directory</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="Line" name="line_2">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QLabel" name="label_19">
+                     <property name="text">
+                      <string>Merge All sub-databases into one</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QPushButton" name="pushButton_merge_downstream_database">
+                     <property name="text">
+                      <string>Merge downstream databases</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -420,6 +462,13 @@
                   </property>
                   <property name="text">
                    <string>Print unknown tags</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_update_wiki">
+                  <property name="text">
+                   <string>Update stored wiki info</string>
                   </property>
                  </widget>
                 </item>
@@ -672,8 +721,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>761</width>
-             <height>993</height>
+             <width>330</width>
+             <height>689</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -776,27 +825,6 @@
                 <widget class="QCheckBox" name="checkBox_hide_sentence_in_view">
                  <property name="text">
                   <string>Hide Sentence in the Database View</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBox_load_images_thumbnail">
-                 <property name="text">
-                  <string>Load Images Thumbnails in view</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBox_double_images_thumbnail_size">
-                 <property name="text">
-                  <string>Double Images Thumbnails Size in view</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBox_activate_danbooru_tag_wiki_lookup">
-                 <property name="text">
-                  <string>Activate Danbooru Tag Wiki Lookup</string>
                  </property>
                 </widget>
                </item>
@@ -1015,13 +1043,6 @@
                 </layout>
                </item>
                <item>
-                <widget class="QCheckBox" name="check_deactivate_filter">
-                 <property name="text">
-                  <string>Deactivate Filter</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QCheckBox" name="check_filter_remove_series">
                  <property name="text">
                   <string>Filter remove series</string>
@@ -1096,7 +1117,7 @@
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_20">
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>10</number>
                  </property>
                  <item>
                   <widget class="QSpinBox" name="spinBox_sample_count">
@@ -1140,7 +1161,7 @@
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2,WDEVA02LARGEV3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2</string>
                    </property>
                    <property name="text">
                     <string>Automatic Tagger</string>
@@ -1286,30 +1307,6 @@
                   <widget class="QLabel" name="label_18">
                    <property name="text">
                     <string>Yolo Detection Resolution</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_25">
-                 <item>
-                  <widget class="QDoubleSpinBox" name="spin_wdeva02_large_threshold">
-                   <property name="maximum">
-                    <double>0.990000000000000</double>
-                   </property>
-                   <property name="singleStep">
-                    <double>0.050000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_19">
-                   <property name="toolTip">
-                    <string>the threshold for wich to add tags from the swinv2 tagger</string>
-                   </property>
-                   <property name="text">
-                    <string>WD EVA02-Large Threshold</string>
                    </property>
                   </widget>
                  </item>

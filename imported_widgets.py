@@ -1,6 +1,6 @@
+from PySide6.QtWidgets import QLabel, QCompleter, QTreeView, QListView
 from PySide6 import QtCore
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QLabel, QTreeView
+from PySide6.QtCore import Slot, Signal, QModelIndex
 
 
 class ScaledLabel(QLabel):

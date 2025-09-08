@@ -1,22 +1,24 @@
-import datetime
-import os
-from collections import Counter
-
-import matplotlib
-import pandas as pd
 from PySide6 import QtCore, QtGui
-from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import Slot
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-
-from classes.class_database import Database
-from interfaces import statistics
-from resources import parameters
 from resources.tag_categories import KAOMOJI, COLOR_DICT
 
+from resources import parameters
+from classes.class_database import Database
+from interfaces import statistics
+
+import datetime
+import pandas as pd
+import os
+from collections import Counter
+import numpy as np
+
+import matplotlib
 matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 import seaborn as sns
 from clip import tokenize
 
@@ -269,20 +271,10 @@ class StatisticsView(QWidget, statistics.Ui_Form):
         """
         loop all the images, get the tag length, tag conflicts, and display the summary statistics
         """
-        tag_len = []
-        tag_conflict_len = []
-        self.tag_counter = Counter()
-        self.rejected_counter = Counter()
-        self.tag_conflict_counter = Counter()
-        for img in self.temp_database.images:
-            tags = img.get_full_tags()
-            rejected_tags = img.get_rejected_tags()
-            tag_conflict_categ = img.get_unresolved_conflicts()
-            tag_conflict_len.append(len(tag_conflict_categ))
-            self.tag_counter.update(tags)
-            self.rejected_counter.update(rejected_tags)
-            self.tag_conflict_counter.update(list(tag_conflict_categ.keys()))
-            tag_len.append(len(tags))
+        
+        return_val = self.temp_database.get_conflict_counts()
+        tag_len, tag_conflict_len,self.tag_counter, self.rejected_counter,self.tag_conflict_counter = return_val
+        
         tag_series = pd.Series(tag_len)
         tag_conflict_series = pd.Series(tag_conflict_len)
         unique_rejected = len(self.rejected_counter)
@@ -402,7 +394,7 @@ class StatisticsView(QWidget, statistics.Ui_Form):
                 blacklist += [sc + "_up" for sc in blacklist]
                 tag_list = [t.replace("_", " ") if len(t) > 3 and t not in KAOMOJI else t for t in tag_list]
                 tag_list+=blacklist
-                #print(tag_list[:10])
+                
                 known_text = tokenize(tag_list, context_length=500)
                 self.token_dict = {}
                 for tag, tokens in zip(tag_list, known_text):

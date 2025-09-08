@@ -17,6 +17,8 @@ from PIL import Image
 from resources import parameters
 from resources.tag_categories import KAOMOJI
 
+from tools.wd14_based_taggers import parse_interpolation
+
 
 IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".bmp"]
 
@@ -42,7 +44,7 @@ def custom_collate(batch):
     return default_collate(batch)
 
 class FictionnalArgs:
-    def __init__(self, data, ckpt, class_map, bs):
+    def __init__(self, data, ckpt, class_map, bs, interpolation="bicubic"):
         self.data = data
         self.ckpt = ckpt
         self.class_map = class_map
@@ -63,6 +65,7 @@ class FictionnalArgs:
         self.num_queries = 80
         self.scale_skip = 1
         self.model_path = None
+        self.interpolation_method = parse_interpolation(interpolation)
 
 
 def make_args():
@@ -119,13 +122,14 @@ class Demo:
 
         if args.keep_ratio:
             self.trans = transforms.Compose([
-                transforms.Resize(args.image_size),
+                transforms.Resize(args.image_size,interpolation=args.interpolation_method),
                 crop_fix,
                 transforms.ToTensor(),
             ])
         else:
             self.trans = transforms.Compose([
-                                    transforms.Resize((args.image_size, args.image_size)),
+                                    transforms.Resize((args.image_size, args.image_size),
+                                                      interpolation=args.interpolation_method),
                                     transforms.ToTensor(),
                                 ])
 
@@ -204,11 +208,12 @@ class Demo:
 
 
 #python caformer_tagger.py --data imgs/t1.jpg --model_name caformer_m36 --ckpt ckpt/ml_caformer_m36_dec-5-97527.ckpt --thr 0.7 --image_size 448
-def caformer_tagging(data, model_folder):
+def caformer_tagging(data, model_folder, interpolation = "bicubic"):
     model_dir = os.path.join(model_folder, "model.ckpt")
     model_json_dir = os.path.join(model_folder, "class.json")
     batch_size = parameters.PARAMETERS["max_batch_size"]
-    args = FictionnalArgs(data, model_dir, model_json_dir, batch_size)
+    
+    args = FictionnalArgs(data, model_dir, model_json_dir, batch_size, interpolation)
     demo = Demo(args)
     if args.bs>1:
         tag_dict = demo.infer_batch(args.data, args.bs)

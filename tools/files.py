@@ -52,7 +52,7 @@ def backup_database_file(folder):
     backups = []
     
     for f in files:
-        if (db_file_name+".bak" in f or db_file_name in f):
+        if (db_file_name+".bak" in f and db_file_name in f) or (f.endswith(db_file_name)):
             backups.append(f)
     # string sort, numbered bak files are in increasing order, and base database is at the end
     backups = sorted(backups)
@@ -77,7 +77,7 @@ def backup_database_file(folder):
 
 def get_all_images_in_folder(folder, image_ext=resources.parameters.IMAGES_EXT, rejected_folders=resources.parameters.PARAMETERS["discard_folder_name_from_search"]):
     """
-    return all images paths from a certain folder, recursively
+    return all relative images paths from a certain folder, recursively
     Args:
         rejected_folders: list of rejected names that could be inside folders
         folder:
@@ -188,6 +188,33 @@ def save_image(old_img_path, new_image_path, tags: list):
         tags_line = ",".join(tags)
         f.write(tags_line)
 
+def ext_to_ext(paths:list=[], input_ext:str|tuple[str]=".webp", output_ext:str=".png"):
+    """returns 3 list: renamed, new_names, error_files, error is logged automatically"""
+    renamed, new_name, error_files = [], [], []
+    # input validation, string, tuple, and check if it's an extension
+    if not isinstance(input_ext, str):
+        for ext_str in input_ext:
+            assert isinstance(ext_str, str)  and "." in ext_str, "input should be a iterable with strings with a ."
+    else:
+        assert isinstance(input_ext, str)  and "." in input_ext, "input ext should be a string with a ."
+    assert isinstance(output_ext, str) and "." in output_ext, "output ext should be a string with a ."
+
+    if not isinstance(input_ext,(tuple, str)): # convert iterables to tuple
+        input_ext = tuple(input_ext)
+    
+    for f in paths:
+        if f.endswith(input_ext):
+            dest_path = os.path.splitext(f)[0] + output_ext
+            try:
+                os.rename(f, dest_path)
+                renamed.append(f)
+                new_name.append(dest_path)
+            except:
+                error_files.append(f)
+    if error_files:
+        max_example_count = max(len(error_files), 5)
+        parameters.log.info(f"Error renaming {input_ext} to {output_ext}: error:\n{error_files[max_example_count]}")
+    return renamed, new_name, error_files
 
 def to_png(path, pool: concurrent.futures.ThreadPoolExecutor):
     """
@@ -200,14 +227,11 @@ def to_png(path, pool: concurrent.futures.ThreadPoolExecutor):
     for i in files:
         if os.path.isdir(os.path.join(path, i)):
             to_png(os.path.join(path, i), pool)
-        elif os.path.join(path, i).endswith('jpg'):
+        elif os.path.join(path, i).endswith(('.jpg', '.jpeg')):
             src_path=os.path.join(path, i)
-            dst_path=os.path.join(path, i)[:-4]+".png"
+            dst_path=os.path.splitext(src_path)[0] + ".png"
             pool.submit(convert_image_to_png, src_path, dst_path)
-        elif os.path.join(path, i).endswith('jpeg'):
-            src_path = os.path.join(path, i)
-            dst_path = os.path.join(path, i)[:-5] + ".png"
-            pool.submit(convert_image_to_png, src_path, dst_path)
+        
 def to_png_from_images_paths(images_paths, pool: concurrent.futures.ThreadPoolExecutor):
     """
     convert all .jpg files to PNG files in a single folder ( subfolders included )
@@ -215,14 +239,9 @@ def to_png_from_images_paths(images_paths, pool: concurrent.futures.ThreadPoolEx
     :param images_paths:
     :return:
     """
-    for i in images_paths:
-        if i.endswith('jpg'):
-            src_path=i
-            dst_path=i[:-4]+".png"
-            pool.submit(convert_image_to_png, src_path, dst_path)
-        elif i.endswith('jpeg'):
-            src_path = i
-            dst_path = i[:-5] + ".png"
+    for src_path in images_paths:
+        if src_path.endswith(('.jpg', '.jpeg')):
+            dst_path=os.path.splitext(src_path)[0] + ".png"
             pool.submit(convert_image_to_png, src_path, dst_path)
 
 def convert_image_to_png(src_path, dst_path):
@@ -281,12 +300,7 @@ def get_md5(file_path):
 
 def get_multiple_md5(files_paths) -> list[tuple[str, str]]:
     """
-    concurrent md5 calculation (supposedly faster than direct ones)
-    Args:
-        files_paths:
-
-    Returns:
-        result: list[tuple(md5, file_path)]
+    concurrent md5 calculation (supposedly faster than direct ones), returns list[tuple(md5, file_path)]
     """
     result = []
     def get_md5_and_path(file_path):
@@ -405,6 +419,10 @@ def loose_tags_check(search_tags, full_tags):
     # return all(any([t[0] in ft for ft in full_tags]) for t in search_tags if t[1]==True) and all(all([t[0] not in ft for ft in full_tags]) for t in search_tags if t[1]==False)
 
 def export_images(img_paths, base_dir, new_folder="DISCARDED"):
+    if isinstance(img_paths, str):
+        img_paths = [img_paths]
+    
+    
     if len(img_paths):
         # adds new folder to root/base_dir and exports the imgs there. will keep directory structure found
         if new_folder == 'DISCARDED':
@@ -492,6 +510,7 @@ def find_near_duplicates(images_paths: list[str],*, threshold: float=0.9, hash_s
             Image signature as Numpy n-dimensional array or None if the file is not a PIL recognized image
         """
         try:
+            # convert img to grayscale, resize to 33x32
             pil_image = Image.open(image_file).convert("L").resize(
                 (hash_size + 1, hash_size),
                 Image.LANCZOS)
@@ -630,6 +649,9 @@ def download_model(name: str):
                 rel_file_path = rel_path + filename
                 pool.submit(hf_hub_download, repo_id="PhoenixAscencio/HWtagger", filename=rel_file_path,
                             local_dir=parameters.MAIN_FOLDER)
+        case "detect_text":
+            for filename in ["det/ch_PP-OCRv4_det/model.onnx"]:
+                pool.submit(hf_hub_download, repo_id="deepghs/paddleocr", filename=filename, local_dir=os.path.join(parameters.MAIN_FOLDER, "models"))
         case _:
             parameters.log.error(f"Unknown case when downloading model, check for typo for model")
     pool.shutdown(wait=True)

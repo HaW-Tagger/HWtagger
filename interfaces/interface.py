@@ -169,6 +169,16 @@ class Ui_MainWindow(object):
 
         self.gridLayout_6.addWidget(self.pushButton_redetect_hand, 6, 0, 1, 1)
 
+        self.pushButton_reapply_threshold = QPushButton(self.groupBox_3)
+        self.pushButton_reapply_threshold.setObjectName(u"pushButton_reapply_threshold")
+
+        self.gridLayout_6.addWidget(self.pushButton_reapply_threshold, 4, 1, 1, 1)
+
+        self.pushButton_gen_report = QPushButton(self.groupBox_3)
+        self.pushButton_gen_report.setObjectName(u"pushButton_gen_report")
+
+        self.gridLayout_6.addWidget(self.pushButton_gen_report, 5, 1, 1, 1)
+
 
         self.verticalLayout_3.addWidget(self.groupBox_3)
 
@@ -209,6 +219,28 @@ class Ui_MainWindow(object):
 
         self.gridLayout_13.addWidget(self.pushButton_load_and_merge_secondary, 1, 0, 1, 1)
 
+        self.lineEdit_merge_downstream_database = QLineEdit(self.groupBox_10)
+        self.lineEdit_merge_downstream_database.setObjectName(u"lineEdit_merge_downstream_database")
+
+        self.gridLayout_13.addWidget(self.lineEdit_merge_downstream_database, 4, 0, 1, 1)
+
+        self.line_2 = QFrame(self.groupBox_10)
+        self.line_2.setObjectName(u"line_2")
+        self.line_2.setFrameShape(QFrame.HLine)
+        self.line_2.setFrameShadow(QFrame.Sunken)
+
+        self.gridLayout_13.addWidget(self.line_2, 2, 0, 1, 1)
+
+        self.label_19 = QLabel(self.groupBox_10)
+        self.label_19.setObjectName(u"label_19")
+
+        self.gridLayout_13.addWidget(self.label_19, 3, 0, 1, 1)
+
+        self.pushButton_merge_downstream_database = QPushButton(self.groupBox_10)
+        self.pushButton_merge_downstream_database.setObjectName(u"pushButton_merge_downstream_database")
+
+        self.gridLayout_13.addWidget(self.pushButton_merge_downstream_database, 5, 0, 1, 1)
+
 
         self.verticalLayout_3.addWidget(self.groupBox_10)
 
@@ -244,6 +276,11 @@ class Ui_MainWindow(object):
         self.pushButton_print_unknown_tags.setObjectName(u"pushButton_print_unknown_tags")
 
         self.verticalLayout_4.addWidget(self.pushButton_print_unknown_tags)
+
+        self.pushButton_update_wiki = QPushButton(self.tab)
+        self.pushButton_update_wiki.setObjectName(u"pushButton_update_wiki")
+
+        self.verticalLayout_4.addWidget(self.pushButton_update_wiki)
 
         self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
@@ -389,7 +426,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 761, 993))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 330, 689))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
         self.groupBox = QGroupBox(self.scrollAreaWidgetContents)
@@ -459,21 +496,6 @@ class Ui_MainWindow(object):
         self.checkBox_hide_sentence_in_view.setObjectName(u"checkBox_hide_sentence_in_view")
 
         self.verticalLayout_5.addWidget(self.checkBox_hide_sentence_in_view)
-
-        self.checkBox_load_images_thumbnail = QCheckBox(self.groupBox)
-        self.checkBox_load_images_thumbnail.setObjectName(u"checkBox_load_images_thumbnail")
-
-        self.verticalLayout_5.addWidget(self.checkBox_load_images_thumbnail)
-
-        self.checkBox_double_images_thumbnail_size = QCheckBox(self.groupBox)
-        self.checkBox_double_images_thumbnail_size.setObjectName(u"checkBox_double_images_thumbnail_size")
-
-        self.verticalLayout_5.addWidget(self.checkBox_double_images_thumbnail_size)
-
-        self.checkBox_activate_danbooru_tag_wiki_lookup = QCheckBox(self.groupBox)
-        self.checkBox_activate_danbooru_tag_wiki_lookup.setObjectName(u"checkBox_activate_danbooru_tag_wiki_lookup")
-
-        self.verticalLayout_5.addWidget(self.checkBox_activate_danbooru_tag_wiki_lookup)
 
 
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
@@ -614,11 +636,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_7.addLayout(self.horizontalLayout_17)
 
-        self.check_deactivate_filter = QCheckBox(self.groupBox_8)
-        self.check_deactivate_filter.setObjectName(u"check_deactivate_filter")
-
-        self.verticalLayout_7.addWidget(self.check_deactivate_filter)
-
         self.check_filter_remove_series = QCheckBox(self.groupBox_8)
         self.check_filter_remove_series.setObjectName(u"check_filter_remove_series")
 
@@ -674,7 +691,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_20 = QHBoxLayout()
         self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
-        self.horizontalLayout_20.setContentsMargins(-1, -1, -1, 0)
+        self.horizontalLayout_20.setContentsMargins(-1, -1, -1, 10)
         self.spinBox_sample_count = QSpinBox(self.groupBox_8)
         self.spinBox_sample_count.setObjectName(u"spinBox_sample_count")
         self.spinBox_sample_count.setValue(5)
@@ -807,23 +824,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_6.addLayout(self.horizontalLayout_2)
 
-        self.horizontalLayout_25 = QHBoxLayout()
-        self.horizontalLayout_25.setObjectName(u"horizontalLayout_25")
-        self.spin_wdeva02_large_threshold = QDoubleSpinBox(self.groupBox_7)
-        self.spin_wdeva02_large_threshold.setObjectName(u"spin_wdeva02_large_threshold")
-        self.spin_wdeva02_large_threshold.setMaximum(0.990000000000000)
-        self.spin_wdeva02_large_threshold.setSingleStep(0.050000000000000)
-
-        self.horizontalLayout_25.addWidget(self.spin_wdeva02_large_threshold)
-
-        self.label_19 = QLabel(self.groupBox_7)
-        self.label_19.setObjectName(u"label_19")
-
-        self.horizontalLayout_25.addWidget(self.label_19)
-
-
-        self.verticalLayout_6.addLayout(self.horizontalLayout_25)
-
 
         self.gridLayout.addWidget(self.groupBox_7, 1, 0, 1, 1)
 
@@ -924,6 +924,8 @@ class Ui_MainWindow(object):
         self.pushButton_redetect_person.setText(QCoreApplication.translate("MainWindow", u"Re-Detect People", None))
         self.pushButton_redetect_head.setText(QCoreApplication.translate("MainWindow", u"Re-Detect Head", None))
         self.pushButton_redetect_hand.setText(QCoreApplication.translate("MainWindow", u"Re-Detect Hands", None))
+        self.pushButton_reapply_threshold.setText(QCoreApplication.translate("MainWindow", u"Re-apply Autotag threshold", None))
+        self.pushButton_gen_report.setText(QCoreApplication.translate("MainWindow", u"Generate Report", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"Group Management Tools", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_move_files_groupings.setToolTip(QCoreApplication.translate("MainWindow", u"move images from the database to their corresponding groups (destructive be careful, you could lose information)", None))
@@ -942,11 +944,15 @@ class Ui_MainWindow(object):
         self.pushButton_load_and_merge_secondary.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>There's two database at play.</p><p><br/></p><p>The primary database loaded at the top and the secondary database entered right above this button.<br/><br/>This will search for any duplicate md5 hashes in both databases and pull tags from the secondary database and update the content of the primary database.<br/><br/>This is useful if you're importing tags from a previously cleaned database</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_load_and_merge_secondary.setText(QCoreApplication.translate("MainWindow", u"Load secondary database and merge tags", None))
+        self.lineEdit_merge_downstream_database.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter main directory", None))
+        self.label_19.setText(QCoreApplication.translate("MainWindow", u"Merge All sub-databases into one", None))
+        self.pushButton_merge_downstream_database.setText(QCoreApplication.translate("MainWindow", u"Merge downstream databases", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Output", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_print_unknown_tags.setToolTip(QCoreApplication.translate("MainWindow", u"useful for making the tag categories csv, prints tags that are known by tagger, that are not listed in the tag category", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_print_unknown_tags.setText(QCoreApplication.translate("MainWindow", u"Print unknown tags", None))
+        self.pushButton_update_wiki.setText(QCoreApplication.translate("MainWindow", u"Update stored wiki info", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"Database Edit Tools", None))
         self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"Clean Dataset Folder Tools", None))
 #if QT_CONFIG(tooltip)
@@ -1000,9 +1006,6 @@ class Ui_MainWindow(object):
 
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Tag Edit Click Count", None))
         self.checkBox_hide_sentence_in_view.setText(QCoreApplication.translate("MainWindow", u"Hide Sentence in the Database View", None))
-        self.checkBox_load_images_thumbnail.setText(QCoreApplication.translate("MainWindow", u"Load Images Thumbnails in view", None))
-        self.checkBox_double_images_thumbnail_size.setText(QCoreApplication.translate("MainWindow", u"Double Images Thumbnails Size in view", None))
-        self.checkBox_activate_danbooru_tag_wiki_lookup.setText(QCoreApplication.translate("MainWindow", u"Activate Danbooru Tag Wiki Lookup", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("MainWindow", u"Misc", None))
         self.spin_max_amount_of_backups.setSuffix("")
 #if QT_CONFIG(tooltip)
@@ -1040,7 +1043,6 @@ class Ui_MainWindow(object):
         self.label_13.setToolTip(QCoreApplication.translate("MainWindow", u"path to the image editor that should be used to open images, if not specified, the default app will be launched", None))
 #endif // QT_CONFIG(tooltip)
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"External Image Editor Path", None))
-        self.check_deactivate_filter.setText(QCoreApplication.translate("MainWindow", u"Deactivate Filter", None))
         self.check_filter_remove_series.setText(QCoreApplication.translate("MainWindow", u"Filter remove series", None))
         self.check_filter_remove_metadata.setText(QCoreApplication.translate("MainWindow", u"Filter remove metadata", None))
         self.check_filter_remove_characters.setText(QCoreApplication.translate("MainWindow", u"Filter remove characters", None))
@@ -1048,7 +1050,7 @@ class Ui_MainWindow(object):
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"Prompt count for sample toml", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("MainWindow", u"Tagger", None))
 #if QT_CONFIG(tooltip)
-        self.label_3.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2,WDEVA02LARGEV3</p></body></html>", None))
+        self.label_3.setToolTip(QCoreApplication.translate("MainWindow", u"if you don't like one tagger or the other, mainly use both, available currently: SWINV2V3,CAFORMER,SWINV2V2", None))
 #endif // QT_CONFIG(tooltip)
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Automatic Tagger", None))
 #if QT_CONFIG(tooltip)
@@ -1076,10 +1078,6 @@ class Ui_MainWindow(object):
         self.spinBox_detection_resolution.setToolTip(QCoreApplication.translate("MainWindow", u"This is the max height/width for the resized image passed to the detection models", None))
 #endif // QT_CONFIG(tooltip)
         self.label_18.setText(QCoreApplication.translate("MainWindow", u"Yolo Detection Resolution", None))
-#if QT_CONFIG(tooltip)
-        self.label_19.setToolTip(QCoreApplication.translate("MainWindow", u"the threshold for wich to add tags from the swinv2 tagger", None))
-#endif // QT_CONFIG(tooltip)
-        self.label_19.setText(QCoreApplication.translate("MainWindow", u"WD EVA02-Large Threshold", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_cancel_settings.setToolTip(QCoreApplication.translate("MainWindow", u"cancel the changes, doesn't restore to defaults, it only restore the previous setting, if yyou want to restore the default, delete the .ini file that acts as the config", None))
 #endif // QT_CONFIG(tooltip)

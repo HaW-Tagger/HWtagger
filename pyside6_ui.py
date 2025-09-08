@@ -1,6 +1,4 @@
-import os
-import sys
-
+import os, sys
 os.environ["XFORMERS_FORCE_DISABLE_TRITON"] = "1"
 def _ignore_xformers_triton_message_on_windows():
     import logging
@@ -24,7 +22,7 @@ import concurrent.futures
 import time
 
 import CustomWidgets
-from resources import parameters, tag_categories
+from resources import parameters, tag_categories, wiki_info
 tag_categories.check_categories()
 
 import GlobalDatabaseView
@@ -35,9 +33,9 @@ import ImageTools
 from interfaces import interface
 from tools import files, safetensors_metadata
 
-from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import Slot
-from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QSpinBox
+from PySide6.QtCore import Slot, Qt
+from PySide6.QtGui import QFont, QPalette, QColor, Qt
 
 from classes.class_database import Database
 import qdarkstyle
@@ -91,16 +89,18 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.pushButton_redetect_person.clicked.connect(self.redetect_person)
         self.pushButton_redetect_head.clicked.connect(self.redetect_head)
         self.pushButton_redetect_hand.clicked.connect(self.redetect_hand)
+        self.pushButton_reapply_threshold.clicked.connect(self.reapply_threshold)
+        self.pushButton_gen_report.clicked.connect(self.generate_report)    
         
         # Group Management Tools
         self.pushButton_move_files_groupings.clicked.connect(self.move_files_groupings_button)
         self.pushButton_rebuild_groups.clicked.connect(self.rebuild_groups_button)
         
         self.pushButton_load_and_merge_secondary.clicked.connect(self.merge_secondary_database)
-        
+        self.pushButton_merge_downstream_database.clicked.connect(self.merge_downstream_database)
         # RIGHT:
         self.pushButton_print_unknown_tags.clicked.connect(self.print_unknown_tags_button)
-        
+        self.pushButton_update_wiki.clicked.connect(self.update_wiki_info)
 
         # checkpoint and misc TOOLS TAB
         self.pushButton_rename_all.clicked.connect(self.rename_bad_names_to_md5)
@@ -153,7 +153,11 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.init_settings()
 
 
-
+    def db_loaded(self):
+        if not self.basic_database:
+            parameters.log.error("Database not loaded")
+            return False
+        return True
    
     # button functions used in multiple sections:
     @Slot()
@@ -164,89 +168,60 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
     # Setup Output functions:
     @Slot()
     def create_txt_files_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        self.basic_database.create_txt_files(
-            use_trigger_tags=self.widget_to_output.use_trigger_tags(),
-            token_separator=self.widget_to_output.use_token_separator(),
-            use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
-            use_sentence=self.widget_to_output.use_sentence(),
-            sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
-            remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator(),
-            shuffle_tags=self.widget_to_output.shuffle_tags()
-            )
+        if self.db_loaded():
+            self.basic_database.create_txt_files(
+                use_trigger_tags=self.widget_to_output.use_trigger_tags(),
+                token_separator=self.widget_to_output.use_token_separator(),
+                use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
+                use_sentence=self.widget_to_output.use_sentence(),
+                sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
+                remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+                )
 
     @Slot()
     def create_meta_cap_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        self.basic_database.create_json_file(
-            use_trigger_tags=self.widget_to_output.use_trigger_tags(),
-            token_separator=self.widget_to_output.use_token_separator(),
-            use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
-            use_sentence=self.widget_to_output.use_sentence(),
-            sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
-            remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator(),
-            shuffle_tags=self.widget_to_output.shuffle_tags()
-            )
+        if self.db_loaded():
+            self.basic_database.create_json_file(
+                use_trigger_tags=self.widget_to_output.use_trigger_tags(),
+                token_separator=self.widget_to_output.use_token_separator(),
+                use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
+                use_sentence=self.widget_to_output.use_sentence(),
+                sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
+                remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+                )
 
     @Slot()
     def create_sample_toml_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        selected_resolution = self.widget_to_output.toml_resolution()
-        resolution_dict = {
-      		"SDXL":	(1024, 1024, 64), 
-			"SD1.5":(768, 768, 64), 
-			"SD1.0":(512,512, 64), 
-			"Custom":(parameters.PARAMETERS['custom_export_width'], 
-						parameters.PARAMETERS['custom_export_height'], 
-						parameters.PARAMETERS['custom_export_bucket_steps'])
-        }
-        if selected_resolution in resolution_dict:
-            res_info = resolution_dict[selected_resolution]
-        else:
-            parameters.log.error("Resolution string not found")
-            res_info = resolution_dict["SDXL"]
-
-        self.basic_database.create_sample_toml(res_info[0], res_info[1], res_info[2])    
+        if self.db_loaded():
+            selected_resolution = self.widget_to_output.toml_resolution()
+            res_info = self.basic_database.get_resolution_info(selected_resolution)
+            self.basic_database.create_sample_toml(res_info[0], res_info[1], res_info[2], prepend_tags=res_info[4], negative_prompts=res_info[3])    
 
     @Slot()
     def create_jsonL(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        self.basic_database.create_jsonL_file(
-            use_trigger_tags=self.widget_to_output.use_trigger_tags(),
-            token_separator=self.widget_to_output.use_token_separator(),
-            use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
-            use_sentence=self.widget_to_output.use_sentence(),
-            sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
-            remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator(),
-            shuffle_tags=self.widget_to_output.shuffle_tags()
-            )
+        if self.db_loaded():
+            self.basic_database.create_jsonL_file(
+                use_trigger_tags=self.widget_to_output.use_trigger_tags(),
+                token_separator=self.widget_to_output.use_token_separator(),
+                use_aesthetic_score=self.widget_to_output.use_aesthetic_score(),
+                use_sentence=self.widget_to_output.use_sentence(),
+                sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
+                remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+                )
 
     @Slot(str)
     def update_main_trigger_tags(self, text: str):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        tags = [tag.strip() for tag in text.split(",")]
-        self.basic_database.trigger_tags["main_tags"] = tags
+        if self.db_loaded():
+            self.basic_database.set_triggers("main_tags", text)
+        
 
     @Slot(str)
     def update_secondary_trigger_tags(self, text: str):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        tags = [tag.strip() for tag in text.split(",")]
-        self.basic_database.trigger_tags["secondary_tags"] = tags
+        if self.db_loaded:
+            self.basic_database.set_triggers("secondary_tags", text)
 
     #############################
     # DATABASE TOOLS
@@ -258,15 +233,14 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             return
         parameters.log.info("Loading Database")
         self.basic_database = Database(self.lineEdit_database_folder.text())
-        self.widget_to_output.set_trigger_tags(", ".join(self.basic_database.trigger_tags["main_tags"]), ", ".join(self.basic_database.trigger_tags["secondary_tags"]))
+        self.widget_to_output.set_trigger_tags(", ".join(self.basic_database.get_triggers("main_tags")),
+                                               ", ".join(self.basic_database.get_triggers("secondary_tags")))
         parameters.log.info(f"Loaded Database with {len(self.basic_database.images)} images")
     
     @Slot()
     def save_database_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return False
-        self.basic_database.save_database()
+        if self.db_loaded():
+            self.basic_database.save_database()
     
     # LEFT:  
     # Preprocessing tools
@@ -309,91 +283,92 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
     # Database validation tools
     @Slot()
     def images_existence_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        parameters.log.info("checking image existance, updating path if necessaryß")
-        self.basic_database.check_existence_images()
+        if self.db_loaded():
+            parameters.log.info("checking image existance, updating path if necessaryß")
+            self.basic_database.check_existence_images()
+            self.basic_database.recheck_image_paths()
 
     @Slot()
     def filter_images_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.filter_all()
+        if self.db_loaded():
+            self.basic_database.check_duplicate_tags_in_manual_rejected()
+            self.basic_database.filter_all()
 
     @Slot()
     def reautotags_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.re_call_models(tag_images=True)
+        if self.db_loaded():
+            self.basic_database.re_call_models(tag_images=True)
 
     @Slot()
     def rescore_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.re_call_models(score_images=True)
+        if self.db_loaded():
+            self.basic_database.re_call_models(score_images=True)
 
     @Slot()
     def reclassify_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.re_call_models(classify_images=True)
+        if self.db_loaded():
+            self.basic_database.re_call_models(classify_images=True)
 
     @Slot()
     def rehash_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.reapply_md5()
-        parameters.log.info("Updated MD5 of images")
-
+        if self.db_loaded():
+            self.basic_database.reapply_md5()
+            parameters.log.info("Updated MD5 of images")
+            self.basic_database.recheck_image_paths()
+            
     @Slot()
     def redetect_person(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.re_call_models(detect_people=True)
+        if self.db_loaded():
+            self.basic_database.re_call_models(detect_people=True)
     
     @Slot()
     def redetect_head(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.re_call_models(detect_head=True)
+        if self.db_loaded():
+            self.basic_database.re_call_models(detect_head=True)
 
     @Slot()
     def redetect_hand(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.re_call_models(detect_hand=True)
+        if self.db_loaded():
+            self.basic_database.re_call_models(detect_hand=True)
 
+    @Slot()
+    def reapply_threshold(self):
+        if self.db_loaded():
+            tagger_thresh = [
+            (parameters.AvailableTaggers.WDEVA02LARGEV3.value, parameters.PARAMETERS["wdeva02_large_threshold"]),
+            (parameters.AvailableTaggers.SWINV2V3.value, parameters.PARAMETERS["swinv2_threshold"]),
+            (parameters.AvailableTaggers.CAFORMER.value, parameters.PARAMETERS["caformer_threshold"])
+            ]
+            msg = f'Reapply Threshold onto Autotags? [this will remove tags under threshold] {tagger_thresh}'
+            confirmation = CustomWidgets.confirmation_dialog(self, text=msg)
+            if confirmation:
+                self.basic_database.re_apply_threshold()
+                parameters.log.info("completed re-applying threshold")
+    
+    @Slot()
+    def generate_report(self):
+        if self.db_loaded():
+            self.basic_database.generate_report()
+            parameters.log.info("Generated Report")
+    
     # Group Management Tools
     @Slot()
     def move_files_groupings_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.organise_image_paths_groups()
+        if self.db_loaded():
+            self.basic_database.organise_image_paths_groups()
 
     @Slot()
     def rebuild_groups_button(self):
-        if not self.basic_database:
-            parameters.log.error("Database not loaded")
-            return
-        self.basic_database.remove_groups()
-        self.basic_database.add_image_to_groups_by_path([x.path for x in self.basic_database.images])
-        parameters.log.info("Groups are rebuilt based on the path")
+        if self.db_loaded():
+            self.basic_database.remove_groups()
+            self.basic_database.add_image_to_groups_by_path([x.path for x in self.basic_database.images])
+            parameters.log.info("Groups are rebuilt based on the path")
 
     def merge_secondary_database(self): # load and merge database method
         # load old db and transfer data for files with matching md5
         
         db_path = self.lineEdit_secondary_db_folder.text().strip()
-        parameters.log.info("Loading and transfering tags from secondary database")
+        parameters.log.info("Loading and transfering tags from secondary database, this is a 'left join' on the primary database, img must be added to primary before this to transfer tags")
         # check for any errors:
         if not self.basic_database:
             parameters.log.error("No Primary database loaded")
@@ -406,107 +381,31 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             return
         
         # we passed the errors and load secondary db and start the tag transfer
-        sec_db = Database(db_path)
-        update_counter = 0
-        sec_md5s = [img.md5 for img in sec_db.images]
+        self.basic_database.merge_databases([db_path], union=False, print_changes=True)
         
-        # notify user if secondary database has trigger tags that they might want to know.
-        if sec_db.trigger_tags["main_tags"] or sec_db.trigger_tags["secondary_tags"]:
-            parameters.log.info("Secondary database had the following trigger tags, but they're merged as regular tags, update primary database's trigger tags if needed")
-            parameters.log.info(f"PRIMARY: {sec_db.trigger_tags['main_tags']}, SECONDARY: {sec_db.trigger_tags['secondary_tags']}")
-            
+    def merge_downstream_database(self):
+        dir_dbs = self.lineEdit_merge_downstream_database.text().strip()
+        parameters.log.info("Loading and merging downstream databases")
+        if not dir_dbs:
+            parameters.log.error("No directory entered")
+            return
+        # repurpose image collection function to get databases
+        downstream_dbs = files.get_all_images_in_folder(dir_dbs, (".json"))
+        downstream_dbs = [f for f in downstream_dbs if os.path.basename(f) == parameters.DATABASE_FILE_NAME and f!=parameters.DATABASE_FILE_NAME]
+        parameters.log.info(f"merging: {downstream_dbs}, total: {len(downstream_dbs)}")
+        if not downstream_dbs: # check if there's any dbs
+            return
+        
+        confirmation = True
+        if os.path.exists(os.path.join(dir_dbs, parameters.DATABASE_FILE_NAME)):
+            confirmation = CustomWidgets.confirmation_dialog(self, text="This will update the database file in the entered directory, Proceed?")
+        
+        if confirmation:
+            primary_db = Database(dir_dbs)
+            primary_db.merge_databases(downstream_dbs, single_group_membership=True)
+            primary_db.save_database()
 
-        primary_md5 = [img.md5 for img in self.basic_database.images]
-        md5_intersect = set(primary_md5).intersection(set(sec_md5s))
         
-        # make a set of md5s preassigned in a group and use it to see if we need to add it to a new group
-        md5_preassigned_to_group = []
-        if self.basic_database.groups:
-            # check if primary db has the database and get a list of md5s that has a group
-            for group_name, group_content in self.basic_database.groups.items():
-                md5_preassigned_to_group += [md5_hash for md5_hash in group_content.md5s if md5_hash in md5_intersect]
-        md5_preassigned_to_group = set(md5_preassigned_to_group) # making a set for faster check
-        md5_not_assigned = [m for m in md5_intersect if m not in md5_preassigned_to_group]
-        
-        if md5_not_assigned and sec_db.groups: # if any md5 is unassigned and groups exists in secondary db
-            for group_name, group_content in sec_db.groups.items():
-                if group_content.md5s: #check if this secondary group is not empty
-                    
-                    if not group_name in self.basic_database.groups.keys(): # check if the group name exists
-                        self.basic_database.groups[group_name] =  GroupElement(group_name=group_name)
-                        
-                    self.basic_database.groups[group_name].md5s += [m for m in group_content.md5s if m in md5_not_assigned]
-             
-        if md5_intersect:
-            parameters.log.info(f"starting tag transfering for {len(md5_intersect)}")
-        # loop for transfering content one by one
-        for md5 in md5_intersect:
-            
-            # find the two indexes that have matching md5
-            i = self.basic_database.index_of_image_by_md5(md5)
-            sec_i = sec_db.index_of_image_by_md5(md5)
-            
-            # How the merge/export works: 
-            # before overwriting, save some values we might want to keep in temp variables
-            # then load the image data_dict that stores all the img data from secondary to primary, 
-            # then overwrite specific sections, like path, from the temp variable back into primary
-            
-            # temp variable that might be need overwriting
-            primary_full_path = self.basic_database.images[i].path
-            
-            primary_score_value = self.basic_database.images[i].score_value
-            primary_score_label = self.basic_database.images[i].score_label
-            primary_class_value = self.basic_database.images[i].classify_label
-            primary_class_label = self.basic_database.images[i].classify_value
-            primary_completeness_label = self.basic_database.images[i].completeness_label
-            primary_completeness_value = self.basic_database.images[i].completeness_value
-          
-            # temp original md5 and bool if it's the same with the base md5
-            primary_original_md5 = self.basic_database.images[i].original_md5
-            primary_two_md5 = self.basic_database.images[i].md5 != primary_original_md5
-            
-            data_dict = sec_db.images[sec_i].get_saving_dict()
-            #print(data_dict)
-            # update non-tags
-            self.basic_database.images[i].init_image_dict(data_dict)
-            
-            # at this stage basic database has the new values from the secondary database
-            
-            # update path
-            self.basic_database.images[i].path = primary_full_path
-         
-            # update score if necessary
-            sec_score_value = self.basic_database.images[i].score_value
-            if ((primary_score_label and not self.basic_database.images[i].score_label) or 
-                (sec_score_value > primary_score_value and 1 >= primary_score_value > 0)):
-                # if secondary doesn't have scores, use primary's scores
-                # OR
-                # lecagy, use the score that has the new values [0~1] if found
-                self.basic_database.images[i].score_label = primary_score_label
-                self.basic_database.images[i].score_value = primary_score_value
-            
-            # update class label if necessary 
-            if primary_class_label and not self.basic_database.images[i].classify_label:
-                self.basic_database.images[i].classify_label = primary_class_value
-                self.basic_database.images[i].classify_value = primary_class_label 
-
-            if primary_completeness_label and not self.basic_database.image[i].completeness_label:
-                self.basic_database.images[i].completeness_label = primary_completeness_label
-                self.basic_database.images[i].completeness_value = primary_completeness_value
-                
-            # update md5 if necessary, very rare, but if primary has older md5 and secondary doesn't have older md5
-            if primary_two_md5 and self.basic_database.images[i].original_md5 == self.basic_database.images[i].md5:
-                self.basic_database.images[i].original_md5 = primary_original_md5
-            else:
-                pass
-                # ignore the case if both primary and secondary have md5 != original_md5 because 
-                # there's no way of knowing which is the original. So we assume the secondary, which
-                # is intended to be the older database, to have the true original
-     
-            
-            update_counter+=1
-        
-        parameters.log.info(f"Updated {update_counter} images in primary database from secondary database")
 
     # RIGHT:
     @Slot()
@@ -514,11 +413,15 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         unk_tags = []
         known_tags = set(tag_categories.COLOR_DICT.keys()).union(tag_categories.REJECTED_TAGS)
 
+        char_tags = tag_categories.CATEGORY_TAG_DICT["CHARACTERS"] +  tag_categories.CATEGORY_TAG_DICT["CHARACTERS_LESSER"]
+        
         import numpy as np
         from resources.tag_categories import KAOMOJI
-
+        from resources.tag_pos_grouping import known_modifiers, attire_types
         
-        #ca_dict = files.get_caformer_tags()
+        ca_dict = files.get_dict_caformer_tag_frequency()
+        ca_list = [ca_val.replace("_", " ") if len(ca_val) > 3 and ca_val not in KAOMOJI else ca_val
+                   for ca_val in ca_dict.values()]
         
         #ca_list = [ca_dict[str(k)].replace("_", " ") if len(ca_dict[str(k)]) > 3 else ca_dict[str(k)] for k in
         #           range(12546 + 1)]
@@ -536,9 +439,45 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         general_tag = [tag_names[i] for i in general_indexes]
         gt_list = [gt for gt in general_tag if gt not in known_tags]
 
-        #parameters.log.info(", ".join(ca_list))
-        #parameters.log.info(", ".join([gt for gt in gt_list if gt not in ca_set]))
-
+        all_known_tags = set(general_tag + list(known_tags) + ca_list) - set(char_tags)
+        parameters.log.info(f"total count of known tags is {len(all_known_tags)}")
+        two_words = [t for t in all_known_tags if " " in t] # get all tags that are more than one word
+        parameters.log.info(f"tags that are more than one word; {len(two_words)}")
+        mod_and_word = [(" ".join(t.split(" ")[:-1]) , t.split(" ")[-1]) for t in two_words]
+        
+        
+        from collections import Counter
+        two_word_counter = Counter()
+        two_word_counter.update([c[0] for c in mod_and_word])
+        mod_to_word_dict = {k: [] for k in two_word_counter.keys()}
+        for m, w in mod_and_word:
+            mod_to_word_dict[m]+=[w]
+        
+        parameters.log.info(f"the total count of broad modifiers is {len(two_word_counter)}")
+        
+        verb_ing = []
+        adj = []
+        def print_mod_info(mod, max_count=5):
+            word_list = mod_to_word_dict[mod][:min(max_count, len(mod_to_word_dict[mod]))]
+            parameters.log.info(f"{i} :Count: {count} : Mod: {mod} : Example word {word_list}")
+            
+        for i, (mod, count) in enumerate(two_word_counter.most_common()):
+            if count > 4 and mod.endswith("ing"):
+                verb_ing.append(mod)
+                #print_mod_info(mod)
+        for i, (mod, count) in enumerate(two_word_counter.most_common()):
+            if count > 4 and not mod.endswith("ing"):
+                adj.append(mod)
+        
+        subjects = []
+              
+        for m in attire_types:
+            subjects.extend(mod_to_word_dict[m])
+            print_mod_info(m)
+        print(set(subjects))
+        parameters.log.info("*"*20)
+        
+        
         if self.basic_database:
             for image in self.basic_database.images:
                 for tag in image.get_full_tags():
@@ -546,6 +485,21 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                         unk_tags.append(tag)
             parameters.log.info(unk_tags)
 
+
+    @Slot()
+    def update_wiki_info(self):
+        if self.basic_database:
+            parameters.log.info("Updating wiki info")
+            t1 = time.time()
+            tags = set()
+            for image in self.basic_database.images:
+                tags.update(image.get_full_tags().simple_tags())
+            new_wiki = wiki_info.add_wiki_info(tags, wiki_info.load_wiki_info())
+            wiki_info.save_wiki_info(new_wiki)
+            t2 = time.time()
+            parameters.log.info(f"Updated wiki info, Time taken: {t2-t1}")
+            
+                
     # checkpoint and misc TOOLS TAB
     def rename_bad_names_to_md5(self):
         confirmation = CustomWidgets.confirmation_dialog(self, text="Do you wish to convert all file names to their MD5 Hash (and update related json)?\nMake sure MD5 didn't update")
@@ -644,6 +598,9 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         new_head_path = "dataset" # previously was ""
         export_for_linux = True
         db_dir = None
+        
+        tag_set = set()
+        
         if self.lineEdit_dataset_folder.text():
             parameters.log.info("No DB loaded, using path in text")
             db_dir = self.lineEdit_dataset_folder.text()
@@ -775,7 +732,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             parameters.log.warning("No valid path entered.")
             return False
         temp_db = Database(folder_path)
-        temp_db.check_existence_images()
+        #temp_db.check_existence_images()
         self.add_db_tab_widget(temp_db)
 
     @Slot()
@@ -801,7 +758,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             self.spin_swinv2_chara_count, self.check_swinv2_chara, self.spin_caformer_thresh, self.spin_max_batch_size,
             self.spin_max_images_loader_thread, self.spin_max_4k_pixels_save_multiplier, self.spin_similarity_thresh,
             self.comboBox_click_option, self.spinBox_custom_height, self.spinBox_custom_width, self.spinBox_custom_bucket_steps,
-            self.spinBox_sample_count, self.spin_max_amount_of_backups, self.spinBox_detection_resolution, self.spin_wdeva02_large_threshold
+            self.spinBox_sample_count, self.spin_max_amount_of_backups, self.spinBox_detection_resolution
         ]
         for x in list_of_widget_to_have_their_wheel_event_removed:
             x.wheelEvent = lambda event: None
@@ -811,7 +768,6 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spin_image_load_size.setValue(parameters.PARAMETERS["image_load_size"])
         self.lineEdit_automatic_tagger.setText(",".join([x.name for x in parameters.PARAMETERS["automatic_tagger"]]))
         self.spin_swinv2_thresh.setValue(parameters.PARAMETERS["swinv2_threshold"])
-        self.spin_wdeva02_large_threshold.setValue(parameters.PARAMETERS["wdeva02_large_threshold"])
         self.spin_swinv2_chara_thresh.setValue(parameters.PARAMETERS["swinv2_character_threshold"])
         self.spin_swinv2_chara_count.setValue(parameters.PARAMETERS["swinv2_character_count_threshold"])
         self.check_swinv2_chara.setChecked(parameters.PARAMETERS["swinv2_enable_character"])
@@ -839,12 +795,8 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spinBox_custom_width.setValue(parameters.PARAMETERS["custom_export_width"])
         self.spinBox_custom_bucket_steps.setValue(parameters.PARAMETERS["custom_export_bucket_steps"])
         self.spinBox_sample_count.setValue(parameters.PARAMETERS["toml_sample_max_count"])
-
-        self.checkBox_load_images_thumbnail.setChecked(parameters.PARAMETERS["view_load_images"])
-        self.checkBox_double_images_thumbnail_size.setChecked(parameters.PARAMETERS["doubling_image_thumbnail_max_size"])
-        self.check_deactivate_filter.setChecked(parameters.PARAMETERS["deactivate_filter"])
-        self.checkBox_activate_danbooru_tag_wiki_lookup.setChecked(parameters.PARAMETERS["danbooru_tag_wiki_lookup"])
-
+         
+         
         self.pushButton_save_settings.clicked.connect(self.save_settings_button)
         self.pushButton_cancel_settings.clicked.connect(self.init_settings)
         self.pushButton_reload_default.clicked.connect(self.init_default_settings)
@@ -856,7 +808,6 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spin_image_load_size.setValue(parameters.default_parameters['Interface']["image_load_size"])
         self.lineEdit_automatic_tagger.setText(",".join([x.name for x in parameters.default_parameters['Taggers']["automatic_tagger"]]))
         self.spin_swinv2_thresh.setValue(parameters.default_parameters['Taggers']["swinv2_threshold"])
-        self.spin_wdeva02_large_threshold.setValue(parameters.default_parameters['Taggers']["wdeva02_large_threshold"])
         self.spin_swinv2_chara_thresh.setValue(parameters.default_parameters['Taggers']["swinv2_character_threshold"])
         self.spin_swinv2_chara_count.setValue(parameters.default_parameters['Taggers']["swinv2_character_count_threshold"])
         self.check_swinv2_chara.setChecked(parameters.default_parameters['Taggers']["swinv2_enable_character"])
@@ -885,12 +836,6 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.spinBox_custom_bucket_steps.setValue(parameters.default_parameters['Exporting']["custom_export_bucket_steps"])
         self.spinBox_sample_count.setValue(parameters.default_parameters['Exporting']["toml_sample_max_count"])
 
-        self.checkBox_load_images_thumbnail.setChecked(parameters.default_parameters['Interface']["view_load_images"])
-        self.checkBox_double_images_thumbnail_size.setChecked(parameters.default_parameters['Interface']["doubling_image_thumbnail_max_size"])
-        self.check_deactivate_filter.setChecked(parameters.default_parameters['Filter']["deactivate_filter"])
-        self.checkBox_activate_danbooru_tag_wiki_lookup.setChecked(parameters.default_parameters['Interface']["danbooru_tag_wiki_lookup"])
-
-
     @Slot()
     def save_settings_button(self):
         parameters.PARAMETERS["font_size"] = self.spin_font_size.value()
@@ -900,7 +845,6 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.PARAMETERS["image_load_size"] = self.spin_image_load_size.value()
         parameters.PARAMETERS["automatic_tagger"] = [parameters.AvailableTaggers[t.strip().upper()] for t in self.lineEdit_automatic_tagger.text().strip().split(",")]
         parameters.PARAMETERS["swinv2_threshold"] = self.spin_swinv2_thresh.value()
-        parameters.PARAMETERS["wdeva02_large_threshold"] = self.spin_wdeva02_large_threshold.value()
         parameters.PARAMETERS["swinv2_character_threshold"] = self.spin_swinv2_chara_thresh.value()
         parameters.PARAMETERS["swinv2_character_count_threshold"]=self.spin_swinv2_chara_count.value()
         parameters.PARAMETERS["swinv2_enable_character"]=self.check_swinv2_chara.isChecked()
@@ -925,13 +869,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         parameters.PARAMETERS["custom_export_width"] = self.spinBox_custom_width.value()
         parameters.PARAMETERS["custom_export_bucket_steps"] = self.spinBox_custom_bucket_steps.value()
         parameters.PARAMETERS["toml_sample_max_count"] = self.spinBox_sample_count.value()
-
-
-        parameters.PARAMETERS["view_load_images"] = self.checkBox_load_images_thumbnail.isChecked()
-        parameters.PARAMETERS["doubling_image_thumbnail_max_size"] = self.checkBox_double_images_thumbnail_size.isChecked()
-        parameters.PARAMETERS["deactivate_filter"] = self.check_deactivate_filter.isChecked()
-        parameters.PARAMETERS["danbooru_tag_wiki_lookup"] = self.checkBox_activate_danbooru_tag_wiki_lookup.isChecked()
-
+        
         parameters.save_config()
 
 

@@ -1,17 +1,19 @@
-import functools
 import time
 
-import PySide6.QtCore as QtCore
 import PySide6.QtGui as QtGui
-from PySide6.QtCore import Signal, Slot
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QCompleter, QDialog, QMessageBox, QLabel, QCheckBox, QHBoxLayout, \
-    QLineEdit, QPushButton, QGridLayout, QFileDialog
+#from PySide6.QtMultimedia import QSoundEffect, QMediaPlayer, QAudioOutput
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QProgressBar, QCompleter, QTreeWidgetItem, QStyledItemDelegate, \
+    QDialog, QDialogButtonBox, QMessageBox, QToolTip, QLabel, QCheckBox, QHBoxLayout, QLineEdit, QPushButton, QFrame, \
+    QGridLayout, QColorDialog, QFileDialog
+from PySide6.QtGui import QPixmap, QImageReader
+import PySide6.QtCore as QtCore
+from PySide6.QtCore import Signal, Slot, QStringListModel
 
 from classes.class_database import Database
-from interfaces import global_database_item, outputBase
+from interfaces import popupscaledlabel, global_database_item, outputBase
 from resources import parameters
 
+import functools
 
 #from version 2, page 203 - 205 of Fluent Python by Luciano Ramalho
 def clock(func):
@@ -101,9 +103,6 @@ class OutputWidget(QWidget, outputBase.Ui_Form):
         # Edited Trigger tags
         self.lineEdit_main_trigger_tag.editingFinished.connect(lambda: self.editedMainTriggerTag.emit(self.lineEdit_main_trigger_tag.text()))
         self.plainTextEdit_secondary_trigger_tags.textChanged.connect(lambda: self.editedSecondaryTriggerTag.emit(self.plainTextEdit_secondary_trigger_tags.toPlainText()))
-
-    def shuffle_tags(self):
-        return self.checkBox_shuffle_tags.isChecked()
 
     def use_trigger_tags(self):
         return self.checkBox_trigger_tags.isChecked()
@@ -367,8 +366,14 @@ class CustomQCompleter(QCompleter):
         # Split the input text by comma
         parts = path.split(",")
         # Return the last part as the prefix for the completer
-        if len(parts[-1].strip()) > 2:
-            return [parts[-1].strip()]
+        last_elem = parts[-1].lstrip()
+        if last_elem.endswith(' '):
+            last_elem = last_elem.rstrip() + ' '
+        else:
+            last_elem = last_elem.rstrip()
+        
+        if len(last_elem) > 2:
+            return [last_elem]
         else:
             return ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"]
 
@@ -432,3 +437,71 @@ class GlobalDatabaseItem(QWidget, global_database_item.Ui_Form):
         if not self.group_storage:
             return []
         return [x.text() for x in self.group_storage if x.isChecked()]
+
+
+from PySide6.QtWidgets import QApplication, QWidget, QComboBox, QStyledItemDelegate, QCheckBox, QVBoxLayout
+from PySide6.QtCore import Qt, QEvent
+
+class CheckComboBox(QComboBox):
+    dropdown_closed = Signal()  # Custom signal for when dropdown is closed
+    def __init__(self, items, prechecked=[], parent=None):
+        super().__init__(parent)
+        self.setEditable(True)
+        self.lineEdit().setReadOnly(True)
+        self.items = sorted(items)
+        self.checked_items = set(sorted(prechecked)) # sets are slightly easier with the checks
+        self.view().pressed.connect(self.handle_item_pressed)
+        self.populate()
+        
+    def populate(self):
+        self.clear()
+        for item in self.items:
+            self.addItem(item)
+            check_state = Qt.Checked if item in self.checked_items else Qt.Unchecked
+            self.setItemData(self.count() - 1, check_state, Qt.CheckStateRole)
+        self.update_display()
+        
+    def handle_item_pressed(self, index):
+        state = self.itemData(index.row(), Qt.CheckStateRole)
+        new_state = Qt.Checked if state == Qt.Unchecked else Qt.Unchecked
+        self.setItemData(index.row(), new_state, Qt.CheckStateRole)
+        item_text = self.itemText(index.row())
+
+        if new_state == Qt.Checked:
+            self.checked_items.add(item_text)
+        else: 
+            self.checked_items.discard(item_text)
+
+        self.update_display()
+        self.showPopup()
+    
+    def update_display(self):
+        text = ", ".join(self.checked_items) if self.checked_items else "Group: N/A"
+        self.lineEdit().setText(text)
+    
+    def get_selected(self):
+        return list(self.checked_items)
+    
+    def update_list(self, group_list=[], group_membership:list|set=[]):
+        """Takes in a list og group names that currently exists, and the second is the groups it's a member of
+
+        Args:
+            group_list (list, optional): _description_. Defaults to [].
+            group_membership (list, optional): _description_. Defaults to [].
+        """
+        if sorted(group_list) != self.items or self.checked_items != set(group_membership):
+            self.items = sorted(group_list) if group_list else []
+            self.checked_items = set(group_membership) if group_membership else set()
+            self.populate()
+    
+    
+    
+    def hidePopup(self):
+        """Emit signal when dropdown is closed"""
+        super().hidePopup()
+        self.dropdown_closed.emit()  # Emit signal when popup closes
+        
+    def eventFilter(self, obj, event):
+        if obj == self.lineEdit() and event.type() == QEvent.MouseButtonPress:
+            self.showPopup()  # Expand dropdown when clicking on the text
+        return super().eventFilter(obj, event)

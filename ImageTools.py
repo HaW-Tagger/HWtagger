@@ -1,20 +1,25 @@
-import os
-import time
-from pathlib import Path
-
-import PIL
-import PySide6.QtCore as QtCore
-import imagesize
-from PIL.ImageQt import ImageQt
-from PySide6.QtCore import Slot
-from PySide6.QtGui import QPixmap, QImageReader, QStandardItemModel, QStandardItem
-from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QCheckBox, QListView, QFrame
-from tqdm.auto import tqdm
-
-from classes.class_database import Database
 from interfaces import image_tools
+from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QCheckBox, QListView, QFrame
+from PySide6.QtCore import Slot
+import PySide6.QtCore as QtCore
+from PySide6.QtGui import QPixmap, QImageReader, QStandardItemModel, QStandardItem
+
 from resources import parameters
 from tools import images, files
+from pathlib import Path
+
+from classes.class_database import Database
+
+import PIL
+
+from PIL.ImageQt import ImageQt
+
+import concurrent.futures
+import os
+from tqdm.auto import tqdm
+import shutil
+import imagesize
+import time
 
 REMOVE_EXIF = False
 w_font_font = parameters.PARAMETERS['font_name'] 
@@ -104,7 +109,7 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
 
 
         self.LoadDirectory.clicked.connect(self.load_directory)
-        self.ProcessImages.clicked.connect(self.load_images)
+        self.ProcessImages.clicked.connect(self.process_and_load_images)
         self.SaveImages.clicked.connect(self.save_images)
         self.NextPage.clicked.connect(self.load_next_page)
         #self.printDupes.clicked.connect(self.print_duplicate_imgs)
@@ -202,12 +207,17 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
 
     @Slot()
     @images.timing
-    def load_images(self):
+    def process_and_load_images(self):
         parameters.log.info("Processing images")
         convert_transparent = self.ConvertTransparent.isChecked()
+        if not convert_transparent:
+            import CustomWidgets
+            confirmation = CustomWidgets.confirmation_dialog(self, "The don't Fill transparent isn't an option anymore, bc we convert all imgs to RGB for processing  Continue? ")
+            if not confirmation:
+                return
         crop_edge = self.CropEdge.isChecked()
         crop_border = self.CropBorder.isChecked()
-        highlight_cropped_text = True
+        
         self.image_cache = dict()
         
         parameters.log.info("Loading images")
@@ -222,8 +232,8 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
             if i > self.previous_index: # we use previous index to avoid recomputation
                 self.previous_index = i
                 original_img, new_img, cropped, filled, bboxes = images.border_transparency(
-                                    img_path, crop_empty_space=crop_edge, crop_empty_border=crop_border,
-                                    fill_stray_signature=False,use_thumbnail=False)
+                                    img_path, self.directory, crop_empty_space=crop_edge, crop_empty_border=crop_border,
+                                    fill_stray_signature=False,use_thumbnail=False, fill_transparent=convert_transparent)
                 if cropped or filled:
                     self.image_cache[img_path] = new_img
                    
@@ -301,7 +311,7 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
     def load_next_page(self):
         self.refresh_model()
         self.NextPage.setEnabled(False)
-        self.load_images()
+        self.process_and_load_images()
 
     @Slot()
     def save_images(self):
@@ -393,6 +403,12 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
             crop_edge = self.CropEdge.isChecked()
             crop_border = self.CropBorder.isChecked()
             update_db = self.updateDB.isChecked()
+            convert_transparent = self.ConvertTransparent.isChecked()
+            if not convert_transparent:
+                import CustomWidgets
+                confirmation = CustomWidgets.confirmation_dialog(self, "The don't Fill transparent isn't an option anymore, bc we convert all imgs to RGB for processing  Continue? ")
+                if not confirmation:
+                    return
             db_loaded = 0
             db_dir_list = []
             #if self.database:
@@ -411,8 +427,8 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
             #pool = concurrent.futures.ThreadPoolExecutor(max_workers=parameters.PARAMETERS["max_images_loader_thread"])
             for img_path in tqdm(image_paths):
                 _, new_img, cropped, filled, _ = images.border_transparency(
-                                            img_path, crop_empty_space=crop_edge, crop_empty_border=crop_border,
-                                            fill_stray_signature=False,use_thumbnail=False)
+                                            img_path, self.directory, crop_empty_space=crop_edge, crop_empty_border=crop_border,
+                                            fill_stray_signature=False,use_thumbnail=False, fill_transparent=convert_transparent)
                 
                 if cropped or filled:
                     if cropped and filled:
@@ -448,8 +464,15 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
             index = 0
             ratio_index = 0
             directory = self.directory if self.directory else self.DirectoryText.text()
+            error_files = []
             for img_path in files.get_all_images_in_folder(directory):
-                width, height = imagesize.get(img_path)
+                try:
+                    width, height = imagesize.get(img_path)
+                    
+                except ValueError as e:
+                    print(f"Error: {e} - Skipping file: {img_path}")
+                    error_files.append(img_path)
+                    continue
                 pix_val = width*height
                 hw_ratio = height/width
                 wh_ratio = width/height
@@ -474,6 +497,8 @@ class ImageToolsView(QWidget, image_tools.Ui_Form):
                 parameters.log.info(f"Found {len(small_images)} images that is below the recommended size for XL training.")
             if bad_ratio_images:
                 parameters.log.info(f"Found {len(bad_ratio_images)} images that is too tall/wide for tagging")
+            if error_files:
+                parameters.log.info(f"Found {len(error_files)} images that caused errors, corrputed or bad jpeg: {error_files}")
             self.bad_imgs = small_images
             self.resize_imgs = bad_ratio_images
             if not small_images and not bad_ratio_images:

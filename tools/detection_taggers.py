@@ -16,72 +16,11 @@ from tools.wd14_based_taggers import custom_collate
 import imagesize
 import numpy as np
 
+from tools.yolo_postprocessing import _yolo_xywh2xyxy, _yolo_nms, _xy_postprocess, _bboxes_from_bitmap
+
 # people detection
 # https://deepghs.github.io/imgutils/main/_modules/imgutils/detect/person.html#detect_person
 #https://deepghs.github.io/imgutils/main/_modules/imgutils/detect/head.html#detect_heads
-
-
-# code from yolov8, some parts, I'm unsure of and there doesn't seem to be an easy way to speed the bbox extraction
-def _yolo_nms(boxes, scores, thresh: float = 0.7) -> list[int]:
-    """
-    dets: ndarray, (num_boxes, 5)
-    """
-    x1 = boxes[:, 0]
-    y1 = boxes[:, 1]
-    x2 = boxes[:, 2]
-    y2 = boxes[:, 3]
-    areas = (x2 - x1 + 1) * (y2 - y1 + 1)
-
-    order = scores.argsort()[::-1]
-    keep = []
-    while order.size > 0:
-        i = order[0]
-        keep.append(i)
-        xx1 = np.maximum(x1[i], x1[order[1:]])
-        yy1 = np.maximum(y1[i], y1[order[1:]])
-        xx2 = np.minimum(x2[i], x2[order[1:]])
-        yy2 = np.minimum(y2[i], y2[order[1:]])
-
-        w = np.maximum(0.0, xx2 - xx1 + 1)
-        h = np.maximum(0.0, yy2 - yy1 + 1)
-
-        inter = w * h
-        iou = inter / (areas[i] + areas[order[1:]] - inter)
-
-        inds = np.where(iou <= thresh)[0]
-        order = order[inds + 1]
-
-    return keep
-
-def _yolo_xywh2xyxy(x: np.ndarray) -> np.ndarray:
-    """
-    Copied from yolov8.
-
-    Convert bounding box coordinates from (x, y, width, height) format to (x1, y1, x2, y2) format where (x1, y1) is the
-    top-left corner and (x2, y2) is the bottom-right corner.
-
-    Args:
-        x (np.ndarray) or (torch.Tensor): The input bounding box coordinates in (x, y, width, height) format.
-    Returns:
-        y (np.ndarray) or (torch.Tensor): The bounding box coordinates in (x1, y1, x2, y2) format.
-    """
-    y = np.copy(x)
-    y[..., 0] = x[..., 0] - x[..., 2] / 2  # top left x
-    y[..., 1] = x[..., 1] - x[..., 3] / 2  # top left y
-    y[..., 2] = x[..., 0] + x[..., 2] / 2  # bottom right x
-    y[..., 3] = x[..., 1] + x[..., 3] / 2  # bottom right y
-    return y
-
-def _xy_postprocess(x, y, old_size, new_size):
-    # returns the height and weight associated to the original size of the image
-    
-    old_width, old_height = old_size
-    new_width, new_height = new_size
-    x, y = x / new_width * old_width, y / new_height * old_height
-    x = int(np.clip(x, a_min=0, a_max=old_width).round())
-    y = int(np.clip(y, a_min=0, a_max=old_height).round())
-    return x, y
-
 
 class BaseArgs:
     # this is a class that stores the args used by the detection model
@@ -102,6 +41,7 @@ class BaseArgs:
 
 class ResizeWithAspectRatio:
     # a class with a __call__ feature which acts as the transformation applied to a torch custom dataset
+    # calculates resized image, usually downsize to maxsize keeping aspect ratio
     def __init__(self, max_size=640, multiples=32):
         self.max_size = max_size
         self.multiples = multiples
@@ -159,9 +99,11 @@ class BaseDetectionDemo:
         self.args = args
         self.labels = args.labels
         self.image_size = args.image_size
+        self.yolo_text_detection = args.labels == ["text"]
 
     def get_bbox(self, pred, old_dim, new_dim, labels=["person"]):
         # this gets the bbox based on the result per sample (not including batch dim)
+        #print(pred.shape)
         max_scores = pred[4:, :].max(axis=0) #[5, 8400]
         pred = pred[:, max_scores > self.args.conf_thresh].transpose(1, 0)
         boxes = pred[:, :4]
@@ -186,6 +128,26 @@ class BaseDetectionDemo:
             detection_count[max_score_id]+=1
         return detections
     
+    def get_bbox_text(self, pred, old_dim, new_dim, labels=["texts"]):
+        # old dim and new dim are pairs due to the dataloader
+        heatmap = pred[0]
+        (origin_width, origin_height) = np.array(old_dim)
+        max_candidates = 1000
+        unclip_ratio = 2
+        # gets headmap
+        retval = []
+        det_count = 0
+        for points, score in zip(*_bboxes_from_bitmap(
+                heatmap, heatmap >= self.args.conf_thresh, origin_width, origin_height,
+                self.args.iou_thresh, max_candidates, unclip_ratio,
+        )):
+            #retval.append((points, score))
+            x0, y0 = points[:, 0].min(), points[:, 1].min()
+            x1, y1 = points[:, 0].max(), points[:, 1].max()
+            retval.append(((x0.item(), y0.item(), x1.item(), y1.item()), 'text'+"_"+ str(det_count), float(score)))
+            det_count+=1
+        return retval
+    
     def bucketed_infer_batch(self, paths, batch_size=4):
         # this is a psudo batch yolo method, takes in the paths of the images, 
         # then bucket them using a resize policy of 640px.  Then run the infer_batch function on each bucket size
@@ -196,20 +158,25 @@ class BaseDetectionDemo:
         c = Counter()
         c.update(img_sizes)
         
+        def get_batch(img_count):
+            # dynamically assign proper batch size based on img count per bucket
+            return 1 if img_count < 50 else batch_size
+        
         img_sizes_set = sorted(list(set(img_sizes)), reverse=True)
-        parameters.log.info(f"working on the following batch sizes:")
+        parameters.log.info(f"working with the following ((bucket sizes), img count, batch):")
         
         misc_sizes = {size for size in img_sizes_set if c[size] < batch_size}
         non_misc_size = [size for size in img_sizes_set if size not in misc_sizes]
         misc_path_subset = [p for p, s in zip(paths, img_sizes) if s in misc_sizes]
         
         for size in non_misc_size:
-            parameters.log.info(f"{size} : {c[size]}")
-        parameters.log.info(f"sum of misc size (running batch 1) : {len(misc_path_subset)}")
+            parameters.log.info(f"{size} : {c[size]} , {get_batch(c[size])}")
+        parameters.log.info(f"misc size (running batch 1) : {len(misc_path_subset)}, 1")
         
         for size in non_misc_size:    
             path_subset = [p for p, s in zip(paths, img_sizes) if s == size]
-            main_dict.update(self.infer_batch(path_subset, batch_size)) # update main dict with results
+            img_count = len(path_subset)
+            main_dict.update(self.infer_batch(path_subset, get_batch(img_count))) # update main dict with results
         
         if misc_path_subset:
             main_dict.update(self.infer_batch(misc_path_subset, 1))
@@ -217,7 +184,13 @@ class BaseDetectionDemo:
         return main_dict
              
     @torch.no_grad()  
-    def infer_batch(self, paths, batch_size=1): 
+    def infer_batch(self, paths, batch_size=1):
+        """
+        this uses batches: 
+        for batch > 1, only send images that are the same size after bucketing (check resize_transform)
+        for batch = 1, you can send images of different size
+        returns dict : path --> ((x0.item(), y0.item(), x1.item(), y1.item()), 'text', score)
+        """
         path_dict = {}
         #dataset = PathDataset_test(self.args.data, self.trans, convert_bhwc=True, convert_bgr=False, to_np=True, fill_transaprent=True)
         resize_transform = ResizeWithAspectRatio(max_size=self.image_size, multiples=32)
@@ -232,7 +205,10 @@ class BaseDetectionDemo:
             batch_output = self.ort_session.run([self.output_name], {self.input_name:imgs})[0] # onnx output numpy
             #parameters.log.info(f"output_shape: {batch_output.shape}")
             for i, path in enumerate(path_list):
-                path_dict[path] = self.get_bbox(batch_output[i], old_dim[i], new_dim[i], self.labels)
+                if self.yolo_text_detection:
+                    path_dict[path] = self.get_bbox_text(batch_output[i], old_dim[i], new_dim[i], self.labels)
+                else:
+                    path_dict[path] = self.get_bbox(batch_output[i], old_dim[i], new_dim[i], self.labels)
         return path_dict
 
 def detect_people(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_size"]): # no batch size for now
@@ -257,6 +233,7 @@ def detect_head(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_siz
     model_name = "head_detect_best_s.onnx"
     ckpt = os.path.join(model_pth, model_name)
     parameters.log.info(f"Loading head (anime) detection")
+    
     args = BaseArgs(data, "head detection", model_pth, ckpt, batch_size=batch_size, model_type="s", 
                     model_version="Best", conf_thresh=0.3, iou_thresh=0.7, labels=["head"], 
                     image_size=parameters.PARAMETERS["detection_small_resolution"])
@@ -277,6 +254,39 @@ def detect_hand(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_siz
     args = BaseArgs(data, "hand detection", model_pth, ckpt, batch_size=batch_size, model_type="s", 
                     model_version="v1.0", conf_thresh=0.35, iou_thresh=0.7, labels=["hand"], 
                     image_size=parameters.PARAMETERS["detection_small_resolution"])
+    demo = BaseDetectionDemo(args)
+    if len(data) < 50: # do batch 1
+        batch_size = 1
+        args.batch_size = batch_size
+        tag_dict = demo.infer_batch(args.data, batch_size)
+    else: # bucket the images into similar size and so detection that ways
+        tag_dict = demo.bucketed_infer_batch(args.data, batch_size)
+    return tag_dict
+
+
+def detect_text(data:list[str], model_pth:str, batch_size:int=4):
+    """This is intended to call ocr models hosted by imgutils but using batches based on bucketed images
+    imgutils: https://dghs-imgutils.deepghs.org/main/api_doc/ocr/index.html
+    ocr models: https://huggingface.co/deepghs/paddleocr/tree/main
+
+    resize max dim of img to 768 (keep aspect ratio), then bucket them based on the resized resolution,
+    then perform batch inference with yolo (which returns a heatmap), 
+    then we process the heatmap to get the location data for the detected text
+    
+    Args:
+        data (list[str]): list of image paths
+        model_pth (str): location where the model.onnx file is location (include filename)
+        batch_size (int, optional): _description_. Defaults to 4.
+
+    Returns:
+        dict[str:list[tuple((int, int, int, int), str, float)]] : returns a dict with the image_path as key, values is a list of tuple
+            len 3: tuple stores the top left and bottom right corner of the detection area, the detection type, and confidence (0~1)
+            Ex: img_path --> ((x0.item(), y0.item(), x1.item(), y1.item()), 'text', score)
+    """
+    ckpt = os.path.join(model_pth, "model.onnx")
+    args = BaseArgs(data, "text detection", model_pth, ckpt, batch_size=batch_size, model_type="det", 
+                    model_version="v4", conf_thresh=0.3, iou_thresh=0.6, labels=["text"], 
+                    image_size=parameters.PARAMETERS["detection_text_resolution"])
     demo = BaseDetectionDemo(args)
     if len(data) < 50: # do batch 1
         batch_size = 1

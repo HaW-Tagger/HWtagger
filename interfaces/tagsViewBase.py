@@ -17,8 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplication, QCheckBox,
     QComboBox, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QListView, QPlainTextEdit, QSizePolicy,
-    QVBoxLayout, QWidget)
+    QLineEdit, QListView, QPlainTextEdit, QPushButton,
+    QSizePolicy, QTabWidget, QVBoxLayout, QWidget)
 
 from imported_widgets import ConflictsTreeView
 
@@ -26,27 +26,35 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(550, 823)
+        Form.resize(554, 847)
         self.verticalLayout_3 = QVBoxLayout(Form)
-        self.verticalLayout_3.setSpacing(2)
+        self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(2, 2, 2, 2)
-        self.horizontalLayout_11 = QHBoxLayout()
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.lineEdit_tag_highlight = QLineEdit(Form)
+        self.tabWidget = QTabWidget(Form)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tab = QWidget()
+        self.tab.setObjectName(u"tab")
+        self.verticalLayout = QVBoxLayout(self.tab)
+        self.verticalLayout.setSpacing(4)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(2, 2, 2, 2)
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.lineEdit_tag_highlight = QLineEdit(self.tab)
         self.lineEdit_tag_highlight.setObjectName(u"lineEdit_tag_highlight")
 
-        self.horizontalLayout_11.addWidget(self.lineEdit_tag_highlight)
+        self.horizontalLayout_5.addWidget(self.lineEdit_tag_highlight)
 
-        self.checkBox_highligh_rare_tags = QCheckBox(Form)
+        self.checkBox_highligh_rare_tags = QCheckBox(self.tab)
         self.checkBox_highligh_rare_tags.setObjectName(u"checkBox_highligh_rare_tags")
 
-        self.horizontalLayout_11.addWidget(self.checkBox_highligh_rare_tags)
+        self.horizontalLayout_5.addWidget(self.checkBox_highligh_rare_tags)
 
 
-        self.verticalLayout_3.addLayout(self.horizontalLayout_11)
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
 
-        self.label_image_path = QLabel(Form)
+        self.label_image_path = QLabel(self.tab)
         self.label_image_path.setObjectName(u"label_image_path")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -56,55 +64,79 @@ class Ui_Form(object):
         self.label_image_path.setScaledContents(False)
         self.label_image_path.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_3.addWidget(self.label_image_path)
+        self.verticalLayout.addWidget(self.label_image_path)
 
-        self.horizontalLayout_7 = QHBoxLayout()
-        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
-        self.label_tags_len = QLabel(Form)
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label_tags_len = QLabel(self.tab)
         self.label_tags_len.setObjectName(u"label_tags_len")
 
-        self.horizontalLayout_7.addWidget(self.label_tags_len)
+        self.horizontalLayout_2.addWidget(self.label_tags_len)
 
-        self.label_token_len = QLabel(Form)
+        self.label_token_len = QLabel(self.tab)
         self.label_token_len.setObjectName(u"label_token_len")
 
-        self.horizontalLayout_7.addWidget(self.label_token_len)
+        self.horizontalLayout_2.addWidget(self.label_token_len)
 
-        self.label_image_ext = QLabel(Form)
+        self.label_image_ext = QLabel(self.tab)
         self.label_image_ext.setObjectName(u"label_image_ext")
 
-        self.horizontalLayout_7.addWidget(self.label_image_ext)
+        self.horizontalLayout_2.addWidget(self.label_image_ext)
 
-        self.label_image_size = QLabel(Form)
+        self.label_image_size = QLabel(self.tab)
         self.label_image_size.setObjectName(u"label_image_size")
 
-        self.horizontalLayout_7.addWidget(self.label_image_size)
+        self.horizontalLayout_2.addWidget(self.label_image_size)
 
 
-        self.verticalLayout_3.addLayout(self.horizontalLayout_7)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
-        self.horizontalLayout_8 = QHBoxLayout()
-        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
-        self.comboBox_score_tags = QComboBox(Form)
-        self.comboBox_score_tags.setObjectName(u"comboBox_score_tags")
-
-        self.horizontalLayout_8.addWidget(self.comboBox_score_tags)
-
-        self.checkBox_reviewed = QCheckBox(Form)
-        self.checkBox_reviewed.setObjectName(u"checkBox_reviewed")
-
-        self.horizontalLayout_8.addWidget(self.checkBox_reviewed)
-
-
-        self.verticalLayout_3.addLayout(self.horizontalLayout_8)
-
-        self.listView_rejected = QListView(Form)
-        self.listView_rejected.setObjectName(u"listView_rejected")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(0)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.horizontalLayout_7.setContentsMargins(-1, -1, 0, -1)
+        self.comboBox_group_items = QComboBox(self.tab)
+        self.comboBox_group_items.setObjectName(u"comboBox_group_items")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.listView_rejected.sizePolicy().hasHeightForWidth())
-        self.listView_rejected.setSizePolicy(sizePolicy1)
+        sizePolicy1.setHeightForWidth(self.comboBox_group_items.sizePolicy().hasHeightForWidth())
+        self.comboBox_group_items.setSizePolicy(sizePolicy1)
+
+        self.horizontalLayout_7.addWidget(self.comboBox_group_items)
+
+        self.comboBox_score_tags = QComboBox(self.tab)
+        self.comboBox_score_tags.setObjectName(u"comboBox_score_tags")
+        sizePolicy1.setHeightForWidth(self.comboBox_score_tags.sizePolicy().hasHeightForWidth())
+        self.comboBox_score_tags.setSizePolicy(sizePolicy1)
+
+        self.horizontalLayout_7.addWidget(self.comboBox_score_tags)
+
+        self.checkBox_reviewed = QCheckBox(self.tab)
+        self.checkBox_reviewed.setObjectName(u"checkBox_reviewed")
+
+        self.horizontalLayout_7.addWidget(self.checkBox_reviewed)
+
+
+        self.horizontalLayout_3.addLayout(self.horizontalLayout_7)
+
+        self.pushButton_reload_view = QPushButton(self.tab)
+        self.pushButton_reload_view.setObjectName(u"pushButton_reload_view")
+
+        self.horizontalLayout_3.addWidget(self.pushButton_reload_view)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
+
+        self.listView_rejected = QListView(self.tab)
+        self.listView_rejected.setObjectName(u"listView_rejected")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.listView_rejected.sizePolicy().hasHeightForWidth())
+        self.listView_rejected.setSizePolicy(sizePolicy2)
         self.listView_rejected.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.listView_rejected.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.listView_rejected.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -115,56 +147,36 @@ class Ui_Form(object):
         self.listView_rejected.setResizeMode(QListView.Adjust)
         self.listView_rejected.setWordWrap(False)
 
-        self.verticalLayout_3.addWidget(self.listView_rejected)
+        self.verticalLayout.addWidget(self.listView_rejected)
 
-        self.widget_2 = QWidget(Form)
-        self.widget_2.setObjectName(u"widget_2")
-        self.horizontalLayout_9 = QHBoxLayout(self.widget_2)
-        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.horizontalLayout_9.setContentsMargins(0, 0, 0, 0)
-        self.plainTextEdit_sentence = QPlainTextEdit(self.widget_2)
+        self.widget_sentenceSection = QWidget(self.tab)
+        self.widget_sentenceSection.setObjectName(u"widget_sentenceSection")
+        self.horizontalLayout_4 = QHBoxLayout(self.widget_sentenceSection)
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.plainTextEdit_sentence = QPlainTextEdit(self.widget_sentenceSection)
         self.plainTextEdit_sentence.setObjectName(u"plainTextEdit_sentence")
-        sizePolicy1.setHeightForWidth(self.plainTextEdit_sentence.sizePolicy().hasHeightForWidth())
-        self.plainTextEdit_sentence.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.plainTextEdit_sentence.sizePolicy().hasHeightForWidth())
+        self.plainTextEdit_sentence.setSizePolicy(sizePolicy2)
         self.plainTextEdit_sentence.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.plainTextEdit_sentence.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        self.horizontalLayout_9.addWidget(self.plainTextEdit_sentence)
+        self.horizontalLayout_4.addWidget(self.plainTextEdit_sentence)
 
-        self.label_sentence_len = QLabel(self.widget_2)
+        self.label_sentence_len = QLabel(self.widget_sentenceSection)
         self.label_sentence_len.setObjectName(u"label_sentence_len")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.label_sentence_len.sizePolicy().hasHeightForWidth())
-        self.label_sentence_len.setSizePolicy(sizePolicy2)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.label_sentence_len.sizePolicy().hasHeightForWidth())
+        self.label_sentence_len.setSizePolicy(sizePolicy3)
 
-        self.horizontalLayout_9.addWidget(self.label_sentence_len)
-
-
-        self.verticalLayout_3.addWidget(self.widget_2)
-
-        self.widget = QWidget(Form)
-        self.widget.setObjectName(u"widget")
-        self.horizontalLayout_10 = QHBoxLayout(self.widget)
-        self.horizontalLayout_10.setSpacing(6)
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
-        self.lineEdit_add_tags = QLineEdit(self.widget)
-        self.lineEdit_add_tags.setObjectName(u"lineEdit_add_tags")
-
-        self.horizontalLayout_10.addWidget(self.lineEdit_add_tags)
-
-        self.checkBox_clear_on_add = QCheckBox(self.widget)
-        self.checkBox_clear_on_add.setObjectName(u"checkBox_clear_on_add")
-        self.checkBox_clear_on_add.setChecked(True)
-
-        self.horizontalLayout_10.addWidget(self.checkBox_clear_on_add)
+        self.horizontalLayout_4.addWidget(self.label_sentence_len)
 
 
-        self.verticalLayout_3.addWidget(self.widget)
+        self.verticalLayout.addWidget(self.widget_sentenceSection)
 
-        self.listView_tags = QListView(Form)
+        self.listView_tags = QListView(self.tab)
         self.listView_tags.setObjectName(u"listView_tags")
         self.listView_tags.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.listView_tags.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -175,26 +187,80 @@ class Ui_Form(object):
         self.listView_tags.setResizeMode(QListView.Adjust)
         self.listView_tags.setWordWrap(False)
 
-        self.verticalLayout_3.addWidget(self.listView_tags)
+        self.verticalLayout.addWidget(self.listView_tags)
 
-        self.treeView_conflicts = ConflictsTreeView(Form)
+        self.treeView_conflicts = ConflictsTreeView(self.tab)
         self.treeView_conflicts.setObjectName(u"treeView_conflicts")
         self.treeView_conflicts.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.treeView_conflicts.setProperty("showDropIndicator", False)
         self.treeView_conflicts.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.treeView_conflicts.header().setVisible(False)
 
-        self.verticalLayout_3.addWidget(self.treeView_conflicts)
+        self.verticalLayout.addWidget(self.treeView_conflicts)
 
-        self.listView_recommendations = QListView(Form)
+        self.listView_recommendations = QListView(self.tab)
         self.listView_recommendations.setObjectName(u"listView_recommendations")
         self.listView_recommendations.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.listView_recommendations.setDefaultDropAction(Qt.IgnoreAction)
 
-        self.verticalLayout_3.addWidget(self.listView_recommendations)
+        self.verticalLayout.addWidget(self.listView_recommendations)
+
+        self.widget = QWidget(self.tab)
+        self.widget.setObjectName(u"widget")
+        self.horizontalLayout = QHBoxLayout(self.widget)
+        self.horizontalLayout.setSpacing(6)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.lineEdit_add_tags = QLineEdit(self.widget)
+        self.lineEdit_add_tags.setObjectName(u"lineEdit_add_tags")
+
+        self.horizontalLayout.addWidget(self.lineEdit_add_tags)
+
+        self.checkBox_clear_on_add = QCheckBox(self.widget)
+        self.checkBox_clear_on_add.setObjectName(u"checkBox_clear_on_add")
+        self.checkBox_clear_on_add.setChecked(True)
+
+        self.horizontalLayout.addWidget(self.checkBox_clear_on_add)
+
+
+        self.verticalLayout.addWidget(self.widget)
+
+        self.tabWidget.addTab(self.tab, "")
+        self.tab_2 = QWidget()
+        self.tab_2.setObjectName(u"tab_2")
+        self.verticalLayout_2 = QVBoxLayout(self.tab_2)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.label_tree_full_tags = QLabel(self.tab_2)
+        self.label_tree_full_tags.setObjectName(u"label_tree_full_tags")
+        self.label_tree_full_tags.setWordWrap(True)
+
+        self.verticalLayout_2.addWidget(self.label_tree_full_tags)
+
+        self.label_tree_unused_tags = QLabel(self.tab_2)
+        self.label_tree_unused_tags.setObjectName(u"label_tree_unused_tags")
+        self.label_tree_unused_tags.setWordWrap(True)
+
+        self.verticalLayout_2.addWidget(self.label_tree_unused_tags)
+
+        self.plainTextEdit_tree_result = QPlainTextEdit(self.tab_2)
+        self.plainTextEdit_tree_result.setObjectName(u"plainTextEdit_tree_result")
+
+        self.verticalLayout_2.addWidget(self.plainTextEdit_tree_result)
+
+        self.pushButton_refresh_tree = QPushButton(self.tab_2)
+        self.pushButton_refresh_tree.setObjectName(u"pushButton_refresh_tree")
+
+        self.verticalLayout_2.addWidget(self.pushButton_refresh_tree)
+
+        self.tabWidget.addTab(self.tab_2, "")
+
+        self.verticalLayout_3.addWidget(self.tabWidget)
 
 
         self.retranslateUi(Form)
+
+        self.tabWidget.setCurrentIndex(0)
+
 
         QMetaObject.connectSlotsByName(Form)
     # setupUi
@@ -234,6 +300,13 @@ class Ui_Form(object):
 #endif // QT_CONFIG(tooltip)
         self.checkBox_reviewed.setText(QCoreApplication.translate("Form", u"Reviewed", None))
 #if QT_CONFIG(tooltip)
+        self.pushButton_reload_view.setToolTip(QCoreApplication.translate("Form", u"reload the current image view", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(whatsthis)
+        self.pushButton_reload_view.setWhatsThis("")
+#endif // QT_CONFIG(whatsthis)
+        self.pushButton_reload_view.setText("")
+#if QT_CONFIG(tooltip)
         self.listView_rejected.setToolTip(QCoreApplication.translate("Form", u"all tags that are rejected (bold tags are manually rejected tags)", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
@@ -245,14 +318,6 @@ class Ui_Form(object):
 #endif // QT_CONFIG(tooltip)
         self.label_sentence_len.setText(QCoreApplication.translate("Form", u"TextLabel", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_add_tags.setToolTip(QCoreApplication.translate("Form", u"add tags to this image, tags are separated by commas, press enter to validate the addition", None))
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_add_tags.setPlaceholderText(QCoreApplication.translate("Form", u"Enter Tags to Add (Press Enter to add tag)", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_clear_on_add.setToolTip(QCoreApplication.translate("Form", u"if checked, will clear the tags to add when entered", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_clear_on_add.setText(QCoreApplication.translate("Form", u"Clear on add", None))
-#if QT_CONFIG(tooltip)
         self.listView_tags.setToolTip(QCoreApplication.translate("Form", u"the tags that will be outputed by the tagger, bold tags are manually added tags, click on tag to add it to the rejected, select a tag and click on w to go the tag danbooru wiki", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
@@ -261,5 +326,18 @@ class Ui_Form(object):
 #if QT_CONFIG(tooltip)
         self.listView_recommendations.setToolTip(QCoreApplication.translate("Form", u"tag recommendations based on what is present in the output", None))
 #endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.lineEdit_add_tags.setToolTip(QCoreApplication.translate("Form", u"add tags to this image, tags are separated by commas, press enter to validate the addition", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_add_tags.setPlaceholderText(QCoreApplication.translate("Form", u"Enter Tags to Add (Press Enter to add tag)", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_clear_on_add.setToolTip(QCoreApplication.translate("Form", u"if checked, will clear the tags to add when entered", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_clear_on_add.setText(QCoreApplication.translate("Form", u"Clear on add", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Form", u"Tags", None))
+        self.label_tree_full_tags.setText(QCoreApplication.translate("Form", u"TextLabel", None))
+        self.label_tree_unused_tags.setText(QCoreApplication.translate("Form", u"TextLabel", None))
+        self.pushButton_refresh_tree.setText(QCoreApplication.translate("Form", u"Refresh Tree (reload the csv file)", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("Form", u"Advanced Image Settings", None))
     # retranslateUi
 

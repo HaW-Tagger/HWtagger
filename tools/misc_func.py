@@ -75,7 +75,7 @@ def order_tag_prompt(full_tag, model_prefix_tags=[], keep_token_tags=[], remove_
     second_chosen += [category for category in COLOR_CATEGORIES.keys() if category not in second_chosen]
 
     full_tag = [t for t in full_tag if t not in remove_tags]
-
+    
     tag_list = model_prefix_tags
     shuffle(keep_token_tags)
     for t in keep_token_tags:
@@ -126,3 +126,47 @@ def tqdm_parallel_map(executor, fn, *iterables, **kwargs):
         futures_list += [executor.submit(fn, i) for i in iterable]
     for f in tqdm(concurrent.futures.as_completed(futures_list), total=len(futures_list), **kwargs):
         yield f.result()
+
+seen_keys = {}     
+def tree_print(iter_obj, tab_count=0, max_depth=5):
+    # does a recursive call and print k-v pairs and types so we can figure 
+    # out if all items are json serializable
+    if tab_count == max_depth: # final stop
+        if type(iter_obj).__name__ not in seen_keys.get(tab_count, set()) and iter_obj is not None:
+            print(f"{tab_count*'  '}{type(iter_obj).__name__}")
+            
+            add_val = type(iter_obj).__name__ or type(iter_obj)
+            
+            seen_keys[tab_count]=seen_keys.get(tab_count, set()) | {add_val}
+            print("s0", seen_keys.get(tab_count, set()) | {add_val})
+        return 
+    if isinstance(iter_obj, dict):  
+        for i, (k, v) in enumerate(iter_obj.items()):
+            if k not in seen_keys.get(tab_count, set()) and i<5:
+                print(f"{tab_count*'  '}{k} : {type(k).__name__} --> {type(v).__name__}")
+                seen_keys[tab_count]=seen_keys.get(tab_count, set()) | {k}
+                print("s1", seen_keys.get(tab_count, set()) | {k})
+                if hasattr(v, '__iter__'):
+                    tree_print(v, tab_count+1)
+    elif hasattr(iter_obj, '__iter__') and not isinstance(iter_obj, str): # sets and list
+        first_val = next((x for x in iter_obj), None)
+        if first_val is not None:
+            message = f"{tab_count*'  '}{type(iter_obj).__name__} with {first_val}"
+            if message not in seen_keys.get(tab_count, set()):
+                print(message)
+                seen_keys[tab_count]=seen_keys.get(tab_count, set()) | {message}
+                print("s3", seen_keys.get(tab_count, set()) | {message})
+            for i, v in enumerate(iter_obj):
+                if i==0 and v:
+                    tree_print(v, tab_count+1)
+    elif iter_obj is None:
+        pass   
+            
+    else: 
+        if type(iter_obj).__name__ not in seen_keys.get(tab_count, set()):
+            print(f"{tab_count*'  '}{type(iter_obj).__name__}")
+            print(tab_count, seen_keys.items())
+            seen_keys[tab_count]=seen_keys.get(tab_count, set()) | {type(iter_obj).__name__}   
+                
+            print("s4", seen_keys.get(tab_count, set()) | {type(iter_obj).__name__})
+        

@@ -2,17 +2,18 @@ import json
 import os
 import shutil
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import Qt
+from PySide6 import QtCore
+from PySide6.QtCore import Slot, Signal, Qt
+from PySide6.QtGui import QStandardItemModel, QStandardItem, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 from tqdm import tqdm
 
-import CustomWidgets
-from classes.class_database import Database
 from classes.class_elements import GroupElement
+from resources import tag_categories, parameters
+import CustomWidgets
 from classes.class_image import ImageDatabase
 from interfaces import global_database_view
-from resources import tag_categories, parameters
+from classes.class_database import Database
 from tools import files
 
 
@@ -116,7 +117,7 @@ class GlobalDatabaseFrame(QWidget, global_database_view.Ui_Form):
                 if save_database_as_group:
                     if group not in merged_database.groups.keys():
                         merged_database.groups[group] = GroupElement(group_name=group, md5s=[])
-                    merged_database.groups[group].append(image.md5)
+                    merged_database.groups[group].add_item(image.md5)
         merged_database.save_database()
 
         if self.checkBox_reorganize_folder.isChecked():
@@ -170,8 +171,7 @@ class GlobalDatabaseFrame(QWidget, global_database_view.Ui_Form):
                                                score_trigger=True,
                                                use_sentence=False,
                                                sentence_in_trigger=False,
-                                               remove_tags_in_sentence=False,
-                                               shuffle_tags=True
+                                               remove_tags_in_sentence=False
                                                )
                 image_dict[image.path] = {}
                 image_dict[image.path]["tags"] = to_write

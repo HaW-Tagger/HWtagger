@@ -2,13 +2,66 @@ import os, csv
 from collections import defaultdict
 
 from resources import parameters
+# removed out 'color halftone'
+
+
+"""
+this is a quick loose description of most variables in this file: the ones that I use a lot are documented
+
+COLOR_DICT, tag [str] -> rgb color [tuple]
+CATEGORY_TAG_DICT, category name [str] -> set of tags [set]
+TAG_DEFINITION, tag [str] -> definition [str]
+TAG2HIGH_KEYSET, 
+LOW2TAGS_KEYSET, key is the tag in the low category and and value is a list of tags that would remove the key str if any exists
+TAG_CATEGORIES_EXCLUSIVE, 
+TAG_CATEGORIES_NONEXCLUSIVE,
+TAG2HIGH, TAG --> [list of HIGH tags it should be converted to, usually only 1]
+EXCLUSIVE_HIGH2TAGS, # HIGH --> TAGS
+LOW2TAGS, # LOW --> TAGS
+TAG_CATEGORIES, 
+TAGS_RECOMMENDATIONS, a dict of kv pair of tag [str] --> list of list of tags that would trigger the key tag [list[list[str]]]
+CHARACTER_RECOMMENDATIONS, a dict of kv pair of minor character names [str] --> main attributes useful in identifying the character [list[list[str]]]
+DESCRIPTION_TAGS, 
+DESCRIPTION_TAGS_FREQUENCY, 
+ARTISTS_TAGS, 
+SERIES_TAGS, 
+CHARACTERS_TAG, dict of characters and their secondary tags, character_name [str] -> list of secondary tags (char names/alias) [list[str]]
+CHARACTERS_TAG_FREQUENCY, dict, character name [str] -> frequency [int], frequency is from danbooru_tags.csv and frequency is the tag count in danbooru in 2024 or something, manually added names are set to 1
+METADATA_TAGS, 
+TAG2SUB_CATEGORY_EXCLUSIVE, 
+PRIORITY_DICT, 
+TAG2CATEGORY : tag [str] -> category [str]
+"""
+
+# these are depreciated tags with proper replacement(s) added to tag categories
+DEPRECIATED = {"disembodied limb", 'french braid', 'looking away', 'eyebrows', 'areolae', 
+                'uniform','multiple penises'
+               'striped','breast hold','arm grab','habit','light','multicolored background',
+               'pose', 'plaid', 'oni horns','wall',
+               'black headwear','white headwear','brown headwear','red headwear','blue headwear',
+               'green headwear','purple headwear','grey headwear','yellow headwear','orange headwear',
+               'plaid headwear','multicolored headwear','aqua headwear','pink headwear',
+               'white footwear', 'brown footwear','platform footwear','cross-laced footwear',
+               'black footwear','white footwear','brown footwear','red footwear','blue footwear',
+               'green footwear','purple footwear','grey footwear','yellow footwear','orange footwear',
+               'plaid footwear','multicolored footwear','aqua footwear','pink footwear','toeless footwear',
+               'two-tone footwear','pointy footwear','gold footwear','fur-trimmed footwear','winged footwear',
+               'shiny','checkered', 'tied hair', 'vertical stripes', 'diagonal stripes','gradient','ass grab',
+               'lights', 'hand on head', 'visor', 'holding person','argyle','stone','traditional clothes',
+               'hand on breast','turret','hand gesture', 'mole on body','low tied hair','highleg swimsuit',
+               'implied anal','white uniform','chest armor','hand on forehead',"just the tip","tired",
+               "furniture", "correction","qiya","wtf",'piercings','black legwear','white legwear','brown legwear',
+               'red legwear','blue legwear','green legwear','purple legwear','grey legwear','yellow legwear',
+               'orange legwear','gold legwear', 'drop earrings', 'amazon'
+               
+               }
+
 REJECTED_TAGS = {
     # globally rejected tags, we also reject depreciated tags from danbooru
     # 'breasts', 'groin', 'cleft of venus', 'partially visible vulva'
     
     # depreciated
     "looking away", "just the tip","tired","furniture", "correction","qiya","wtf",
-    
     # remove maybe
     "nsfw", "sfw",
     
@@ -16,10 +69,10 @@ REJECTED_TAGS = {
     "please don't bully me", "nagatoro",
     
     # body parts:
-    "face", "nose","hands","ears","mouth","fur","hair","human","cum","posing", 
+    "face","nose","ears","mouth","fur","hair","human","cum","posing", 
     
     # ambiguous clothing
-    "clothing", "mostly clothed", "clothed",
+    "clothing", "mostly clothed", "clothed",'piercing',
     
     # rule 34 specific weird/ambiguous tags:
     "bedding", "screenshot background", "extinct", "forced exposure","rule 63","original character","cuntboy","on ass", "pinup", "m-preg",
@@ -53,7 +106,7 @@ REJECTED_TAGS = {
     
     "youtube", "biribiri",'virtual youtuber',"deviantart","utaite", "shindan maker","self-upload","original","mmorpg","vtuber",
     "wallpaper","artist self-insert", "self-insert", "self upload",  "real life insert","voice actor","k-pop","animated",'photoshop (medium)', 
-    'jpeg artifacts', 'bad id', 'commentary', 'bad pixiv id', 'translated', 'english commentary', 'official art', 'bad twitter id',
+    'bad id', 'commentary', 'bad pixiv id', 'translated', 'english commentary', 'official art', 'bad twitter id',
     'commission', 'chinese commentary', 'md5 mismatch', 'symbol-only commentary', 'non-web source', 'korean commentary', 'partial commentary', 
     'revision', 'skeb commission', 'paid reward available', 'duplicate', 'bad link', 'check translation', 'video', 'spoilers', 'variant set', 
     'mixed-language commentary', 'second-party source', 'resolution mismatch', 'protected link', 'pixel-perfect duplicate', 'third-party edit', 
@@ -78,7 +131,7 @@ REJECTED_TAGS = {
     'midjourney', 'xnalara', 'bad imgur id', 'upside-down commentary', 'konachan sample', 'animatic','nicoseiga sample', 'gif artifacts', 
     'reversed', 'microsoft paint (medium)', 'german commentary','app filter', 'portuguese commentary', 'audible internal cumshot', 'screenshot',
     'flash game', 'bad aspect ratio', 'hairstyle request', 'bad fantia id', 'nai diffusion', 'fixed', 'custom maid 3d 2', 'has cropped revision', 
-    'color halftone', 'zip available', 'bad fanbox id', 'plant request', 'bad poipiku id', 'flipnote studio (medium)', 'bad drawcrowd id', 
+    'zip available', 'bad fanbox id', 'plant request', 'bad poipiku id', 'flipnote studio (medium)', 'bad drawcrowd id', 
     'check gender', 'art trade', 'bad tinami id', 'brush (medium)', 'color banding', 'bad newgrounds id', 'model kit (medium)', 'gouache (medium)', 
     'reference photo', 'cleaned', 'lego (medium)', 'easytoon (medium)','fan request', 'lofter sample', 'greek commentary', 'fruit request', 
     'pattern request', 'azpainter (medium)', 'bad miiverse id', 'weibo sample', 'polish commentary', 'bad behance id', 'tinami sample', 'check medium', 
@@ -107,6 +160,7 @@ REJECTED_TAGS = {
     'download link', 'downscaled', 'dutch commentary', 'making-of', 'masking tape (medium)', 'merchandise available', 'mixed-language audio', 'picrew (medium)', 'pixiv banner',
     'highres', 'absurdres', "hi res", "high res", "2d", "digital media", "digital media (artwork)", "absurd res", "patreon url", "twitter url", "pixiv url", "url",
     "artist cg","alternate version available", "alternate version at source",  "comission", "high resolution", "no text version", "oc", "unknown artist",
+    "logo parody",
     
     
     'no headwear',"no testicles","no bangs", "no arms", "no symbol", "no hat",
@@ -125,7 +179,7 @@ REJECTED_TAGS = {
     # races
     "mithra (ff11)","warrior of light (ff14)","lalafell",
     
-    "creature and personification","personification", "animification","humanization",'fertilization',
+    "creature and personification","personification", "animification","humanization",
     "objectification", "animification", "animalization", "furrification", "vehicle and personification", 
     
     "platinum blonde hair", "light green hair","hair extensions","silver hair", "tied hair","hairlocs", "hair down",'sparse pubic hair', 
@@ -264,7 +318,7 @@ REJECTED_TAGS = {
 }
 HIGH_TOKEN_COUNT = {"eyebrows visible through hair", "heart-shaped pupils", "navel piercing", "tongue piercing", "ass visible through thighs", "asymmetrical hair", "cum on body", "cum on breasts"}
 
-
+UNRELIABLE_SMALL_TAGS={"piercing", "pupils", "ring", "rings", "piercings"}
 
 # Quality tags
 QUALITY_LABELS = ["worst", "worse", "average", "good", "great", "best", "masterpiece"]
@@ -460,9 +514,18 @@ COLOR_DICT_ORDER = [
 COLOR_DICT_ORDER += [category for category in COLOR_CATEGORIES.keys() if category not in COLOR_DICT_ORDER]
 
 
+SOLO_CONFLICTS = {
+   "GENDER-SOLO": {"1girl","1boy"},
+   "RACE-SOLO":{"furry male", "furry female"}
+}
 
-
-
+p_threshold = 0.7
+remove_low_threshold_list = ['ahegao', 'navel piercing', 'clitois piercing', 'tongue piercing',
+                                'heart-shaped pupils', 'symbol-shaped pupils', 'thumb ring','cumdrip',
+                                'cum in pussy', 'after sex', 'after vaginal', 'after anal', 'vaginal', 'anal',
+                                'dildo', 'vaginal object insertion', 'anal object insertion', 'object insertion'
+                                
+] + list(EMOJI_10KPLUS_UNIQUE.keys()) + list(EMOJI_10KPLUS.keys())
 
 def get_recommendations_from_csv():
     complexer = {}
@@ -561,9 +624,6 @@ def check_categories():
                     rp_tags = [a for a in low_tags if a in tags]
                     parameters.log.info(f"CHECK! self-referencial tags {main_cat}, {subcat_name}: {rp_tags}")
         
-
-
-
 def make_tag_colors_dict():
     # returns a dict "tag" --> associated color for visuals
     alphas = 255
@@ -608,7 +668,6 @@ def make_tag_colors_dict():
     
     return color_dict, category_to_tags_dict, priority_dict, tag2category
 
-
 def get_tag_categories_belonging():
     # this handles the categories and it's tags
     category_exclusive = {} # category name --> SET of tags
@@ -645,12 +704,6 @@ def get_tag_categories_belonging():
 
     return category_exclusive, category_nonexclusive, tag2high, exclusive_high2tags, low2tags, tag2subcategory_exclusive
 
-
-
-SOLO_CONFLICTS = {
-   "GENDER-SOLO": {"1girl","1boy"},
-   "RACE-SOLO":{"furry male", "furry female"}
-}
 def csv_get_type():
     """
     :param num: 0 is for common tags, 1 for artists, 3 for series, 4 for characters, 5 for metadata
@@ -670,7 +723,7 @@ def csv_get_type():
         for row in csv_reader:
             secondary_tags = []
             if len(row[0]) > 3 and row[0] not in KAOMOJI:
-                main_tag = row[0].replace('_', ' ').lower()
+                main_tag = row[0].replace('_', ' ').lower() 
             else:
                 main_tag = row[0].lower()
             if len(row) > 3:
@@ -680,6 +733,9 @@ def csv_get_type():
                     DANBOORU_LOW2TAGS[sub_tag] = main_tag
                     DANBOORU_TAG2HIGH[sub_tag] = main_tag
 
+            #main tag is basic tags like 1girl, solo, large breasts, ...
+            # secondary tags is a list of tags that are converted to the main tag like "large_boobs", "large_tits"
+            # secondary tag can be an empty list
             match int(row[1]):
                 case 0:
                     DESCRIPTION_TAGS[main_tag] = secondary_tags
@@ -699,9 +755,10 @@ def csv_get_type():
 # note, tag_category_exclusive is a dict of sets
 # we make a set just for the keys because we often check for inclusions
 DESCRIPTION_TAGS, DESCRIPTION_TAGS_FREQUENCY, ARTISTS_TAGS, SERIES_TAGS, CHARACTERS_TAG, CHARACTERS_TAG_FREQUENCY, METADATA_TAGS = {}, {},{}, {},{}, {},{}
-TAG_CATEGORIES_EXCLUSIVE, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG2SUB_CATEGORY_EXCLUSIVE = None, None, None, None, None
+TAG_CATEGORIES_EXCLUSIVE,TAG_CATEGORIES_NONEXCLUSIVE, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG2SUB_CATEGORY_EXCLUSIVE = None, None, None, None, None, None
 TAG_CATEGORIES = {}
 TAGS_RECOMMENDATIONS = {}
+CHARACTER_RECOMMENDATIONS = {}
 TAG2HIGH_KEYSET = set()
 LOW2TAGS_KEYSET = set()
 COLOR_DICT = {}
@@ -710,16 +767,28 @@ TAG2CATEGORY = {}
 CATEGORY_TAG_DICT = {}
 TAG_DEFINITION = {}
 
+char_manuals = ['TAIMANIN_SERIES' , 
+                'MANUAL_CHAR_MISC' ,'MANUAL_CHAR_UMINEKO' ,'MANUAL_CHAR_BLEACH' , 'MANUAL_CHAR_AOT',"MANUAL_CHAR_ISEKAI","MANUAL_CHAR_SEITOKAIYAKUIN",
+                'MANUAL_CHAR_BLACK_LAGOON_JORMUNGND' ,'MANUAL_CHAR_WORLD_TRIGGER' , 'MANUAL_CHAR_NARUTO', 'MANUAL_CHAR_FAIRYTAIL',
+                'MANUAL_CHAR_CONAN' ,'MANUAL_CHAR_FRIEREN' ,'MANUAL_CHAR_GITS' ,'MANUAL_CHAR_GAMES' , "MANUAL_CHAR_POKEMON","MANUAL_CHAR_QUEENSBLADE",
+                'MANUAL_CHAR_GUNDAM_UC','MANUAL_CHAR_GUNDAM_00', 'MANUAL_CHAR_GUNDAM_ALT', 'MANUAL_CHAR_GUNDAM_WITCH','MANUAL_CHAR_INAZUMAILLEVEN' ,'MANUAL_CHAR_JUMP' ,
+                'MANUAL_CHAR_WESTERN','MANUAL_CHAR_NIJI', 'MANUAL_CHAR_VTUBERS','MANUAL_CHAR_3D','COSPLAY_LIST']
+
 
 def tag_categories_init():
-    global COLOR_DICT, CATEGORY_TAG_DICT, TAG_DEFINITION, TAG2HIGH_KEYSET, LOW2TAGS_KEYSET, TAG_CATEGORIES_EXCLUSIVE, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG_CATEGORIES, TAGS_RECOMMENDATIONS
-    global DESCRIPTION_TAGS, DESCRIPTION_TAGS_FREQUENCY, ARTISTS_TAGS, SERIES_TAGS, CHARACTERS_TAG, CHARACTERS_TAG_FREQUENCY, METADATA_TAGS, TAG2SUB_CATEGORY_EXCLUSIVE, PRIORITY_DICT, TAG2CATEGORY
+    # f*ck it we load these as global variables, ugly but it works and too many dicts to pass around
+    global COLOR_DICT, CATEGORY_TAG_DICT, TAG_DEFINITION, TAG2HIGH_KEYSET, LOW2TAGS_KEYSET, TAG_CATEGORIES_EXCLUSIVE, \
+    TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG_CATEGORIES, TAGS_RECOMMENDATIONS,TAG_CATEGORIES_NONEXCLUSIVE,\
+    DESCRIPTION_TAGS, DESCRIPTION_TAGS_FREQUENCY, ARTISTS_TAGS, SERIES_TAGS, CHARACTERS_TAG, CHARACTERS_TAG_FREQUENCY, \
+    METADATA_TAGS, TAG2SUB_CATEGORY_EXCLUSIVE, PRIORITY_DICT, TAG2CATEGORY
+    
     DESCRIPTION_TAGS, DESCRIPTION_TAGS_FREQUENCY, ARTISTS_TAGS, SERIES_TAGS, CHARACTERS_TAG, CHARACTERS_TAG_FREQUENCY, METADATA_TAGS, DANBOORU_LOW2TAGS, DANBOORU_TAG2HIGH = csv_get_type()
     TAG_CATEGORIES = get_tag_categories_from_csv()
     TAGS_RECOMMENDATIONS = get_recommendations_from_csv()
+    
     COLOR_DICT, CATEGORY_TAG_DICT,PRIORITY_DICT, TAG2CATEGORY = make_tag_colors_dict()
-    TAG_CATEGORIES_EXCLUSIVE, _, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG2SUB_CATEGORY_EXCLUSIVE = get_tag_categories_belonging()
-
+    TAG_CATEGORIES_EXCLUSIVE, TAG_CATEGORIES_NONEXCLUSIVE, TAG2HIGH, EXCLUSIVE_HIGH2TAGS, LOW2TAGS, TAG2SUB_CATEGORY_EXCLUSIVE = get_tag_categories_belonging()
+    
     TAG_DEFINITION = get_tag_definition()
     """
     for key, value in DANBOORU_TAG2HIGH.items():
@@ -739,7 +808,86 @@ def tag_categories_init():
 
     TAG2HIGH_KEYSET = set(TAG2HIGH.keys())
     LOW2TAGS_KEYSET = set(LOW2TAGS.keys())
+    
+    character_subcats = ['KNOWN_CHARACTERS_1' ,'KNOWN_CHARACTERS_2'] + char_manuals
+    character_lesser_subcats = ['CHARACTER_MINOR_1' , 'CHARACTER_MINOR_2' ,'CHARACTER_MINOR_3' ,
+                                'CHARACTER_MINOR_4' ,'CHARACTER_MINOR_5' ,'CHARACTER_MINOR_6']
+    
+    from resources import parameters
+    try:
+        fav_file = os.path.join(parameters.MAIN_FOLDER, 'resources/favourites.txt')
+        if os.path.exists(fav_file):
+            with open(fav_file, 'r') as f:
+                favourites = [tag.strip() for tag in f.readline().split(',') if tag != ""]
+        else:
+            favourites = []
+        previous_favourites = favourites.copy()
+    except Exception as e:
+        raise Exception(f"Error loading favourites.txt: {e}")
+       
+            
+    
+    # we add manual chars and known chars to list of characters
+    for mainCategory, subcatList in zip(["CHARACTERS", "CHARACTERS_LESSER"], 
+                                        [character_subcats, character_lesser_subcats]):
+        for subcat in subcatList:
+            if mainCategory not in TAG_CATEGORIES:
+                continue
+            if subcat not in TAG_CATEGORIES[mainCategory]:
+                continue
+            for tag in TAG_CATEGORIES[mainCategory][subcat]["tags"]:
+                CHARACTERS_TAG[tag] = TAG_CATEGORIES[mainCategory][subcat].get("low", [])
+                if tag not in CHARACTERS_TAG_FREQUENCY: #new character name tags, set a defualt 1 value
+                    CHARACTERS_TAG_FREQUENCY[tag] = 1
+                
+            if subcat in char_manuals and parameters.PARAMETERS["save_manual_names_to_favorites_file"]:
+                favourites += [tag for tag in TAG_CATEGORIES[mainCategory][subcat]["tags"] if tag not in favourites]
+    
+    # we now know all the characters, we can now make a secondary dict of character recommendations
+    CHARACTER_RECOMMENDATIONS = {k:v for k, v in TAGS_RECOMMENDATIONS.items() if k in CHARACTERS_TAG.keys()}
+    
+    # here we add artists and other relevant tags to favorites, but we don't need to update character_tags
+    view_subcats = ["JP ARTISTS","WESTERN ARTISTS","KOR ARTIST"]
+    model_subcats = ["BRIGHTNESS LEVELS","DARKNESS LEVELS", "SPECIAL MEDIA TAGS","SPECIAL QUALITY TAGS"]
+    for mainCategory, subcatList in zip(["VIEW", "MODELS"], [view_subcats, model_subcats]):
+        for subcat in subcatList:
+            if mainCategory not in TAG_CATEGORIES:
+                continue
+            if subcat not in TAG_CATEGORIES[mainCategory]:
+                continue
+            
+            if parameters.PARAMETERS["save_manual_names_to_favorites_file"]:
+                favourites += [tag for tag in TAG_CATEGORIES[mainCategory][subcat]["tags"] if tag not in favourites]
 
+    
+    
+                  
+    favourites = list(set(favourites)) 
+    if favourites and set(favourites) != set(previous_favourites):
+        parameters.log.info(f"Updated favourites.txt with new characters")
+        with open(fav_file, 'w') as f:
+            f.write(', '.join(favourites))
+    
+    #unadded chars
+    # we check and notify user of any unadded characters in the character dict       
+    unadded_char = []
+    
+    
+    
+    
+    
+    for mainCategory in ["CHARACTERS", "CHARACTERS_LESSER"]:
+        for subcat in TAG_CATEGORIES[mainCategory].values():
+            for tag in subcat["tags"]:
+                if tag not in CHARACTERS_TAG:
+                    unadded_char.append(tag)
+
+            
+            
+    if unadded_char:
+        parameters.log.info(f"Warning: {len(unadded_char)} are not added in the character dict: {unadded_char}")
+            
+            
 def check_definitions_and_recommendations():
     all_tags = COLOR_DICT.keys()
     for k, v in TAG_DEFINITION.items(): # tag --> definition
@@ -754,4 +902,3 @@ def check_definitions_and_recommendations():
         
 if TAG_CATEGORIES == {}:
     tag_categories_init()
-    
