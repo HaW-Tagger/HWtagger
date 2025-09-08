@@ -45,7 +45,7 @@ conflict_categories = [
         ("dog", "wolf"),
         ("cat", "dog"),
         ("pig", ("horse", "dog", "cow")),
-        ("yaoi", ("1girl", "2girls", "futa with", "furry female", "multiple girls", "male on"))
+        ("yaoi", ("1girl", "2girls", "futa with", "furry female", "multiple girls", "male on")),
         (("girl", "female", "1boy"), ("boy", "male", "1boy")), 
         ("chastity", ("phimosis", "condom on penis", "foreskin")),
         ("dark-skinned male", ("horse", "bestiality", "monster", "animal")),
