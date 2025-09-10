@@ -63,7 +63,8 @@ default_parameters['Interface'] = {
     'view_placeholder_default_path': "resources/images/default.jpg",
     'doubling_image_thumbnail_max_size': False,
     'save_manual_names_to_favorites_file': False,
-    'sort_autocompletion_by_frequency': True
+    'sort_autocompletion_by_frequency': True,
+    'max_stored_directories': 10
 }
 default_parameters['Taggers'] = {#AvailableTaggers.WDEVA02LARGEV3
     'automatic_tagger': [AvailableTaggers.SWINV2V3, AvailableTaggers.CAFORMER],

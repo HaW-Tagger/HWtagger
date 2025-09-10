@@ -348,6 +348,48 @@ def save_favourites(tags_list):
         f.write(', '.join(tags_list))
     parameters.log.info("Saved favourite tags to {'resources/favourites.txt'}")
 
+def get_recent_directories():
+    # get the recent directories from the recent_directories.txt file, the top one is the latest one seen
+    recent_dir_file = os.path.join(parameters.MAIN_FOLDER, "resources/recent_directories.txt")
+    try:
+        with open(recent_dir_file, 'r', encoding="utf-8") as f:
+            lines = [line.strip() for line in f]
+        return lines
+    except FileNotFoundError: # if the file doesn't exist, try to make an empty one
+        parameters.log.info("Creating recent_directories.txt file under resources in project directory")
+        try:
+            with open(recent_dir_file, 'w', encoding="utf-8") as f:
+                pass
+            parameters.log.info(f"File '{recent_dir_file}' created successfully.")
+        except Exception as e:
+            parameters.log.info(f"An error occurred while creating the file: {e}")
+    return []
+    
+def save_recent_directories(directories:list[str]|None=None):
+    """paired with the function above, used to save recent directories to the recent_directories.txt file
+    the directory list is stored from newest to oldest
+    """
+    if directories is None:
+        directories = []
+    max_len = parameters.PARAMETERS["max_stored_directories"]
+    file_path = os.path.join(parameters.MAIN_FOLDER, "resources/recent_directories.txt")
+    
+    # filter for length and duplicate paths
+    cleaned_dir = []
+    for d in directories:
+        if len(cleaned_dir) < max_len and d not in cleaned_dir:
+            cleaned_dir.append(d)
+            
+    # write to file
+    try:
+        with open(file_path, 'w', encoding="utf-8") as f:
+            for dir_string in cleaned_dir:
+                f.write(dir_string.strip() + "\n")
+    except Exception as e:
+        parameters.log.info(f"An error occurred while saving the file: {e}")
+        
+    return cleaned_dir
+
 def get_duplicate_string(string_list):
     seen_tags = set()
     unique_tags, dupes = [], []

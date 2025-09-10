@@ -653,7 +653,7 @@ class Ui_Form(object):
         self.pushButton_print_recommendations.setText(QCoreApplication.translate("Form", u"print Unknown Recommendations", None))
         self.pushButton_print_curr_img_data.setText(QCoreApplication.translate("Form", u"Print curr img data", None))
         self.pushButton_tfidf_comp.setText(QCoreApplication.translate("Form", u"Print tf-idf comparison", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("Form", u"Page", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("Form", u"Misc Functions", None))
         self.NoteSection.setTitle(QCoreApplication.translate("Form", u"Notes", None))
         self.plainTextEdit_notes.setPlaceholderText(QCoreApplication.translate("Form", u"Enter any notes regarding database here", None))
         self.ReportSection.setTitle(QCoreApplication.translate("Form", u"Reports", None))

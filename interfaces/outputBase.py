@@ -56,12 +56,11 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.checkBox_sentence_separator, 1, 1, 1, 1)
 
-        self.checkBox_aesthetic_score_in_token_separator = QCheckBox(Form)
-        self.checkBox_aesthetic_score_in_token_separator.setObjectName(u"checkBox_aesthetic_score_in_token_separator")
-        sizePolicy.setHeightForWidth(self.checkBox_aesthetic_score_in_token_separator.sizePolicy().hasHeightForWidth())
-        self.checkBox_aesthetic_score_in_token_separator.setSizePolicy(sizePolicy)
+        self.checkBox_remove_tags_in_sentence = QCheckBox(Form)
+        self.checkBox_remove_tags_in_sentence.setObjectName(u"checkBox_remove_tags_in_sentence")
+        self.checkBox_remove_tags_in_sentence.setChecked(True)
 
-        self.gridLayout.addWidget(self.checkBox_aesthetic_score_in_token_separator, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.checkBox_remove_tags_in_sentence, 2, 0, 1, 2)
 
         self.checkBox_use_sentence = QCheckBox(Form)
         self.checkBox_use_sentence.setObjectName(u"checkBox_use_sentence")
@@ -71,11 +70,12 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.checkBox_use_sentence, 1, 0, 1, 1)
 
-        self.checkBox_remove_tags_in_sentence = QCheckBox(Form)
-        self.checkBox_remove_tags_in_sentence.setObjectName(u"checkBox_remove_tags_in_sentence")
-        self.checkBox_remove_tags_in_sentence.setChecked(True)
+        self.checkBox_aesthetic_score_in_token_separator = QCheckBox(Form)
+        self.checkBox_aesthetic_score_in_token_separator.setObjectName(u"checkBox_aesthetic_score_in_token_separator")
+        sizePolicy.setHeightForWidth(self.checkBox_aesthetic_score_in_token_separator.sizePolicy().hasHeightForWidth())
+        self.checkBox_aesthetic_score_in_token_separator.setSizePolicy(sizePolicy)
 
-        self.gridLayout.addWidget(self.checkBox_remove_tags_in_sentence, 2, 0, 1, 2)
+        self.gridLayout.addWidget(self.checkBox_aesthetic_score_in_token_separator, 4, 1, 1, 1)
 
         self.checkBox_export_aesthetic_score = QCheckBox(Form)
         self.checkBox_export_aesthetic_score.setObjectName(u"checkBox_export_aesthetic_score")
@@ -83,7 +83,13 @@ class Ui_Form(object):
         self.checkBox_export_aesthetic_score.setSizePolicy(sizePolicy)
         self.checkBox_export_aesthetic_score.setChecked(False)
 
-        self.gridLayout.addWidget(self.checkBox_export_aesthetic_score, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.checkBox_export_aesthetic_score, 4, 0, 1, 1)
+
+        self.checkBox_random_shuffle = QCheckBox(Form)
+        self.checkBox_random_shuffle.setObjectName(u"checkBox_random_shuffle")
+        self.checkBox_random_shuffle.setChecked(True)
+
+        self.gridLayout.addWidget(self.checkBox_random_shuffle, 3, 0, 1, 1)
 
 
         self.verticalLayout.addLayout(self.gridLayout)
@@ -107,6 +113,11 @@ class Ui_Form(object):
         self.plainTextEdit_secondary_trigger_tags.setBackgroundVisible(False)
 
         self.verticalLayout.addWidget(self.plainTextEdit_secondary_trigger_tags)
+
+        self.pushButton_copy_to_clipboard = QPushButton(Form)
+        self.pushButton_copy_to_clipboard.setObjectName(u"pushButton_copy_to_clipboard")
+
+        self.verticalLayout.addWidget(self.pushButton_copy_to_clipboard)
 
         self.checkBox_current_group = QCheckBox(Form)
         self.checkBox_current_group.setObjectName(u"checkBox_current_group")
@@ -192,21 +203,25 @@ class Ui_Form(object):
 #endif // QT_CONFIG(tooltip)
         self.checkBox_sentence_separator.setText(QCoreApplication.translate("Form", u"Sentence in Token Separator", None))
 #if QT_CONFIG(tooltip)
-        self.checkBox_aesthetic_score_in_token_separator.setToolTip(QCoreApplication.translate("Form", u"Include the quality tags from the aesthetic scores and place them into the main trigger tag section.", None))
+        self.checkBox_remove_tags_in_sentence.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Enable this to remove tags that are included in the sentence. This is to reduce potential duplicates in both the caption and tags.<br/>Example: <br/>caption: &quot;1girl sitting on a chair thinking and contemplating life&quot;<br/>tag: &quot;1girl, solo, chair, sitting, red hair, green eyes, blue shirt&quot;<br/>--&gt; </p><p>caption and a shorter tag list is exported: caption + &quot;solo, red hair, green eyes, blue shirt&quot;</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_aesthetic_score_in_token_separator.setText(QCoreApplication.translate("Form", u"Aesthetic scores in token separator", None))
+        self.checkBox_remove_tags_in_sentence.setText(QCoreApplication.translate("Form", u"Remove tag if included in sentence", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_use_sentence.setToolTip(QCoreApplication.translate("Form", u"include any sentences/caption in the export.  If no captions were set, they're not added to the exported file(s)", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_use_sentence.setText(QCoreApplication.translate("Form", u"Sentence", None))
 #if QT_CONFIG(tooltip)
-        self.checkBox_remove_tags_in_sentence.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Enable this to remove tags that are included in the sentence. This is to reduce potential duplicates in both the caption and tags.<br/>Example: <br/>caption: &quot;1girl sitting on a chair thinking and contemplating life&quot;<br/>tag: &quot;1girl, solo, chair, sitting, red hair, green eyes, blue shirt&quot;<br/>--&gt; </p><p>caption and a shorter tag list is exported: caption + &quot;solo, red hair, green eyes, blue shirt&quot;</p></body></html>", None))
+        self.checkBox_aesthetic_score_in_token_separator.setToolTip(QCoreApplication.translate("Form", u"Include the quality tags from the aesthetic scores and place them into the main trigger tag section.", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBox_remove_tags_in_sentence.setText(QCoreApplication.translate("Form", u"Remove tag if included in sentence", None))
+        self.checkBox_aesthetic_score_in_token_separator.setText(QCoreApplication.translate("Form", u"Place Aesthetic scores in trigger section", None))
 #if QT_CONFIG(tooltip)
         self.checkBox_export_aesthetic_score.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Lookup what aesthetic score values map to any quality tags, then export the aesthetic/quality tag with the other tags.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_export_aesthetic_score.setText(QCoreApplication.translate("Form", u"Aesthetic scores", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_random_shuffle.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>whether to shuffle the tags (main, secondary, and the leftover tags are shuffled within their groups)</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_random_shuffle.setText(QCoreApplication.translate("Form", u"Random Shuffle", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_main_trigger_tag.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.</p><p>You can add a * to a tag and it will add all variants to the selection. Example: hole* will add black hole, white hole, sinkhole, whole grain, ...</p><p>The tag order in main trigger tag(s) are unshuffled</p><p>The tag order in secondary trigger tag(s) is shuffled</p><p>The other tags are shuffled.</p><p>Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
@@ -215,6 +230,10 @@ class Ui_Form(object):
         self.plainTextEdit_secondary_trigger_tags.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>Tags in the main and secondary are placed in front of the other tags. Look at token separator if you want to use token separator with your exporting. You don't need token separator if the count of the trigger tags are constant.</p><p><br/></p><p>You can add a * to a tag and it will add all variants to the selection. Example: hole* will add black hole, white hole, sinkhole, whole grain, ...</p><p><br/></p><p>The tag order in main trigger tag(s) are unshuffled</p><p>The tag order in secondary trigger tag(s) is shuffled</p><p>The other tags are shuffled.</p><p><br/></p><p><br/></p><p>Here's an example with no token separator, 1 main trigger word, and 3 secondary trigger word: main_trigger tag, secondary_tag_3, secondary_tag_1, secondary_tag_2, rest of the tags, ...</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.plainTextEdit_secondary_trigger_tags.setPlaceholderText(QCoreApplication.translate("Form", u"Secondary Tag(s), Separated with \",\"", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_copy_to_clipboard.setToolTip(QCoreApplication.translate("Form", u"<html><head/><body><p>In the main Image UI, the tags for the selected image can be copied to clipboard. </p><p>The order of the tags depends on the chckbox options set above.<br/><br/>if random shuffle is turned off, then it's sorted by two categories (manual tags, auto tag probability),<br/>so all manual tags are at the front and sorted by probability, then the autotags sorted by probability.</p><p>* note that manual tags not found in the autotags has a prob of 0.0<br/><br/></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_copy_to_clipboard.setText(QCoreApplication.translate("Form", u"Copy Tags to clipboard", None))
         self.checkBox_current_group.setText(QCoreApplication.translate("Form", u"For Currently Selected Group", None))
 #if QT_CONFIG(tooltip)
         self.pushButton_txt_file.setToolTip(QCoreApplication.translate("Form", u"create a txt file containing the full tags, same as the first tab", None))

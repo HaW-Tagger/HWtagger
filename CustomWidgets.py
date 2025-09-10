@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QProgressBar, QCompleter, QT
     QGridLayout, QColorDialog, QFileDialog
 from PySide6.QtGui import QPixmap, QImageReader
 import PySide6.QtCore as QtCore
-from PySide6.QtCore import Signal, Slot, QStringListModel
+from PySide6.QtCore import Signal, Slot, QStringListModel, QObject, QEvent
 
 from classes.class_database import Database
 from interfaces import popupscaledlabel, global_database_item, outputBase
@@ -79,7 +79,9 @@ class OutputWidget(QWidget, outputBase.Ui_Form):
 
     editedMainTriggerTag = Signal(str)
     editedSecondaryTriggerTag = Signal(str)
-
+    
+    copyTagsToClipboard = Signal()
+    
     def __init__(self, parent=None, *, primary_tags: str="", secondary_tags: str=""):
         super().__init__()
         self.setupUi(self)
@@ -104,6 +106,9 @@ class OutputWidget(QWidget, outputBase.Ui_Form):
         self.lineEdit_main_trigger_tag.editingFinished.connect(lambda: self.editedMainTriggerTag.emit(self.lineEdit_main_trigger_tag.text()))
         self.plainTextEdit_secondary_trigger_tags.textChanged.connect(lambda: self.editedSecondaryTriggerTag.emit(self.plainTextEdit_secondary_trigger_tags.toPlainText()))
 
+        # copy tags to clipboard
+        self.pushButton_copy_to_clipboard.clicked.connect(lambda: self.copyTagsToClipboard.emit())
+        
     def use_trigger_tags(self):
         return self.checkBox_trigger_tags.isChecked()
 
@@ -122,9 +127,12 @@ class OutputWidget(QWidget, outputBase.Ui_Form):
     def use_aesthetic_score(self):
         return self.checkBox_export_aesthetic_score.isChecked()
 
-    def use_aesthetic_score_in_token_separator(self):
+    def use_aesthetic_score_in_trigger_section(self):
         return self.checkBox_aesthetic_score_in_token_separator.isChecked()
 
+    def use_random_shuffle(self):
+        return self.checkBox_random_shuffle.isChecked()
+    
     def toml_resolution(self):
         return self.comboBox_toml_resolution.currentText()
 
@@ -360,6 +368,21 @@ class PaintingImage(QWidget):
     def edit_rectangle(self):
         self.activated_drawing = True
         self.label.activated_drawing = True
+
+class CustomQCompleterForcedDropdown(QObject):
+    def __init__(self, completer, parent=None):
+        super().__init__(parent)
+        self.completer = completer
+
+    def eventFilter(self, watched, event):
+        if event.type() == QEvent.FocusIn:
+            self.completer.complete()
+            
+        # the following works, but also makes it impossible to highlight texts
+        #elif event.type() == QEvent.MouseButtonPress:
+        #    # Re-show popup even if already focused
+        #    self.completer.complete()
+        return False  # let normal handling continue
 
 class CustomQCompleter(QCompleter):
     def splitPath(self, path):

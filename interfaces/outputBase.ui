@@ -79,19 +79,16 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+     <item row="2" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBox_remove_tags_in_sentence">
        <property name="toolTip">
-        <string>Include the quality tags from the aesthetic scores and place them into the main trigger tag section.</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable this to remove tags that are included in the sentence. This is to reduce potential duplicates in both the caption and tags.&lt;br/&gt;Example: &lt;br/&gt;caption: &amp;quot;1girl sitting on a chair thinking and contemplating life&amp;quot;&lt;br/&gt;tag: &amp;quot;1girl, solo, chair, sitting, red hair, green eyes, blue shirt&amp;quot;&lt;br/&gt;--&amp;gt; &lt;/p&gt;&lt;p&gt;caption and a shorter tag list is exported: caption + &amp;quot;solo, red hair, green eyes, blue shirt&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Aesthetic scores in token separator</string>
+        <string>Remove tag if included in sentence</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -114,20 +111,23 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="QCheckBox" name="checkBox_remove_tags_in_sentence">
+     <item row="4" column="1">
+      <widget class="QCheckBox" name="checkBox_aesthetic_score_in_token_separator">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable this to remove tags that are included in the sentence. This is to reduce potential duplicates in both the caption and tags.&lt;br/&gt;Example: &lt;br/&gt;caption: &amp;quot;1girl sitting on a chair thinking and contemplating life&amp;quot;&lt;br/&gt;tag: &amp;quot;1girl, solo, chair, sitting, red hair, green eyes, blue shirt&amp;quot;&lt;br/&gt;--&amp;gt; &lt;/p&gt;&lt;p&gt;caption and a shorter tag list is exported: caption + &amp;quot;solo, red hair, green eyes, blue shirt&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Include the quality tags from the aesthetic scores and place them into the main trigger tag section.</string>
        </property>
        <property name="text">
-        <string>Remove tag if included in sentence</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
+        <string>Place Aesthetic scores in trigger section</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QCheckBox" name="checkBox_export_aesthetic_score">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
@@ -143,6 +143,19 @@
        </property>
        <property name="checked">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="checkBox_random_shuffle">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;whether to shuffle the tags (main, secondary, and the leftover tags are shuffled within their groups)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Random Shuffle</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -192,6 +205,16 @@
      </property>
      <property name="placeholderText">
       <string>Secondary Tag(s), Separated with &quot;,&quot;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_copy_to_clipboard">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In the main Image UI, the tags for the selected image can be copied to clipboard. &lt;/p&gt;&lt;p&gt;The order of the tags depends on the chckbox options set above.&lt;br/&gt;&lt;br/&gt;if random shuffle is turned off, then it's sorted by two categories (manual tags, auto tag probability),&lt;br/&gt;so all manual tags are at the front and sorted by probability, then the autotags sorted by probability.&lt;/p&gt;&lt;p&gt;* note that manual tags not found in the autotags has a prob of 0.0&lt;br/&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="text">
+      <string>Copy Tags to clipboard</string>
      </property>
     </widget>
    </item>

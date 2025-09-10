@@ -11,7 +11,7 @@ from collections import Counter
 import PySide6.QtGui as QtGui
 from PySide6.QtWidgets import QWidget, QCompleter, QStyle, QSizePolicy, QSplitter,QHBoxLayout, QLabel, QColorDialog,\
     QVBoxLayout, QDialog, QPushButton, QLineEdit, QStackedWidget, QButtonGroup, QRadioButton, \
-        QScrollArea,QAbstractItemView,QTreeView
+        QScrollArea,QAbstractItemView,QTreeView, QApplication
 from PySide6.QtGui import QPixmap, QStandardItem, QBrush
 import PySide6.QtCore as QtCore
 from PySide6.QtCore import Slot, QStringListModel, QSize, Signal
@@ -611,6 +611,7 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
     get_curr_group = Signal()
     checkedHighlightFunction = Signal(tuple)
     clicked_manual_info = Signal()
+    clicked_copy_to_clipboard = Signal(tuple)
     clickedPrintImageInfo = Signal()
     clicked_recommendation_info = Signal()
     clicked_discard_tag_group = Signal(tuple)
@@ -619,7 +620,7 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         super().__init__()
         self.setupUi(self)
         self.db = db
-        # Output
+        # Output widget
         self.widget_to_output.set_trigger_tags(", ".join(self.db.get_triggers("main_tags")), 
                                                ", ".join(self.db.get_triggers("secondary_tags")))
         self.widget_to_output.createTxtFiles.connect(self.create_txt_files_button)
@@ -630,6 +631,15 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         self.widget_to_output.editedMainTriggerTag.connect(self.update_main_trigger_tags)
         self.widget_to_output.editedSecondaryTriggerTag.connect(self.update_secondary_trigger_tags)
 
+        self.widget_to_output.copyTagsToClipboard.connect(lambda: self.clicked_copy_to_clipboard.emit((
+            self.widget_to_output.use_trigger_tags(),
+            self.widget_to_output.use_token_separator(),
+            self.widget_to_output.use_aesthetic_score(),
+            self.widget_to_output.use_sentence(),
+            self.widget_to_output.use_aesthetic_score_in_trigger_section(),
+            self.widget_to_output.use_random_shuffle()
+        )))
+        
         # Save
         self.pushButton_save_database.clicked.connect(lambda: self.clickedSaveDatabase.emit())
 
@@ -695,7 +705,7 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
         self.comboBox_batch_selection_frequency.addItems(view_options)
         self.comboBox_batch_selection_frequency.setCurrentIndex(0)
 
-        # add-on options
+        # misc features tabs options
         # highlight section, emits a tuple of tuple, first element is the checkbox, second is the value
         def emit_highlight_state():
             self.checkedHighlightFunction.emit(
@@ -1010,8 +1020,9 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
             use_sentence=self.widget_to_output.use_sentence(),
             sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
             remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator(),
-            specific_indexes=specific_indexes
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section(),
+            specific_indexes=specific_indexes,
+            shuffle_tags=self.widget_to_output.use_random_shuffle()
         )
 
     @Slot()
@@ -1023,7 +1034,8 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
             use_sentence=self.widget_to_output.use_sentence(),
             sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
             remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section(),
+            shuffle_tags=self.widget_to_output.use_random_shuffle()
         )
 
     @Slot()
@@ -1035,7 +1047,8 @@ class DatabaseToolsBase(QWidget, databaseToolsBase.Ui_Form):
             use_sentence=self.widget_to_output.use_sentence(),
             sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
             remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-            score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+            score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section(),
+            shuffle_tags=self.widget_to_output.use_random_shuffle()
         )
 
     @Slot()
@@ -2471,6 +2484,7 @@ class DatabaseViewBase(QWidget):
         self.database_tools.clicked_manual_info.connect(self.db.print_db_info)
         self.database_tools.clicked_recommendation_info.connect(self.db.print_unknown_recommendations)
         self.database_tools.clickedPrintImageInfo.connect(self.print_image_info)
+        self.database_tools.clicked_copy_to_clipboard.connect(self.copy_tags_to_clipboard)
         
         # new features: reports and discarding tags by group
         self.database_tools.clickedGenerateReport.connect(self.generate_and_fill_report)
@@ -2630,6 +2644,39 @@ class DatabaseViewBase(QWidget):
             if len(self.selected_images) > 1:
                 parameters.log.info("Multiple images selected, only printing info for the first one")
             self.db.images[self.selected_images[0]].print_image_info()
+    
+    @Slot()
+    def copy_tags_to_clipboard(self, output_widget_checkboxes):
+        
+        if self.selected_images:
+            if len(self.selected_images) > 1:
+                parameters.log.info("Multiple images selected, copying tags is only available for a single image")
+            elif len(self.selected_images) == 1:
+                
+                selection = self.selected_images[0]
+                
+                tags_text = self.db.create_output_text(selection,
+                            add_backslash_before_parenthesis= False,
+                            token_separator= output_widget_checkboxes[1],
+                            keep_tokens_separator= parameters.PARAMETERS["keep_token_tags_separator"],
+                            use_trigger_tags= output_widget_checkboxes[0],
+                            use_aesthetic_score = output_widget_checkboxes[2],
+                            use_sentence = output_widget_checkboxes[3],
+                            sentence_in_trigger = False,
+                            remove_tags_in_sentence = True,
+                            score_trigger = output_widget_checkboxes[4],
+                            shuffle_tags=output_widget_checkboxes[5]
+                            )
+                clipboard = QApplication.clipboard()
+                clipboard.setText(tags_text)
+                
+                parameters.log.info("Copied tags to clipboard")
+                """remove_tags_in_sentence, sentence_in_trigger are not used anywhere, idk why
+                """
+            else:
+                parameters.log.info("No images selected")
+        else:
+            parameters.log.info("No images selected")
     
     @Slot()
     def generate_and_fill_report(self):

@@ -299,8 +299,10 @@ class VirtualDatabase:
         if caption_image:
             model_calls.append("florence_caption")
         
-
-        parameters.log.info(f"Running the following models {model_calls}")
+        if model_calls:
+            parameters.log.info(f"Running the following models {model_calls}")
+        else:
+            parameters.log.info("No models applied on the images")
         if any(model_calls):
             self.multi_tagger_call(image_paths, model_calls, extra_args)
 
@@ -480,32 +482,66 @@ class VirtualDatabase:
                         self.trigger_tags[k] = [tag for tag in tags.get(k, []) if tag]
                 else:
                     raise TypeError(f"Invalid argument combination: {type(keys)}, {type(tags)}")
-        
-    def create_txt_files(self, add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator="|||", use_trigger_tags=True, use_aesthetic_score=False, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True, specific_indexes=[]):
-        token_keeper = keep_tokens_separator
-        if not token_separator:
-            token_keeper = ""
-        main_tags = self.get_triggers("main_tags")
-        secondary_tags = self.get_triggers("secondary_tags")
-        if not use_trigger_tags:
-            main_tags = []
-            secondary_tags = []
-        for i, image in enumerate(self.images):
-            if specific_indexes and i not in specific_indexes:
-                continue # skip image if index is not in specific_indexes
-            
-            to_write = image.create_output(add_backslash_before_parenthesis=add_backslash_before_parenthesis,
-                                           keep_tokens_separator=token_keeper,
-                                           main_tags=main_tags,
-                                           secondary_tags=secondary_tags,
-                                           use_aesthetic_score=use_aesthetic_score,
-                                           use_sentence=use_sentence,
-                                           sentence_in_trigger=sentence_in_trigger,
-                                           remove_tags_in_sentence=remove_tags_in_sentence,
-                                           score_trigger=score_trigger
-                                           )
-            with open(os.path.join(os.path.splitext(image.path)[0] + ".txt"), 'w') as f:
-                f.write(to_write + "\n")
+    
+    def create_output_text(self, image_index: int, add_backslash_before_parenthesis=False, token_separator=True, 
+                           keep_tokens_separator="|||", use_trigger_tags=True, use_aesthetic_score=False, 
+                           use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, 
+                           score_trigger=True, shuffle_tags=True):
+        token_keeper = keep_tokens_separator if keep_tokens_separator and token_separator else ""
+        main_tags = self.get_triggers("main_tags") if use_trigger_tags else []
+        secondary_tags = self.get_triggers("secondary_tags") if use_trigger_tags else []
+        to_write = self.images[image_index].create_output(add_backslash_before_parenthesis=add_backslash_before_parenthesis,
+                                            keep_tokens_separator=token_keeper,
+                                            main_tags=main_tags,
+                                            secondary_tags=secondary_tags,
+                                            use_aesthetic_score=use_aesthetic_score,
+                                            score_trigger=score_trigger,
+                                            use_sentence=use_sentence,
+                                            sentence_in_trigger=sentence_in_trigger,
+                                            remove_tags_in_sentence=remove_tags_in_sentence,
+                                            shuffle_tags=shuffle_tags
+                                            )
+        return to_write
+    
+    def create_txt_files(self, add_backslash_before_parenthesis=False, token_separator=True, 
+                         keep_tokens_separator="|||", use_trigger_tags=True, use_aesthetic_score=False, 
+                         use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, 
+                         score_trigger=True, specific_indexes=[], shuffle_tags=True):
+        token_keeper = keep_tokens_separator if keep_tokens_separator and token_separator else ""
+        main_tags = self.get_triggers("main_tags") if use_trigger_tags else []
+        secondary_tags = self.get_triggers("secondary_tags") if use_trigger_tags else []
+        if specific_indexes:
+            parameters.log.info(f"Creating txt files for {len(specific_indexes)} images")
+            for index in specific_indexes:
+                to_write = self.images[index].create_output(add_backslash_before_parenthesis=add_backslash_before_parenthesis,
+                                            keep_tokens_separator=token_keeper,
+                                            main_tags=main_tags,
+                                            secondary_tags=secondary_tags,
+                                            use_aesthetic_score=use_aesthetic_score,
+                                            use_sentence=use_sentence,
+                                            sentence_in_trigger=sentence_in_trigger,
+                                            remove_tags_in_sentence=remove_tags_in_sentence,
+                                            score_trigger=score_trigger,
+                                            shuffle_tags=shuffle_tags
+                                            )
+                with open(os.path.join(os.path.splitext(image.path)[0] + ".txt"), 'w') as f:
+                    f.write(to_write + "\n")
+        else:
+            parameters.log.info(f"Creating txt files for all {len(self.images)} images")
+            for i, image in enumerate(self.images):
+                to_write = image.create_output(add_backslash_before_parenthesis=add_backslash_before_parenthesis,
+                                            keep_tokens_separator=token_keeper,
+                                            main_tags=main_tags,
+                                            secondary_tags=secondary_tags,
+                                            use_aesthetic_score=use_aesthetic_score,
+                                            use_sentence=use_sentence,
+                                            sentence_in_trigger=sentence_in_trigger,
+                                            remove_tags_in_sentence=remove_tags_in_sentence,
+                                            score_trigger=score_trigger,
+                                            shuffle_tags=shuffle_tags
+                                            )
+                with open(os.path.join(os.path.splitext(image.path)[0] + ".txt"), 'w') as f:
+                    f.write(to_write + "\n")
         parameters.log.info("Successfully created the .txt files containing full tags")
 
     def get_img_path_index_dict(self):
@@ -1484,7 +1520,8 @@ class Database(VirtualDatabase):
         if not no_match and not multi_match:
             parameters.log.info(f"All {len(modified_tup)} images paths are fixed!") 
     
-    def add_images_to_db(self, image_paths: list[str]|set[str], from_txt=False, grouping_from_path=False, move_dupes=False, rename_to_md5=False):
+    def add_images_to_db(self, image_paths: list[str]|set[str], from_txt=False, grouping_from_path=False, 
+                         move_dupes=False, rename_to_md5=False):
         """_summary_
 
         Args:
@@ -1599,8 +1636,11 @@ class Database(VirtualDatabase):
             if relative_dir: # has a relative path
                 self.add_image_to_group(relative_dir, image_index)
 
-    def create_json_file(self,add_backslash_before_parenthesis=False, token_separator=True, keep_tokens_separator=parameters.PARAMETERS["keep_token_tags_separator"],
-                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True, score_trigger=True):
+    def create_json_file(self,add_backslash_before_parenthesis=False, token_separator=True, 
+                         keep_tokens_separator=parameters.PARAMETERS["keep_token_tags_separator"],
+                      use_trigger_tags=True, use_aesthetic_score=True, use_sentence=False, 
+                      sentence_in_trigger=False, remove_tags_in_sentence=True, 
+                      score_trigger=True, shuffle_tags=True):
         image_dict = {}
         token_keeper = keep_tokens_separator if token_separator else ""
         main_tags = self.get_triggers("main_tags")
@@ -1618,6 +1658,7 @@ class Database(VirtualDatabase):
                                            use_sentence = use_sentence,
                                            sentence_in_trigger = sentence_in_trigger,
                                            remove_tags_in_sentence = remove_tags_in_sentence,
+                                           shuffle_tags=shuffle_tags
                                            )
             image_dict[image.path] = {}
             image_dict[image.path]["tags"] = to_write

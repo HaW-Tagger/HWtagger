@@ -64,7 +64,11 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
 
         self.widget_to_output.editedMainTriggerTag.connect(self.update_main_trigger_tags)
         self.widget_to_output.editedSecondaryTriggerTag.connect(self.update_secondary_trigger_tags)
-
+        
+        
+        # Copy to clipboard, button is hidden in init below, and a warning message is displayed if clicked somehow
+        self.widget_to_output.copyTagsToClipboard.connect(self.copy_tags_to_clipboard)
+        
         #############################
         # DATABASE TOOLS
 
@@ -176,7 +180,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                 use_sentence=self.widget_to_output.use_sentence(),
                 sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
                 remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-                score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section()
                 )
 
     @Slot()
@@ -189,7 +193,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                 use_sentence=self.widget_to_output.use_sentence(),
                 sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
                 remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-                score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section()
                 )
 
     @Slot()
@@ -209,7 +213,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                 use_sentence=self.widget_to_output.use_sentence(),
                 sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
                 remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-                score_trigger=self.widget_to_output.use_aesthetic_score_in_token_separator()
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section()
                 )
 
     @Slot(str)
@@ -220,9 +224,13 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
 
     @Slot(str)
     def update_secondary_trigger_tags(self, text: str):
-        if self.db_loaded:
+        if self.db_loaded():
             self.basic_database.set_triggers("secondary_tags", text)
 
+    @Slot()
+    def copy_tags_to_clipboard(self):
+        parameters.log.warning("Copy to clipboard feature is only available for a single image in the image view tab")
+    
     #############################
     # DATABASE TOOLS
     # TOP BAR button functions:

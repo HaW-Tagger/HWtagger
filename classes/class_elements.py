@@ -229,7 +229,8 @@ class RectElement:
         r.apply_from_dict(save_dict)
         return r
     
-    def create_output(self, add_backslash_before_parenthesis=False, keep_tokens_separator: str= "|||", main_tags: list[str]=[], secondary_tags: list[str]=[], use_sentence=True, shuffle_tags=True):
+    def create_output(self, add_backslash_before_parenthesis=False, keep_tokens_separator: str= "|||", 
+                      main_tags: list[str]=[], secondary_tags: list[str]=[], use_sentence=True, shuffle_tags=True):
         result = ""
         if use_sentence:
             segments = self.sentence_description.get_output_info()

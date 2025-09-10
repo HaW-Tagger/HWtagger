@@ -403,7 +403,10 @@ class ImageDatabase:
             return False
         return exists(self.path)
 
-    def create_output(self, add_backslash_before_parenthesis=False, keep_tokens_separator: str= "|||", main_tags: list[str]=[], secondary_tags: list[str]=[], use_aesthetic_score=False, score_trigger=True, use_sentence=False, sentence_in_trigger=False, remove_tags_in_sentence=True):
+    def create_output(self, add_backslash_before_parenthesis=False, keep_tokens_separator: str= "|||", 
+                      main_tags: list[str]=[], secondary_tags: list[str]=[], use_aesthetic_score=False, 
+                      score_trigger=True, use_sentence=False, sentence_in_trigger=False, 
+                      remove_tags_in_sentence=True, shuffle_tags=True):
         """
         create the txt files, need a keep token separator option
         currently the trigger tags are removed if they are in a sentence
@@ -421,12 +424,16 @@ class ImageDatabase:
                         continue # The name is not in the image
 
                     # todo: improve the conditions
-                    result += self.rects[[rect.name for rect in self.rects].index(segment[1])].create_output(add_backslash_before_parenthesis=add_backslash_before_parenthesis, keep_tokens_separator=keep_tokens_separator, main_tags=main_tags, secondary_tags=secondary_tags, use_sentence=use_sentence)
+                    result += self.rects[[rect.name for rect in self.rects].index(segment[1])].create_output(
+                        add_backslash_before_parenthesis=add_backslash_before_parenthesis, 
+                        keep_tokens_separator=keep_tokens_separator, main_tags=main_tags, 
+                        secondary_tags=secondary_tags, use_sentence=use_sentence, shuffle_tags=shuffle_tags)
 
             
             elif segment == "#full_tags":
-                tags = self.get_full_only_tags()
-                np.random.shuffle(tags)
+                tags = self.get_full_only_tags(sort_by_probability_and_manual=not shuffle_tags)
+                if shuffle_tags:
+                    np.random.shuffle(tags)
                 identified_main_tags = []
                 identified_secondary_tags = []
 
@@ -464,7 +471,8 @@ class ImageDatabase:
                 if identified_main_tags:
                     temp_tags += identified_main_tags
                 if identified_secondary_tags:
-                    np.random.shuffle(identified_secondary_tags)
+                    if shuffle_tags:
+                        np.random.shuffle(identified_secondary_tags)
                     temp_tags += identified_secondary_tags
 
                 if len(segments) == 1:
@@ -480,7 +488,8 @@ class ImageDatabase:
                             temp_tags.insert(0, score_label)
                         else:
                             tags.append(score_label)
-                            np.random.shuffle(tags)
+                            if shuffle_tags:
+                                np.random.shuffle(tags)
 
                 tags = temp_tags + tags
                 result += ", ".join(tags)
@@ -774,8 +783,15 @@ class ImageDatabase:
         self.update_full_tags()
         return self.full_tags
 
-    def get_full_only_tags(self):
-        return [tag.tag for tag in self.get_full_tags().tags]
+    def get_full_only_tags(self, sort_by_probability_and_manual=False):
+        if sort_by_probability_and_manual:
+            # manual and prob is built in
+            sorted_tags = sorted(self.get_full_tags(), key=lambda x: (x.manual, x.probability), reverse=True)
+            #for tag in sorted_tags:
+            #    print(tag.tag, tag.manual, tag.probability)
+            return [tag.tag for tag in sorted_tags]
+        else:
+            return [tag.tag for tag in self.get_full_tags().tags]
 
     def get_full_tags_over_confidence(self, confidence=0.7):
         """
