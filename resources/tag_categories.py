@@ -1,4 +1,5 @@
 import os, csv
+import itertools
 from collections import defaultdict
 
 from resources import parameters
@@ -555,35 +556,43 @@ def get_tag_categories_from_csv():
     complexer = {}
     with open(os.path.join(parameters.MAIN_FOLDER, "resources/tag_categories.csv"), newline='', encoding='utf-8') as f:
         complex_temp = csv.reader(f)
-    # complex_temp = pd.read_csv(os.path.join("C:\\Users\\louis\\Documents\\46 - Training\\HecateTagger", "resources\\tag_categories.csv"), true_values=["1"], false_values=["0"])
-        skip_first = True
-        for row in complex_temp:
-            if skip_first:
-                skip_first = False
-                continue
-            category = row[0].strip().upper()
-            sub_category = row[1].strip().upper()
-            exclusive = False
-            if row[2]:
-                if int(row[2]) == 1:
-                    exclusive = True
-            high = [x.strip().lower() for x in row[3].split(',') if x != ""]
-            low = [x.strip().lower() for x in row[4].split(',') if x != ""]
-            tags = []
-            for tag in row[5].split(','):
-                if tag.strip().lower() != "" and tag.strip().lower() not in tags:
-                    tags.append(tag.strip().lower())
-            dict_row = {
-                sub_category: {
-                    "exclusive": exclusive,
-                    "high": high,
-                    "low": low,
-                    "tags": tags
-                }
+    
+    additional_data=os.path.join(parameters.MAIN_FOLDER, "resources/user_categories.csv")
+    if os.path.exists(additional_data):
+        with open(additional_data, newline='', encoding='utf-8') as f:
+            complex_temp2 = csv.reader(f)
+        merged_csv_reader = itertools.chain(complex_temp, complex_temp2)
+    else:
+        merged_csv_reader = complex_temp
+    
+    skip_first = True
+    for row in merged_csv_reader:
+        if skip_first:
+            skip_first = False
+            continue
+        category = row[0].strip().upper()
+        sub_category = row[1].strip().upper()
+        exclusive = False
+        if row[2]:
+            if int(row[2]) == 1:
+                exclusive = True
+        high = [x.strip().lower() for x in row[3].split(',') if x != ""]
+        low = [x.strip().lower() for x in row[4].split(',') if x != ""]
+        tags = []
+        for tag in row[5].split(','):
+            if tag.strip().lower() != "" and tag.strip().lower() not in tags:
+                tags.append(tag.strip().lower())
+        dict_row = {
+            sub_category: {
+                "exclusive": exclusive,
+                "high": high,
+                "low": low,
+                "tags": tags
             }
-            if not category in complexer.keys():
-                complexer[category] = {}
-            complexer[category].update(dict_row)
+        }
+        if not category in complexer.keys():
+            complexer[category] = {}
+        complexer[category].update(dict_row)
     return complexer
 
 def get_tag_definition():
