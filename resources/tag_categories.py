@@ -555,7 +555,7 @@ def get_recommendations_from_csv():
 def get_tag_categories_from_csv():
     complexer = {}
     with open(os.path.join(parameters.MAIN_FOLDER, "resources/tag_categories.csv"), newline='', encoding='utf-8') as f:
-        complex_temp = csv.reader(f)
+        complex_temp = list(csv.reader(f))
     
     additional_data=os.path.join(parameters.MAIN_FOLDER, "resources/user_categories.csv")
     if os.path.exists(additional_data):
@@ -568,10 +568,10 @@ def get_tag_categories_from_csv():
             # assume second csv has a header
             # skip this row → do nothing, reader2 is already advanced
             parameters.log.info("detected header in user_categories.csv, skipping first row")
+            complex_temp2 = list(complex_temp2) # skipping header
         else:
-            # put it back if it wasn’t a header
-            if first_row:
-                complex_temp2 = itertools.chain([first_row], complex_temp2)
+            # put first row back if it wasn’t a header
+            complex_temp2 = [first_row] + list(complex_temp2) if first_row else []
         
             
         merged_csv_reader = itertools.chain(complex_temp, complex_temp2)
@@ -579,7 +579,7 @@ def get_tag_categories_from_csv():
         merged_csv_reader = complex_temp
     
     skip_first = True
-    for row in merged_csv_reader:
+    for i, row in enumerate(merged_csv_reader):
         if skip_first:
             skip_first = False
             continue
