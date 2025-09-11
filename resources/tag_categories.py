@@ -561,6 +561,19 @@ def get_tag_categories_from_csv():
     if os.path.exists(additional_data):
         with open(additional_data, newline='', encoding='utf-8') as f:
             complex_temp2 = csv.reader(f)
+            
+        # Peek first row of complex_temp2
+        first_row = next(complex_temp2, None)
+        if first_row and ("category" in first_row[0].strip().lower() or "categories" in first_row[0].strip().lower()):
+            # assume second csv has a header
+            # skip this row → do nothing, reader2 is already advanced
+            parameters.log.info("detected header in user_categories.csv, skipping first row")
+        else:
+            # put it back if it wasn’t a header
+            if first_row:
+                complex_temp2 = itertools.chain([first_row], complex_temp2)
+        
+            
         merged_csv_reader = itertools.chain(complex_temp, complex_temp2)
     else:
         merged_csv_reader = complex_temp
