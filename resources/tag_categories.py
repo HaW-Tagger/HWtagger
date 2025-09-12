@@ -528,55 +528,66 @@ remove_low_threshold_list = ['ahegao', 'navel piercing', 'clitois piercing', 'to
                                 
 ] + list(EMOJI_10KPLUS_UNIQUE.keys()) + list(EMOJI_10KPLUS.keys())
 
-def get_recommendations_from_csv():
-    complexer = {}
-    with open(os.path.join(parameters.MAIN_FOLDER, "resources/recommendations.csv"), newline='', encoding='utf-8') as f:
-        complex_temp = csv.reader(f)
-        skip_first = True
-        for row in complex_temp:
-            if skip_first:
-                skip_first = False
-                continue
-            recommended = [x.strip().lower() for x in row[0].split(',') if x != ""]
-            triggers: list[list[str]] = []
-            col = 1
-            while col < len(row) and row[col]:
-                triggers.append([x.strip().lower() for x in row[col].split(',') if x != ""])
-                col+=1
-                
-            for recomm in recommended:
-                if recomm in complexer.keys():
-                    complexer[recomm] = complexer[recomm] + [trigger for trigger in triggers if not any(all([tag in recomm_sample for tag in trigger]) for recomm_sample in complexer[recomm])]
-                else:
-                    complexer[recomm] = triggers
-    return complexer
-
-
-def get_tag_categories_from_csv():
-    complexer = {}
-    with open(os.path.join(parameters.MAIN_FOLDER, "resources/tag_categories.csv"), newline='', encoding='utf-8') as f:
+def get_main_optional_csv_reader(main_file, additional_data="", user_file_str=""):
+    # used to read both recommendation and tag_categories and merge them, additional data is optional
+    with open(main_file, newline='', encoding='utf-8') as f:
         complex_temp = list(csv.reader(f))
-    
-    additional_data=os.path.join(parameters.MAIN_FOLDER, "resources/user_categories.csv")
-    if os.path.exists(additional_data):
+    if user_file_str and os.path.exists(additional_data):
         with open(additional_data, newline='', encoding='utf-8') as f:
             complex_temp2 = csv.reader(f)
             
-        # Peek first row of complex_temp2
-        first_row = next(complex_temp2, None)
-        if first_row and ("category" in first_row[0].strip().lower() or "categories" in first_row[0].strip().lower()):
-            # assume second csv has a header
-            # skip this row → do nothing, reader2 is already advanced
-            parameters.log.info("detected header in user_categories.csv, skipping first row")
-            complex_temp2 = list(complex_temp2) # skipping header
-        else:
-            # put first row back if it wasn’t a header
-            complex_temp2 = [first_row] + list(complex_temp2) if first_row else []
+            # Peek first row of complex_temp2
+            first_row = next(complex_temp2, None)
+            if first_row and ("recommend" in first_row[0].strip().lower()):
+                # assume second csv has a header
+                # skip this row → do nothing, reader2 is already advanced
+                #parameters.log.info(f"detected header in {user_file_str}, skipping first row")
+                complex_temp2 = list(complex_temp2) # skipping header
+            else:
+                # put first row back if it wasn’t a header
+                complex_temp2 = [first_row] + list(complex_temp2) if first_row else []
         
-            
         merged_csv_reader = itertools.chain(complex_temp, complex_temp2)
+        parameters.log.info(f"Additional {user_file_str} detected, added {len(complex_temp2)} lines")
     else:
-        merged_csv_reader = complex_temp
+        merged_csv_reader = complex_temp      
+    
+    return merged_csv_reader
+
+def get_recommendations_from_csv():
+    complexer = {}
+    skip_first = True
+    user_file_str = "resources/user_recommendations.csv"
+    main_file = os.path.join(parameters.MAIN_FOLDER, "resources/recommendations.csv")
+    additional_data = os.path.join(parameters.MAIN_FOLDER, user_file_str)
+    
+    merged_csv_reader = get_main_optional_csv_reader(main_file, additional_data, user_file_str) 
+    
+    for row in merged_csv_reader:
+        if skip_first:
+            skip_first = False
+            continue
+        recommended = [x.strip().lower() for x in row[0].split(',') if x != ""]
+        triggers: list[list[str]] = []
+        col = 1
+        while col < len(row) and row[col]:
+            triggers.append([x.strip().lower() for x in row[col].split(',') if x != ""])
+            col+=1
+            
+        for recomm in recommended:
+            if recomm in complexer.keys():
+                complexer[recomm] = complexer[recomm] + [trigger for trigger in triggers if not any(all([tag in recomm_sample for tag in trigger]) for recomm_sample in complexer[recomm])]
+            else:
+                complexer[recomm] = triggers
+    return complexer
+
+def get_tag_categories_from_csv():
+    complexer = {}
+    user_file_str = "resources/user_categories.csv"
+    main_file = os.path.join(parameters.MAIN_FOLDER, "resources/tag_categories.csv")
+    additional_data=os.path.join(parameters.MAIN_FOLDER, user_file_str)
+    
+    merged_csv_reader = get_main_optional_csv_reader(main_file, additional_data, user_file_str)
     
     skip_first = True
     for i, row in enumerate(merged_csv_reader):
@@ -789,7 +800,7 @@ TAG2CATEGORY = {}
 CATEGORY_TAG_DICT = {}
 TAG_DEFINITION = {}
 
-char_manuals = ['TAIMANIN_SERIES' , 
+char_manuals = ['TAIMANIN_SERIES' , 'MANUAL_CHAR_FGO_GAME', 'MANUAL_CHAR_FGO_ANIME','MANUAL_CHAR_F_STAYNIGHT',
                 'MANUAL_CHAR_MISC' ,'MANUAL_CHAR_UMINEKO' ,'MANUAL_CHAR_BLEACH' , 'MANUAL_CHAR_AOT',"MANUAL_CHAR_ISEKAI","MANUAL_CHAR_SEITOKAIYAKUIN",
                 'MANUAL_CHAR_BLACK_LAGOON_JORMUNGND' ,'MANUAL_CHAR_WORLD_TRIGGER' , 'MANUAL_CHAR_NARUTO', 'MANUAL_CHAR_FAIRYTAIL',
                 'MANUAL_CHAR_CONAN' ,'MANUAL_CHAR_FRIEREN' ,'MANUAL_CHAR_GITS' ,'MANUAL_CHAR_GAMES' , "MANUAL_CHAR_POKEMON","MANUAL_CHAR_QUEENSBLADE",
@@ -894,20 +905,14 @@ def tag_categories_init():
     # we check and notify user of any unadded characters in the character dict       
     unadded_char = []
     
-    
-    
-    
-    
     for mainCategory in ["CHARACTERS", "CHARACTERS_LESSER"]:
         for subcat in TAG_CATEGORIES[mainCategory].values():
             for tag in subcat["tags"]:
                 if tag not in CHARACTERS_TAG:
                     unadded_char.append(tag)
-
-            
-            
-    if unadded_char:
-        parameters.log.info(f"Warning: {len(unadded_char)} are not added in the character dict: {unadded_char}")
+  
+    if unadded_char and parameters.PARAMETERS["save_manual_names_to_favorites_file"]:
+        parameters.log.info(f"Warning: {len(unadded_char)} are not added in the favorites.txt: {unadded_char}")
             
             
 def check_definitions_and_recommendations():
