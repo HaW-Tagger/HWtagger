@@ -739,7 +739,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         # the second arg for completer is a reference to the parent, so the reference is tied to the line edit
         self.dir_completer = QCompleter(self.recent_dir_list, self.lineEdit_view_database_path)
         self.dir_completer.setCompletionMode(QCompleter.PopupCompletion) # dropdown style
-        self.dir_completer.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.dir_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.dir_completer.setFilterMode(Qt.MatchFlag.MatchContains)
         self.dir_completer.setMaxVisibleItems(parameters.PARAMETERS["max_stored_directories"])
         self.lineEdit_view_database_path.setCompleter(self.dir_completer)

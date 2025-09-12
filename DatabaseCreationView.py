@@ -153,6 +153,9 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
                 "p1_p4_BodyModification","p1_p4_Bondage","p1_p4_Femdom","p1_p4_NSFW_fetish","p1_p4_NSFW_general",
                 "p1_p4_NSFW_Netorare"]		
 
+		check = ["p0_p2_emotions","p0_p6_clothes","p0_p7_nonhuman","p1_p2_extreme_content"]
+		check = tuple(check)
+  
 		from collections import Counter
 		global_tag_counter = Counter()
 		global_rejected_counter = Counter()
@@ -167,9 +170,11 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 		# check immediate folder above is checkpoint
 		folders = [f for f in folders if os.path.basename(os.path.dirname(f)) == "checkpoint"]
 		skipped = [f for f in folders if f.endswith(ignore_folders) or f.endswith(skip_processing)]
-		print(skipped)
-		folders = [f for f in folders if f not in skipped]
-		print(folders)
+		print("skipped",len(skipped) , skipped)
+		#folders = [f for f in folders if f not in skipped]
+		folders = [f for f in folders if f.endswith(check)]
+  
+		print("working on",len(folders) , folders)
 		
 		
 		re_tag_char = False
