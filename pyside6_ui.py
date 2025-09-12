@@ -33,8 +33,8 @@ import ImageTools
 from interfaces import interface
 from tools import files, safetensors_metadata
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QSpinBox
-from PySide6.QtCore import Slot, Qt
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QSpinBox, QCompleter
+from PySide6.QtCore import Slot, Qt, QStringListModel
 from PySide6.QtGui import QFont, QPalette, QColor, Qt
 
 from classes.class_database import Database
@@ -65,10 +65,11 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.widget_to_output.editedMainTriggerTag.connect(self.update_main_trigger_tags)
         self.widget_to_output.editedSecondaryTriggerTag.connect(self.update_secondary_trigger_tags)
         
-        
         # Copy to clipboard, button is hidden in init below, and a warning message is displayed if clicked somehow
         self.widget_to_output.copyTagsToClipboard.connect(self.copy_tags_to_clipboard)
-        
+        self.widget_to_output.pushButton_copy_to_clipboard.hide()
+
+
         #############################
         # DATABASE TOOLS
 
@@ -128,6 +129,11 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.pushButton_open_view_database_path.clicked.connect(self.open_view_database_path_button)
         self.databaseTabWidget.tabCloseRequested.connect(self.view_database_close_requested)
 
+        # setup for the autocomplete for recent directories
+        self.recent_dir_list = []
+        self.dir_completer = None
+        self.setup_recent_directories()
+        
 
         ##############################
         # DATASET CLEANING TAB
@@ -180,7 +186,8 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                 use_sentence=self.widget_to_output.use_sentence(),
                 sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
                 remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section()
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section(),
+                shuffle_tags=self.widget_to_output.use_random_shuffle()
                 )
 
     @Slot()
@@ -193,7 +200,8 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                 use_sentence=self.widget_to_output.use_sentence(),
                 sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
                 remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section()
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section(),
+                shuffle_tags=self.widget_to_output.use_random_shuffle()
                 )
 
     @Slot()
@@ -213,7 +221,8 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                 use_sentence=self.widget_to_output.use_sentence(),
                 sentence_in_trigger=self.widget_to_output.use_sentence_in_token_separator(),
                 remove_tags_in_sentence=self.widget_to_output.remove_tag_in_sentence(),
-                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section()
+                score_trigger=self.widget_to_output.use_aesthetic_score_in_trigger_section(),
+                shuffle_tags=self.widget_to_output.use_random_shuffle()
                 )
 
     @Slot(str)
@@ -221,16 +230,15 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         if self.db_loaded():
             self.basic_database.set_triggers("main_tags", text)
         
-
     @Slot(str)
     def update_secondary_trigger_tags(self, text: str):
         if self.db_loaded():
             self.basic_database.set_triggers("secondary_tags", text)
-
+            
     @Slot()
     def copy_tags_to_clipboard(self):
         parameters.log.warning("Copy to clipboard feature is only available for a single image in the image view tab")
-    
+
     #############################
     # DATABASE TOOLS
     # TOP BAR button functions:
@@ -413,8 +421,6 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             primary_db.merge_databases(downstream_dbs, single_group_membership=True)
             primary_db.save_database()
 
-        
-
     # RIGHT:
     @Slot()
     def print_unknown_tags_button(self):
@@ -493,7 +499,6 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                         unk_tags.append(tag)
             parameters.log.info(unk_tags)
 
-
     @Slot()
     def update_wiki_info(self):
         if self.basic_database:
@@ -506,8 +511,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             wiki_info.save_wiki_info(new_wiki)
             t2 = time.time()
             parameters.log.info(f"Updated wiki info, Time taken: {t2-t1}")
-            
-                
+                       
     # checkpoint and misc TOOLS TAB
     def rename_bad_names_to_md5(self):
         confirmation = CustomWidgets.confirmation_dialog(self, text="Do you wish to convert all file names to their MD5 Hash (and update related json)?\nMake sure MD5 didn't update")
@@ -720,11 +724,7 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
                 parameters.log.info("Finished deleting files")
         else:
             parameters.log.error("No files to delete")
-            
-        
-            
-            
-        
+             
     # DATABASE CREATION TAB
     ###################
     # VIEW DATABASE TAB
@@ -733,12 +733,40 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
             #main_widget = DatabaseTags.DatabaseFrame(db)
             self.databaseTabWidget.addTab(main_widget, db.folder)
     
+    def setup_recent_directories(self):
+        #max_remembered_directories
+        self.recent_dir_list = files.get_recent_directories()
+        # the second arg for completer is a reference to the parent, so the reference is tied to the line edit
+        self.dir_completer = QCompleter(self.recent_dir_list, self.lineEdit_view_database_path)
+        self.dir_completer.setCompletionMode(QCompleter.PopupCompletion) # dropdown style
+        self.dir_completer.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.dir_completer.setFilterMode(Qt.MatchFlag.MatchContains)
+        self.dir_completer.setMaxVisibleItems(parameters.PARAMETERS["max_stored_directories"])
+        self.lineEdit_view_database_path.setCompleter(self.dir_completer)
+        
+        
+        self._dir_filter = CustomWidgets.CustomQCompleterForcedDropdown(
+            self.dir_completer, self.lineEdit_view_database_path)
+        self.lineEdit_view_database_path.installEventFilter(self._dir_filter)
+        
+        
+   
+    def update_recent_directories(self, new_dir):
+        #print("new dir", new_dir)
+        new_dir_model = QStringListModel(new_dir)
+        self.dir_completer.setModel(new_dir_model)  
+    
     @Slot()
     def view_database_button(self):
         folder_path = self.lineEdit_view_database_path.text().strip()
         if not os.path.exists(os.path.join(folder_path,parameters.DATABASE_FILE_NAME)):
             parameters.log.warning("No valid path entered.")
             return False
+        
+        self.recent_dir_list.insert(0, folder_path)
+        new_dir_list = files.save_recent_directories(self.recent_dir_list)
+        self.update_recent_directories(new_dir_list)
+        
         temp_db = Database(folder_path)
         #temp_db.check_existence_images()
         self.add_db_tab_widget(temp_db)
@@ -746,8 +774,11 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
     @Slot()
     def open_view_database_path_button(self):
         path = CustomWidgets.path_input_dialog(self)
-        self.lineEdit_view_database_path.setText(path)
-        self.view_database_button()
+        if path:
+            self.lineEdit_view_database_path.setText(path)
+            self.view_database_button()
+        else:
+            parameters.log.warning("No valid path entered.")
 
     @Slot(int)
     def view_database_close_requested(self, index):
