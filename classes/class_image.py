@@ -786,7 +786,7 @@ class ImageDatabase:
     def get_full_only_tags(self, sort_by_probability_and_manual=False):
         if sort_by_probability_and_manual:
             # manual and prob is built in
-            sorted_tags = sorted(self.get_full_tags(), key=lambda x: (x.manual, x.probability), reverse=True)
+            sorted_tags = sorted(self.get_full_tags(), key=lambda x: (x.get_manual(), x.probability), reverse=True)
             #for tag in sorted_tags:
             #    print(tag.tag, tag.manual, tag.probability)
             return [tag.tag for tag in sorted_tags]

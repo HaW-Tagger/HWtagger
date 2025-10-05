@@ -153,7 +153,8 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
                 "p1_p4_BodyModification","p1_p4_Bondage","p1_p4_Femdom","p1_p4_NSFW_fetish","p1_p4_NSFW_general",
                 "p1_p4_NSFW_Netorare"]		
 
-		check = ["p0_p2_emotions","p0_p6_clothes","p0_p7_nonhuman","p1_p2_extreme_content"]
+		check = ["p0_p0_Background","p0_p0_SFW_effects","p0_p0_SFW_objects","p0_p2_emotions","p0_p6_clothes",
+           "p0_p7_hand_poses","p0_p7_nonhuman","p1_p2_extreme_content"]
 		check = tuple(check)
   
 		from collections import Counter
@@ -322,12 +323,18 @@ class DatabaseCreationView(QWidget, databaseCreationTab.Ui_Form):
 		if not os.path.exists(folder):
 			parameters.log.error("Invalid folder path")
 			return False
+
+		# notify user if they're using offline captions and tags and renaming to md5
+		if (self.checkBox_offline_captions.isChecked() or self.checkBox_offline_tags.isChecked()) and self.checkBox_rename_to_md5.isChecked():
+			error_message = "Renaming to md5 may cause missmatch between images and captions/tags if they're not named properly"
+			parameters.log.warning(error_message)
+			confirmation = CustomWidgets.confirmation_dialog(self, error_message + ", continue?")
+			if not confirmation:
+				return False
+
+
 		images_paths = set(files.get_all_images_in_folder(folder, image_ext=parameters.ALL_IMAGES_EXT))
 		
-		
-		
-
-  
 		if not images_paths:
 			return False
 		non_ascii = [p for p in images_paths if not p.isascii()]

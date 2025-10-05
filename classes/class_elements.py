@@ -1185,3 +1185,8 @@ class TagElement:
             self.wiki_page = wiki_info.get_wiki_page(self.tag)
             # updating wiki_info happens elsewhere in batches
             return self.wiki_page
+        
+    def get_manual(self):
+        if not hasattr(self, "manual"):
+            self.manual = False
+        return self.manual

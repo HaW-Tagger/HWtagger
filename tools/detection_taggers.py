@@ -6,13 +6,12 @@ from collections import Counter
 import math
 import torch
 import onnxruntime as ort
-from src_files.data.path_dataset import PathDataset_test
 import torchvision.transforms as transforms
 
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from PIL import Image
 
-from tools.wd14_based_taggers import custom_collate
+from tools.dataset_loader import custom_collate
 import imagesize
 import numpy as np
 

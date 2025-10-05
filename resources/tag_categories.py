@@ -34,9 +34,9 @@ PRIORITY_DICT,
 TAG2CATEGORY : tag [str] -> category [str]
 """
 
-# these are depreciated tags with proper replacement(s) added to tag categories
+# these are depreciated tags with proper replacement(s) added to tag categories, they're automatically highlighted in the UI
 DEPRECIATED = {"disembodied limb", 'french braid', 'looking away', 'eyebrows', 'areolae', 
-                'uniform','multiple penises'
+                'uniform','multiple penises','untied'
                'striped','breast hold','arm grab','habit','light','multicolored background',
                'pose', 'plaid', 'oni horns','wall',
                'black headwear','white headwear','brown headwear','red headwear','blue headwear',
@@ -53,7 +53,7 @@ DEPRECIATED = {"disembodied limb", 'french braid', 'looking away', 'eyebrows', '
                'implied anal','white uniform','chest armor','hand on forehead',"just the tip","tired",
                "furniture", "correction","qiya","wtf",'piercings','black legwear','white legwear','brown legwear',
                'red legwear','blue legwear','green legwear','purple legwear','grey legwear','yellow legwear',
-               'orange legwear','gold legwear', 'drop earrings', 'amazon'
+               'orange legwear','gold legwear', 'drop earrings', 'amazon', 'striped legwear', 'striped footwear'
                
                }
 
@@ -548,7 +548,7 @@ def get_main_optional_csv_reader(main_file, additional_data="", user_file_str=""
                 complex_temp2 = [first_row] + list(complex_temp2) if first_row else []
         
         merged_csv_reader = itertools.chain(complex_temp, complex_temp2)
-        parameters.log.info(f"Additional {user_file_str} detected, added {len(complex_temp2)} lines")
+        #parameters.log.info(f"Additional {user_file_str} detected, added {len(complex_temp2)} lines")
     else:
         merged_csv_reader = complex_temp      
     

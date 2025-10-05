@@ -1,6 +1,13 @@
 import os
-
 from PIL import Image
+
+# the following two imports are moved to when they're used for lazy import to avoid 
+# pytorch's dataloader from calling them multiple times
+#from tools import files
+
+from resources import parameters
+
+from src_files.data.path_dataset import PathDataset_test
 
 os.environ["XFORMERS_FORCE_DISABLE_TRITON"] = "1"
 import warnings
@@ -11,18 +18,11 @@ import torch
 import math
 import torchvision.transforms.v2 as transforms
 import torchvision.transforms.functional as F
-from torch.utils.data.dataloader import default_collate
 import onnxruntime as ort
 
 from tqdm.auto import tqdm
 import numpy as np
 
-from tools import files
-from src_files.data.path_dataset import PathDataset_test
-from resources import parameters, tag_categories
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-PIN_MEMORY = True if torch.cuda.is_available() else False
 # onnx verion opset:
 # https://github.com/onnx/onnx/blob/main/docs/Versioning.md#released-versions
 
@@ -61,16 +61,7 @@ def parse_interpolation(interpolation_str):
     parameters.log.info("Typo or unrecognized interpolation method, defaulting to Bicubic interpolation")
     return transforms.functional.InterpolationMode.BICUBIC
         
-def build_dataset(img_transformation, paths=[], bs=4, num_workers=4, use_bgr=False, reused_dataloader=None):
-    # imgClassification, Image Completeness
-    if reused_dataloader:
-        return reused_dataloader
-    # swin and other smilingwolf tagger uses bgr: https://huggingface.co/spaces/SmilingWolf/wd-tagger/blob/main/app.py
-    dataset = PathDataset_test(paths, img_transformation, convert_bhwc=False, convert_bgr=use_bgr, 
-                            to_np=True, fill_transaprent=True)
-    loader = torch.utils.data.DataLoader(dataset, batch_size=bs, num_workers=num_workers, 
-                                        shuffle=False, collate_fn=custom_collate, pin_memory=PIN_MEMORY)
-    return loader
+
 class SquarePad:
     def __call__(self, image: Image.Image):
         #https://discuss.pytorch.org/t/how-to-resize-and-pad-in-a-torchvision-transforms-compose/71850/10
@@ -88,9 +79,7 @@ class SquarePad:
         return F.pad(image, padding, (255,255,255), 'constant')
 
 
-def custom_collate(batch):
-    #len_batch = len(batch)
-    return default_collate(batch)
+
 
 class FictionnalArgs:
     def __init__(self, data, dir_path, ckpt, batch_size:int=4, num_workers:int=4, interpolation:str="bicubic", model_name:str="model"):
@@ -224,6 +213,7 @@ class ImageCompletenessDemo(BaseDemo):
         return path_dict
 
 def percentile_to_label(percentile):
+    from resources import tag_categories
     mapping = tag_categories.QUALITY_LABELS_MAPPING
     return_label = "worst"
     for label, threshold in sorted(mapping.items(), key=lambda x: (-x[1], x[0])):
@@ -277,7 +267,7 @@ class ImageScoringDemo(BaseDemo):
                     return np.clip((score - x0) / (x1 - x0) * (y1 - y0) + y0, a_min=y_min, a_max=y_max)
             else:
                 return y[idx]
-                
+        from resources import tag_categories      
         sorted_values = np.array([v for v in sorted(tag_categories.QUALITY_LABELS_MAPPING.values())])
         sorted_keys = [v[0] for v in sorted(tag_categories.QUALITY_LABELS_MAPPING.items(), key=lambda item: item[1])]
         
@@ -302,13 +292,15 @@ class Swinv2v3TaggingDemo(BaseDemo):
     def __init__(self, args, update_to_eva02=False):
         super().__init__(args)
         # the eva02_large code and Swinv2v3 code is basically the same, so it was refactored
-        
+        from tools import files
         if update_to_eva02:
             tags_df = files.get_pd_eva02_large_tag_frequency()
         else:
             tags_df = files.get_pd_swinbooru_tag_frequency()
        # https://huggingface.co/spaces/SmilingWolf/wd-tagger/tree/main
         name_series = tags_df["name"]
+        
+        from resources import tag_categories
         name_series = name_series.map(lambda x: x.replace("_", " ") if x not in tag_categories.KAOMOJI else x)
         self.tag_names = name_series.tolist()
         self.rating_indexes = list(np.where(tags_df["category"] == 9)[0])
@@ -400,7 +392,8 @@ def image_scoring(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_s
     parameters.log.info(f"Loading SwinV2_aesthetic, Batch:{batch_size}, using ONNX and torch")
     args = FictionnalArgs(data, model_pth, ckpt, batch_size, model_name=model_name)
     demo = ImageScoringDemo(args)
-    dataloader = build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
+    import tools.dataset_loader as dataset_loader
+    dataloader = dataset_loader.build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
     tag_dict = demo.infer_batch(dataloader, args.model_dir)
     
     return tag_dict
@@ -412,7 +405,8 @@ def image_classify(data, model_pth, batch_size=parameters.PARAMETERS["max_batch_
     parameters.log.info(f"Loading Image source classifer, Batch:{batch_size}, using ONNX and torch")
     args = FictionnalArgs(data, model_pth, ckpt, batch_size, model_name=model_name)
     demo = ImageClassificationDemo(args)
-    dataloader = build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
+    import tools.dataset_loader as dataset_loader
+    dataloader = dataset_loader.build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
     tag_dict = demo.infer_batch(dataloader)
     return tag_dict
 
@@ -423,7 +417,8 @@ def image_completeness(data, model_pth, batch_size=parameters.PARAMETERS["max_ba
     parameters.log.info(f"Loading Image completeness identifier, Batch:{batch_size}, using ONNX and torch")
     args = FictionnalArgs(data, model_pth, ckpt, batch_size, model_name=model_name)
     demo = ImageCompletenessDemo(args)
-    dataloader = build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
+    import tools.dataset_loader as dataset_loader
+    dataloader = dataset_loader.build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
     tag_dict = demo.infer_batch(dataloader)
     return tag_dict
 
@@ -437,7 +432,8 @@ def swinv2v3_tagging(data, model_pth, character_only=False, batch_size=parameter
     args = FictionnalArgs(data, model_pth, ckpt, batch_size, model_name=model_name)
     args.add_args_for_tagger(threshold, character_threshold, CHARACTERS, character_only, interpolation)
     demo = Swinv2v3TaggingDemo(args)
-    dataloader = build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
+    import tools.dataset_loader as dataset_loader
+    dataloader = dataset_loader.build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
     tag_dict = demo.infer_batch(dataloader, args.thresh ,args.char_thresh, args.num_classes, args.char_tag, args.character_only)
     return tag_dict
 
@@ -451,7 +447,9 @@ def eva02_large_v3_tagging(data, model_pth, character_only=False, batch_size=par
     args = FictionnalArgs(data, model_pth, ckpt,  batch_size, model_name=model_name)
     args.add_args_for_tagger(threshold, character_threshold, CHARACTERS, character_only, interpolation)
     demo = Swinv2v3TaggingDemo(args, update_to_eva02=True)
-    dataloader = build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
+    
+    import tools.dataset_loader as dataset_loader
+    dataloader = dataset_loader.build_dataset(args.trans, args.data, args.batch_size, args.num_workers, args.use_bgr, reused_dataloader)
     tag_dict = demo.infer_batch(dataloader, args.thresh ,args.char_thresh, args.num_classes, args.char_tag, args.character_only)
     return tag_dict
 
@@ -460,8 +458,6 @@ def eva02_large_v3_tagging(data, model_pth, character_only=False, batch_size=par
 
 class image_resize_demo(BaseDemo):
     pass
-    
-
 
 class CaptionArgs:
     def __init__(self, data, model_pth, ckpt, batch_size):

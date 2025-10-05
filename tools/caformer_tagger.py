@@ -18,7 +18,7 @@ from resources import parameters
 from resources.tag_categories import KAOMOJI
 
 from tools.wd14_based_taggers import parse_interpolation
-
+from tools.images import custom_collate
 
 IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".bmp"]
 
@@ -35,13 +35,6 @@ class HiddenPrints: # this is used when loading the model to supress the triton 
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
 
-def custom_collate(batch):
-    len_batch = len(batch)
-    batch = list(filter(lambda x : x[0] is not None, batch))
-    if len_batch > len(batch): # if there are samples missing just use existing members, doesn't work if you reject every sample in a batch
-        diff = len_batch - len(batch)
-        batch = batch + batch[:diff] # assume diff < len(batch)
-    return default_collate(batch)
 
 class FictionnalArgs:
     def __init__(self, data, ckpt, class_map, bs, interpolation="bicubic"):

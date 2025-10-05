@@ -744,13 +744,17 @@ class AddTags(QMainWindow, interface.Ui_MainWindow):
         self.dir_completer.setMaxVisibleItems(parameters.PARAMETERS["max_stored_directories"])
         self.lineEdit_view_database_path.setCompleter(self.dir_completer)
         
-        
-        self._dir_filter = CustomWidgets.CustomQCompleterForcedDropdown(
-            self.dir_completer, self.lineEdit_view_database_path)
-        self.lineEdit_view_database_path.installEventFilter(self._dir_filter)
-        
-        
-   
+        # Show popup after 1 character
+        def show_after_first_char(text):
+            if len(text) >= 1:
+                self.dir_completer.setCompletionPrefix(text)
+                if self.dir_completer.completionCount() > 0:
+                    self.dir_completer.complete()
+            else:
+                self.dir_completer.popup().hide()
+
+        self.lineEdit_view_database_path.textEdited.connect(show_after_first_char)
+
     def update_recent_directories(self, new_dir):
         #print("new dir", new_dir)
         new_dir_model = QStringListModel(new_dir)

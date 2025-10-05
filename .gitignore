@@ -11,6 +11,8 @@ starthere2.bat
 data.json
 resources/favourites.txt
 resources/recent_directories.txt
+resources/user_categories.csv
+resources/user_recommendations.csv
 resources/config.ini
 resources/noteToSelf.txt
 config.ini

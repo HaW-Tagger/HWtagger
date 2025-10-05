@@ -335,7 +335,6 @@ class PaintingImage(QWidget):
         self.setMinimumSize(50, 50)
         self.activated_drawing = False
 
-
     def mousePressEvent(self, event):
         if self.activated_drawing:
             self.label.mousePressEvent(event)
@@ -368,21 +367,6 @@ class PaintingImage(QWidget):
     def edit_rectangle(self):
         self.activated_drawing = True
         self.label.activated_drawing = True
-
-class CustomQCompleterForcedDropdown(QObject):
-    def __init__(self, completer, parent=None):
-        super().__init__(parent)
-        self.completer = completer
-
-    def eventFilter(self, watched, event):
-        if event.type() == QEvent.FocusIn:
-            self.completer.complete()
-            
-        # the following works, but also makes it impossible to highlight texts
-        #elif event.type() == QEvent.MouseButtonPress:
-        #    # Re-show popup even if already focused
-        #    self.completer.complete()
-        return False  # let normal handling continue
 
 class CustomQCompleter(QCompleter):
     def splitPath(self, path):

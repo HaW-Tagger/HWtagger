@@ -50,11 +50,13 @@ def multi_model_caller(image_paths, tagging_models, extra_args=None):
         parameters.log.info("creating reusable dataloader for SW model types")
         f_args = wd14_based_taggers.FictionnalArgs(image_paths, "", "", interpolation="bicubic")
         f_args.add_args_for_tagger(0, 0)
-        SW_tagger_datset = wd14_based_taggers.build_dataset(f_args.trans, f_args.data, f_args.batch_size, f_args.num_workers, use_bgr=True)
+        import tools.dataset_loader as dataset_loader
+        SW_tagger_datset = dataset_loader.build_dataset(f_args.trans, f_args.data, f_args.batch_size, f_args.num_workers, use_bgr=True)
     if 1 < count_overlaps(tagging_models, anime_classifier_models):
         parameters.log.info("creating reusable dataloader for anime-classifier model types")
         f_args = wd14_based_taggers.FictionnalArgs(image_paths, "", "")
-        classifier_dataset = wd14_based_taggers.build_dataset(f_args.trans, f_args.data, f_args.batch_size, f_args.num_workers)
+        import tools.dataset_loader as dataset_loader
+        classifier_dataset = dataset_loader.build_dataset(f_args.trans, f_args.data, f_args.batch_size, f_args.num_workers)
     
     for model_hf_name, download_loc in zip(tagger_huggingface_name, param_tagger_download_folders):
         if model_hf_name in tagging_models: # if the model is the one we want to use

@@ -39,7 +39,8 @@ if (parameters.PARAMETERS["sort_autocompletion_by_frequency"]
     # the tag_frequency was generated using the the checkpoint data (before most checks in May 2025) 
     and os.path.exists(os.path.join(parameters.MAIN_FOLDER, "resources/tag_frequency.txt"))):
     with open(os.path.join(parameters.MAIN_FOLDER, "resources/tag_frequency.txt"), 'r') as f:
-        ordered_tags = [line.split(":")[0].strip() for line in f]
+        ordered_tags = [line.split(":")[1].strip() for line in f]
+    
     ordered_set = set(ordered_tags)
     tags_wordlist = ordered_tags + [tag for tag in tags_wordlist if tag not in ordered_set]
 else:
