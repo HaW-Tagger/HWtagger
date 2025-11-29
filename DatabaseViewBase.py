@@ -457,6 +457,7 @@ class SortType(enum.Enum):
 
     # Name, function, Tooltip description, Tooltip attribute
     ORDER_ADDED =  "Order Added", lambda x: int(x.order_added), "Order Added", ""
+    ORDER_ADDED_UNREVIEWED = "Order Added (Unreviewed)", lambda x: (int(not x.manually_reviewed), len(x.manual_tags), int(x.order_added)), "Other", ""
     TAGS_LEN = "Tags length", lambda x: len(x.full_tags), "Tags Length", ""
     TOKEN_LEN = "Token length", lambda x: x.get_token_length(), "Other", ""
     SENTENCE_TOKEN_LEN = "Sentence token length", lambda x: x.get_sentence_token_length(), "Other", ""
@@ -1713,6 +1714,7 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
     def update_selected_image_group(self, group_list=[]):
         view_indices, db_indices = self.get_selected_index_list()
         if db_indices:
+            parameters.log.info(f"Updating {len(db_indices)} images to {group_list}")
             self.db.update_image_groups(group_list=group_list, image_indicies=db_indices)
         else:
             parameters.log.info("No image selected")
@@ -1935,6 +1937,7 @@ class TagsViewBase(QWidget, tagsViewBase.Ui_Form):
             size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
             self.comboBox_groups.setSizePolicy(size_policy)
             self.horizontalLayout_7.insertWidget(0, self.comboBox_groups)
+            # comboBox_groups is the custom dropdown on the tags view with the checkboxes
             self.comboBox_groups.dropdown_closed.connect(self.update_combobox_group)
         
         self.comboBox_score_tags.addItem("NONE")
@@ -1992,11 +1995,18 @@ class TagsViewBase(QWidget, tagsViewBase.Ui_Form):
         parameters.log.info(f"Widget's Parent {parent_name}, layout: {layout_name}")
         
     def update_combobox_group(self):
+        if not self.isVisible():
+            parameters.log.info("Tags view is not visible, skipping group update")
+            return
         groups = self.comboBox_groups.get_selected()
-        parameters.log.info(f"update selected, {groups}")
-        self.groupInfoChanged.emit(groups)
-        if self.image:
-            self.view_image(self.image)
+        parameters.log.info(f"groups: {groups}")
+        if groups: # if there is a group selected
+            parameters.log.info(f"update selected, {groups}")
+            self.groupInfoChanged.emit(groups)
+            if self.image:
+                self.view_image(self.image)
+        else:
+            parameters.log.info("No group selected")
         
     def refresh_combobox_group_content(self):
         img_groups = self.image.group_names if self.image else []
@@ -2014,7 +2024,7 @@ class TagsViewBase(QWidget, tagsViewBase.Ui_Form):
 
     def view_image(self, image: ImageDatabase):
         self.image = image
-        self.image.filter(update_review=True)
+        self.image.filter(update_review=True, single_image=self.single_image_selected)
         if self.checkBox_highligh_rare_tags.isChecked():
             self.askForRareTags.emit()
 

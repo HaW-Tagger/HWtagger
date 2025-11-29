@@ -616,6 +616,8 @@ def get_tag_categories_from_csv():
         }
         if not category in complexer.keys():
             complexer[category] = {}
+        if sub_category in complexer[category].keys():
+            parameters.log.info(f"Warning: duplicate sub category {sub_category} in {category}")
         complexer[category].update(dict_row)
     return complexer
 

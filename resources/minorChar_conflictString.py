@@ -8,8 +8,8 @@
 # list[
 #   tuple[str, list[str]]
 # ]
-
-char_dict = [
+# this is fast for now, but can get slow if the list gets longer, need better solution later
+char_list = [
         ("uchiha sarada", ["short hair", "black hair", "red-framed eyewear"]),
         ("igawa sakura", ["blonde hair", "flipped hair"]),
         ("mei mei (jujutsu kaisen)", ['white hair', 'hair over one eye', 'single braid']),

@@ -542,7 +542,29 @@ class ImageDatabase:
     def append_secondary_rejected(self, tags: list | str | TagsList | TagElement):
         self.secondary_rejected_tags += tags
 
-    def filter(self,*, update_review=False):
+    def check_in_manual_and_reject(self, tag: str | TagElement):
+        # this is mainly used for secondary rejection tags
+        # check if tag is used in amy of the tags_list indicating action was taken upon it
+        if (tag in self.manual_tags or 
+            tag in self.rejected_manual_tags or 
+            tag in self.secondary_new_tags or 
+            tag in self.secondary_rejected_tags):
+            return True
+        return False
+    
+    def filter(self,*, update_review=False, single_image=True):
+        """this is the entry point for the main filtering system
+        the filter logic are made from 3~4 simple rules based on the tag categories
+        
+        there's one special condition that uses the probability of the tags and when we do
+        multi-image selection, probability is set to 0 for the UI, so the single image variable 
+        was added to keep the behavior consistent
+
+        Args:
+            update_review (bool, optional): _description_. Defaults to False.
+            single_image (bool, optional): _description_. Defaults to False.
+        """
+        
         self.filtered_new_tags.clear()
         self.filtered_rejected_tags.clear()
         self.filtered_review = {}
@@ -585,22 +607,30 @@ class ImageDatabase:
                     any([x not in full_tags for x in multiples])):
                     rejected+=[multi_gender]
             
+            if single_image:
+                rejected_by_prob = []
+                tags_under_thresh = full_tags.tags_under_confidence(tag_categories.p_threshold)
+                tags_under_thresh_08 = full_tags.tags_under_confidence(0.8)
+                for tag in tag_categories.remove_low_threshold_list:
+                    if tag in tags_under_thresh:
+                        
+                        rejected_by_prob += [tag]
             
-            tags_under_thresh = full_tags.tags_under_confidence(tag_categories.p_threshold)
-            tags_under_thresh_08 = full_tags.tags_under_confidence(0.8)
-            for tag in tag_categories.remove_low_threshold_list:
-                if tag in tags_under_thresh:
-                    rejected += [tag]
-        
-            if 'steam' in full_tags and 'steaming body' in full_tags and any(
-                [tag in full_tags for tag in tag_categories.TAG_CATEGORIES_EXCLUSIVE["BACKGROUND COLOR"]]):
-                rejected += ['steam']
-            
-            objects = ('sex toy', 'vibrator', 'dildo', 'bead', 'strap-on', 'plug', 'magic wand', 'aneros')
-            if 'vaginal object insertion' in tags_under_thresh_08 and any([obj in full_tags for obj in objects]):
-                rejected += ['vaginal object insertion']
-            if 'anal object insertion' in tags_under_thresh_08 and any([obj in full_tags for obj in objects]):
-                rejected += ['anal object insertion']
+                if 'steam' in full_tags and 'steaming body' in full_tags and any(
+                    [tag in full_tags for tag in tag_categories.TAG_CATEGORIES_EXCLUSIVE["BACKGROUND COLOR"]]):
+                    rejected_by_prob += ['steam']
+                
+                objects = ('sex toy', 'vibrator', 'dildo', 'bead', 'strap-on', 'plug', 'magic wand', 'aneros')
+                if 'vaginal object insertion' in tags_under_thresh_08 and any([obj in full_tags for obj in objects]):
+                    rejected_by_prob += ['vaginal object insertion']
+                if 'anal object insertion' in tags_under_thresh_08 and any([obj in full_tags for obj in objects]):
+                    
+                    rejected_by_prob += ['anal object insertion']
+                
+                rejected_by_prob = [tag for tag in rejected_by_prob if self.check_in_manual_and_reject(tag)]
+                
+                if rejected_by_prob: 
+                    self.append_secondary_rejected(rejected_by_prob)
                 
             
             
@@ -1019,7 +1049,7 @@ class ImageDatabase:
     def get_auto_tag_origin(self, tag) -> list[tuple[str, float]]:
         result = []
         for name in self.auto_tags.names():
-            if "rejected" not in name and tag in self.auto_tags[name]:
+            if tag in self.auto_tags[name]:
                 result.append((name, self.auto_tags[name][tag.tag].probability))
         return result
 
@@ -1296,16 +1326,12 @@ class ImageDatabase:
 
         if auto_tags_origin:
             tooltip_text += f"\nOrigin: {', '.join(['('+str(info_tuple[0])+', '+str(info_tuple[1])+')' for info_tuple in auto_tags_origin])} - auto tags"
-        if tag in self.secondary_new_tags:
-            tooltip_text += f"\nOrigin: secondary_new tags"
-        if tag in self.filtered_new_tags:
-            tooltip_text += f"\nOrigin: filtered_new tags"
-        if tag in self.rejected_manual_tags:
-            tooltip_text += f"\nOrigin: rejected_manual tags"
-        if tag in self.filtered_rejected_tags:
-            tooltip_text += f"\nOrigin: filtered_rejected tags"
-        if tag in self.manual_tags:
-            tooltip_text += f"\nOrigin: manual tags"
+        
+        for tag_list_name in tags_list_keys:
+            taglist = getattr(self, tag_list_name)
+            if tag in taglist:
+                tooltip_text += f"\nOrigin: {taglist.name}"
+        
         wiki = tag.wiki()
         if wiki:
             tooltip_text += "\n\nDanbooru wiki page:\n"+wiki

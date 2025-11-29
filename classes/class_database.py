@@ -368,7 +368,7 @@ class VirtualDatabase:
                 image.rejected_manual_tags -= overlap
         
         for tag, count in overlap_frequency.most_common():
-            parameters.log.info(f"Tag {tag} was in both manual and rejected {count} times")
+            parameters.log.info(f"Tag {tag} was in both manual and rejected {count} times, prioritizing manual, removing rejected")
                 
         
         
@@ -513,7 +513,8 @@ class VirtualDatabase:
         if specific_indexes:
             parameters.log.info(f"Creating txt files for {len(specific_indexes)} images")
             for index in specific_indexes:
-                to_write = self.images[index].create_output(add_backslash_before_parenthesis=add_backslash_before_parenthesis,
+                image = self.images[index]
+                to_write = image.create_output(add_backslash_before_parenthesis=add_backslash_before_parenthesis,
                                             keep_tokens_separator=token_keeper,
                                             main_tags=main_tags,
                                             secondary_tags=secondary_tags,
@@ -640,7 +641,7 @@ class VirtualDatabase:
             
             add_to_group = group_list - img_group
             remove_from_group = img_group - group_list
-        
+            print(f"idx {index}, img group set: {img_group}, adding {add_to_group}, removing {remove_from_group}")
             for group_name in existing_names:
                 if group_name in add_to_group:
                     self.add_image_to_group(group_name, index)
@@ -648,7 +649,7 @@ class VirtualDatabase:
                     self.remove_image_from_group(group_name, index)
                     
                     
-            parameters.log.info(f"after operation: {self.images[index].group_names}")       
+            parameters.log.info(f"img {index}, group after operation: {self.images[index].group_names}")       
     
     def get_group_names(self):
         return [group.group_name for group in self.groups.values()]
@@ -794,7 +795,7 @@ class VirtualDatabase:
         self.groups = {}
         
         for image in self.images:
-            image.groups = {}
+            image.group_names = {}
 
     def remove_group(self, group_name):
         """
@@ -803,8 +804,8 @@ class VirtualDatabase:
         del self.groups[group_name]
         
         for image in self.images:
-            if group_name in image.groups:
-                image.groups.remove(group_name)
+            if group_name in image.group_names:
+                image.group_names.remove(group_name)
 
     def change_md5_of_image(self, image_index, provided_md5s=""):
         """
@@ -1390,7 +1391,7 @@ class Database(VirtualDatabase):
         """
         self.update_images_paths()
         to_keep = []
-        for image in self.images:
+        for image in tqdm(self.images):
             if image.is_image_in_path():
                 to_keep.append(image)
             if image.auto_tags:

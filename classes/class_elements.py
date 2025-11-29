@@ -244,7 +244,7 @@ class RectElement:
                     np.random.shuffle(tags)
                 identified_main_tags = []
                 identified_secondary_tags = []
-
+                # convert to func and refactor
                 if main_tags or secondary_tags:
                     for main_tag in main_tags:
                         if "*" in main_tag:
