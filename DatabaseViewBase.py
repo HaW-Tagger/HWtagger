@@ -471,7 +471,7 @@ class SortType(enum.Enum):
     IMAGE_WIDTH = "Image width", lambda x: (x.image_width, x.image_height), "Other", ""
     IMAGE_HEIGHT = "Image height", lambda x: (x.image_height, x.image_width), "Other", ""
     # sort by group then size, so smaller images are at the end
-    SIMILARITY_GROUP = "Similarity", lambda x: (x.similarity_group, x.image_height), "Other", "similarity_probability" 
+    SIMILARITY_GROUP = "Similarity", lambda x: (x.similarity_group, x.order_added, x.image_height), "Other", "similarity_probability" 
     BRIGHTNESS_VALUE = "Brightness", lambda x: x.get_brightness(), "Other", "brightness_value"
     AVERAGE_PIXEL = "Average pixel", lambda x: x.get_average_pixel(), "Other", "average_pixel"
     CONTRAST_COMPOSITION = "Contrast", lambda x: x.get_contrast_composition(), "Other", "contrast_comp"
@@ -1852,8 +1852,6 @@ class ImageViewBase(QWidget, imageViewBase.Ui_Form):
         self.current_edit_rect_name = ""
 
 
-
-
 class TagsViewBase(QWidget, tagsViewBase.Ui_Form):
     # signals emitted here goes to DatabaseViewBase and routed for database manipulation
     # TagsViewBase --> DatabaseViewBase --> image_view or tags_view
@@ -2567,10 +2565,12 @@ class DatabaseViewBase(QWidget):
         # we don't need to do anything if selected imgs is < 2
         if len(self.selected_images) > 1:
             parameters.log.info(f"Multiple Imgs changed, applying filter to {len(self.selected_images)} images")
+            
+            self.save_image()
             for index in self.selected_images:
                 self.db.images[index].filter(update_review=True)
-                simple = self.db.images[index].get_full_tags().simple_tags()
-                
+                #simple = self.db.images[index].get_full_tags().simple_tags()
+             
             self.add_db_to_history("Filter applied to "+str(len(self.selected_images)))
             self.database_changed(self.selected_images)
             
@@ -2782,7 +2782,9 @@ class DatabaseViewBase(QWidget):
         if not selected_indexes:
             parameters.log.info("No valid images selected for batch button")
             return False
-        parameters.log.info(f"Replacing tags on {len(selected_indexes)} images, Ex ID: {selected_indexes[:max(10, len(selected_indexes))]}")
+        
+        extra = "" if 10 >= len(selected_indexes) else "..."
+        parameters.log.info(f"Replacing tags on {len(selected_indexes)} images, Ex ID: {selected_indexes[:min(10, len(selected_indexes))]}{extra}")
         
   
         

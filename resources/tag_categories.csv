@@ -83,7 +83,7 @@ ACCESSORIES,CHAIN LEASH COLLAR,1,,"collar, chain, leash, chain leash",collar wit
 ACCESSORIES,CHEEK STICKERS,1,,,cheek stickers
 ACCESSORIES,CHEST ACCESSORIES,1,,,"chest jewel, pendant, brooch, corsage, boutonniere"
 ACCESSORIES,CHINESE KNOT,1,,chinese knot,flower knot
-ACCESSORIES,CHOKER COLOR TYPE,1,,"choker, collar","black choker,red choker,white choker,ribbon choker,blue choker,pink choker,frilled choker,heart choker,purple choker,o-ring choker,green choker,orange choker,star choker,yellow choker,pendant choker,bow choker,gold choker,spiked choker,lace choker,brown choker,cross choker,anchor choker,lace-trimmed choker,flower choker,studded choker,grey choker,fur choker,tassel choker,aqua choker,butterfly choker,bead choker,crescent choker,skull choker,fur-trimmed choker,two-tone choker,leather choker,snowflake choker,cat choker,pearl choker,striped choker,belt choker,heart ring choker,multicolored choker,rainbow choker,string choker,silver choker,torn choker,ribbon-trimmed choker,print choker,feather choker,rabbit choker,latex choker,checkered choker,diamond choker,polka dot choker,plaid choker,cross-laced choker,gradient choker,fishnet choker,jack-o'-lantern choker, spade choker"
+ACCESSORIES,CHOKER COLOR TYPE,1,,"choker, collar","black choker,red choker,white choker,ribbon choker,blue choker,pink choker,frilled choker,heart choker,purple choker,o-ring choker,green choker,orange choker,star choker,yellow choker,pendant choker,bow choker,gold choker,spiked choker,lace choker,brown choker,cross choker,anchor choker,lace-trimmed choker,flower choker,studded choker,grey choker,fur choker,tassel choker,aqua choker,butterfly choker,bead choker,crescent choker,skull choker,fur-trimmed choker,two-tone choker,leather choker,snowflake choker,cat choker,pearl choker,striped choker,belt choker,heart ring choker,multicolored choker,rainbow choker,string choker,silver choker,torn choker,ribbon-trimmed choker,print choker,feather choker,rabbit choker,latex choker,checkered choker,diamond choker,polka dot choker,plaid choker,cross-laced choker,gradient choker,fishnet choker,jack-o'-lantern choker, spade choker, leopard print choker"
 ACCESSORIES,ANCHOR NECKWEAR,1,,,"anchor choker, anchor necklace, anchor collar"
 ACCESSORIES,LEATHER CHOKER,1,,brown choker,leather choker
 ACCESSORIES,HEART O-RING CHOKER,1,,"heart o-ring, heart choker",heart o-ring choker
@@ -109,6 +109,10 @@ ACCESSORIES,EAR PIERCING CONFLICT,1,,,"earrings, ear piercing"
 ACCESSORIES,EAR PLUGS,1,,ear ornament,"ear covers, earplugs, earmuffs, single ear cover"
 ACCESSORIES,EAR PROTECTOR,1,,ear protection,earmuffs
 ACCESSORIES,EARRINGS,1,,"earrings, jewelry","single earring,hoop earrings,stud earrings,star earrings,heart earrings,tassel earrings,cross earrings,multiple earrings,dangle earrings,crescent earrings,flower earrings,gold earrings,feather earrings,skull earrings,magatama earrings,bow earrings,drop earrings,triangle earrings,sphere earrings,food-themed earrings,crystal earrings,pill earrings,pearl earrings,potara earrings,pom pom earrings,anchor earrings,mismatched earrings,butterfly earrings,snake earrings,diamond earrings,shell earrings,bell earrings,ribbon earrings,jack-o'-lantern earrings,teardrop earrings,cherry earrings,rabbit earrings,glowing earrings,spade earrings,leaf earrings,triforce earrings,snowflake earrings,tooth earrings,jingle bell earrings,strawberry earrings,clover earrings,lightning bolt earrings,hanafuda earrings,cat earrings,lemon earrings,ghost earrings,chain earrings,bat earrings,lantern earrings,unworn earring,yin yang earrings,planet earrings,silver earrings,wing earrings,carrot earrings,key earrings,dice earrings,lock earrings,torii earrings,fish earrings,pumpkin earrings,orange-shaped earrings,inverted cross earrings,adjusting earrings,arrow earrings,sword earrings,sparkle earrings,pentagram earrings,lotus earrings,four-leaf clover earrings,dolphin earrings,musical note earrings,apple earrings,matching earrings,razor blade earrings,penis earrings,ankh earrings,egg earrings,poke ball earrings,sun earrings,large earrings,playing card earrings,panda earrings,candy earrings,bone earrings,chandelier earrings,crown earrings,bird earrings,christmas tree earrings,eyeball earrings,starfish earrings,mushroom earrings,candy cane earrings,pineapple earrings,ofuda earrings,fish bone earrings,floating earring,holly earrings,cube earrings,paw earrings,fishing hook earrings,torch earrings,animal earrings,grape earrings,lime earrings,gear earrings,red pepper earrings,sunflower earring,tag earrings,snowman earrings,number earrings,banana earrings,condom earrings,shuriken earrings,mars symbol earrings,ufo earrings,letter earrings,acorn earrings,hexagon earrings,jellyfish earrings,fan earrings,kundan earrings,whale earrings,safety pin earring,cheese earrings,dango earrings,christmas wreath earrings,paperclip earrings,zipper earrings,ladybug earrings,pinwheel earrings,horseshoe earrings,earrings removed,doughnut earrings, earclip, ear tag, ear piercings, gemstone earrings, phallic earrings, infinity earrings, ear piercing, used condom earrings, triangular earrings, single condom earring, spade-shaped hoop earrings"
+ACCESSORIES,UPPER EAR EARRINGS,1,,,"upper-ear earrings, upper-ear hoop earrings, upper-ear stud earrings, upper-ear industrial piercing"
+ACCESSORIES,UPPER EAR HOOP EARRINGS,1,,,"hoop earrings, multiple hoop earrings, upper-ear hoop earrings"
+ACCESSORIES,UPPER EAR STUD EARRINGS,1,,,"stud earrings, multiple stud earrings, upper-ear stud piercings"
+ACCESSORIES,,,,,
 ACCESSORIES,HEART HEAD ORNAMENT CONFLICTS,1,,,"heart earrings, heart hair ornament, heart"
 ACCESSORIES,EARRINGS COLOR,1,,"earrings, jewelry","red earrings,blue earrings,green earrings,black earrings,white earrings,pink earrings,orange earrings,gold earrings,yellow earrings,purple earrings,aqua earrings"
 ACCESSORIES,MARS SYMBOL ACCESSORIES,1,,mars symbol,"mars symbol necklace, mars symbol hair ornament, mars symbol earrings"
@@ -116,11 +120,11 @@ ACCESSORIES,DROP EARRINGS,1,,drop earrings,"floating earrings, teardrop earrings
 ACCESSORIES,DANGLE EARRINGS REPLACE,1,floating earrings,,dangle earrings
 ACCESSORIES,DANGLE EARRINGS REMOVE,1,,dangle earrings,floating earrings
 ACCESSORIES,USED CONDOM EARRINGS,1,,"used condoms, condom earring",used condom earrings
-ACCESSORIES,EARRINGS SPADE,1,,"ear piercing, spade (shape)","spade earrings, spade-shaped hoop earrings"
-ACCESSORIES,EARRINGS HOOP SHAPED,1,,hoop earrings,spade-shaped hoop earrings
+ACCESSORIES,EARRINGS SPADE,1,,"ear piercing, spade (shape)","spade earrings, spade-shaped hoop earrings, gold spade-shaped hoop earrings"
+ACCESSORIES,EARRINGS HOOP SHAPED,1,,hoop earrings,"spade-shaped hoop earrings, gold spade-shaped hoop earrings"
 ACCESSORIES,EARTH ACCESSORIES,1,,,"earth (ornament), earth (planet)"
 ACCESSORIES,EGG HAIR ORNAMENT,1,,"fried egg, food-themed hair ornament",egg hair ornament
-ACCESSORIES,EMBLEM MAJOR,1,,,st. gloriana's (emblem)
+ACCESSORIES,EMBLEM MAJOR,1,,emblem,"st. gloriana's (emblem), survey corps (emblem)"
 ACCESSORIES,EMBLEM MINOR CONVERT,1,emblem,,"bc freedom (emblem), chi-hatan (emblem), kuromorimine (emblem), sakura empire (emblem), saunders (emblem), selection university (emblem)"
 ACCESSORIES,EMBLEM MINOR REMOVE,1,,"bc freedom (emblem), chi-hatan (emblem), kuromorimine (emblem), sakura empire (emblem), saunders (emblem), selection university (emblem)",emblem
 ACCESSORIES,EYEPATCH,1,,eyepatch,"medical eyepatch, heart eyepatch, print eyepatch"
@@ -162,7 +166,7 @@ ACCESSORIES,GEMS,1,,gem,"ruby (gemstone), pearl (gemstone), emerald (gemstone), 
 ACCESSORIES,GEMSTONE COLOR,1,,gem,"pink gemstone, yellow gemstone, purple gemstone, green gemstone, blue gemstone,red gemstone"
 ACCESSORIES,HEART SHAPED ORNAMENT,1,,heart,"heart hair ornament, heart hat ornament"
 ACCESSORIES,GENSHIN ACCESSORIES,1,,,"vision (genshin impact), musou isshin (genshin impact)"
-ACCESSORIES,GLASSES,1,,glasses,"semi-rimless eyewear,black-framed eyewear,red-framed eyewear,round eyewear,under-rim eyewear,tinted eyewear,rimless eyewear,heart-shaped eyewear,rectangular eyewear,blue-framed eyewear,over-rim eyewear,pink-framed eyewear,grey-framed eyewear,orange-tinted eyewear,yellow-framed eyewear,white-framed eyewear,red-tinted eyewear,green-framed eyewear,brown-framed eyewear,blue-tinted eyewear,purple-tinted eyewear,pink-tinted eyewear,purple-framed eyewear,yellow-tinted eyewear,green-tinted eyewear,star-shaped eyewear,triangular eyewear,broken eyewear,orange-framed eyewear,heterochromatic eyewear,brown-tinted eyewear,aqua-framed eyewear,crooked eyewear,x-shaped eyewear,gradient-tinted eyewear,semi-circular eyewear,asymmetrical eyewear,rabbit-shaped eyewear,hexagonal eyewear,two-tone eyewear,grey-tinted eyewear,multicolor-tinted eyewear,aviator eyewear,tortoiseshell-framed eyewear,cat eye-framed eyewear,flower-shaped eyewear,oversized eyewear,octagonal eyewear,aqua-tinted eyewear,cat-shaped eyewear,print eyewear,rainbow-tinted eyewear,transparent eyewear,animal-themed eyewear,horn-rim eyewear, pince-nez, monocle, sunglasses, opaque glasses"
+ACCESSORIES,GLASSES,1,,glasses,"semi-rimless eyewear,black-framed eyewear,red-framed eyewear,round eyewear,under-rim eyewear,tinted eyewear,rimless eyewear,heart-shaped eyewear,rectangular eyewear,blue-framed eyewear,over-rim eyewear,pink-framed eyewear,grey-framed eyewear,orange-tinted eyewear,yellow-framed eyewear,white-framed eyewear,red-tinted eyewear,green-framed eyewear,brown-framed eyewear,blue-tinted eyewear,purple-tinted eyewear,pink-tinted eyewear,purple-framed eyewear,yellow-tinted eyewear,green-tinted eyewear,star-shaped eyewear,triangular eyewear,broken eyewear,orange-framed eyewear,heterochromatic eyewear,brown-tinted eyewear,aqua-framed eyewear,crooked eyewear,x-shaped eyewear,gradient-tinted eyewear,semi-circular eyewear,asymmetrical eyewear,rabbit-shaped eyewear,hexagonal eyewear,two-tone eyewear,grey-tinted eyewear,multicolor-tinted eyewear,aviator eyewear,tortoiseshell-framed eyewear,cat eye-framed eyewear,flower-shaped eyewear,oversized eyewear,octagonal eyewear,aqua-tinted eyewear,cat-shaped eyewear,print eyewear,rainbow-tinted eyewear,transparent eyewear,animal-themed eyewear,horn-rim eyewear, pince-nez, monocle, sunglasses, opaque glasses, heart-shaped sunglasses on head"
 ACCESSORIES,GLASSES HALF-RIM,1,,semi-rimless eyewear,"over-rim eyewear, under-rim eyewear"
 ACCESSORIES,TNTED GLASSES TYPES,1,,tinted eyewear,"opaque glasses, partially opaque glasses"
 ACCESSORIES,GLASSES OPAQUE,1,,opaque glasses,"partially opaque glasses, fogged glasses"
@@ -204,7 +208,8 @@ ACCESSORIES,HAT SIZE,1,,hat,"small hat, large hat, huge hat"
 ACCESSORIES,HEAD MOUNTED DISPLAY,1,head-mounted display,,head mounted display
 ACCESSORIES,HEAD MOUNTED DISPLAY REMOVAL,1,,head mounted display,head-mounted display
 ACCESSORIES,HEAD MOUNTED MONITOR,1,,,head-mounted monitor
-ACCESSORIES,HEAD RING,1,,hair ornament,"tiara, crown, circlet, diadem, forehead protector, head chain, headpiece,super crown, mini crown, master crown, headdress, maid headdress, saishi, hairband"
+ACCESSORIES,HEAD RING,1,,hair ornament,"tiara, crown, circlet, diadem, forehead protector, head chain, headpiece,super crown, mini crown, master crown, headdress, maid headdress, saishi, hairband, headband"
+ACCESSORIES,KRONII HEAD CHAIN,1,,,"head chain, chain, headband"
 ACCESSORIES,HEADBAND COLOR,1,,headband,"red headband,blue headband,green headband,black headband,white headband,grey headband,gray headband,beige headband,brown headband,pink headband,orange headband,gold headband,blonde headband,yellow headband,purple headband,aqua headband"
 ACCESSORIES,HEADBAND TYPE,1,,headband,chain headband
 ACCESSORIES,CHAIN HEADBAND,1,,,"chain, chain headband"
@@ -272,8 +277,9 @@ ACCESSORIES,NECK RIBBON,1,,neck ribbon,undone neck ribbon
 ACCESSORIES,NECKLACE,1,,"necklace,jewelry","cross necklace,bead necklace,pearl necklace,heart necklace,chain necklace,carrot necklace,magatama necklace,star necklace,gold necklace,key necklace,flower necklace,tooth necklace,shell necklace,anchor necklace,skull necklace,crescent necklace,ring necklace,feather necklace,bone necklace,ankh necklace,crystal necklace,bullet necklace,butterfly necklace,rope necklace,musical note necklace,pentagram necklace,millennium necklace,snowflake necklace,lightning bolt necklace,broken necklace,food-themed necklace,shoulder necklace,four-leaf clover necklace,clock necklace,spiked necklace,bat necklace,inverted cross necklace,lemon necklace,diamond necklace,cat necklace,leaf necklace,horseshoe necklace,dice necklace,spade necklace,lock necklace,guitar necklace,crown necklace,bear necklace,cherry necklace,eyeball necklace,strawberry necklace,egg necklace,kiwi necklace,spring onion necklace, fang necklace, phallic necklace, condom necklace, mars symbol necklace, black pearl necklace, qos-spade charm necklace"
 ACCESSORIES,NIGHT VISION ATTACHMENT,1,,,night vision device
 ACCESSORIES,NIPPLE CHAIN,1,,,"nipple chain, linked piercing"
-ACCESSORIES,NIPPLE EXTENDERS,1,,nipple rings,nipple extenders
-ACCESSORIES,NIPPLE PIERCING,1,,nipple piercing,"nipple bar, nipple rings, nipple jewelry, nipple chain, condom on nipple rings, captive bead ring, bulb nipple rings, nipple tag, nipple extenders, rectangular nipple rings, captive bead nipple rings, areolae stud piercing, areolae stud piercings, nipple clamps, nipple piercing with heart charm, nipple rings with heart charm, nipple bar with heart charm, semi-circular nipple rings, nipple rings with phallic charm, spade-shaped nipple rings"
+ACCESSORIES,NIPPLE EXTENDERS,1,,nipple rings,"nipple extenders, spade-shaped nipple extenders, star-shaped nipple extenders"
+ACCESSORIES,NIPPLE EXTENDERS SHAPES,1,,nipple extenders,"spade-shaped nipple extenders, star-shaped nipple extenders"
+ACCESSORIES,NIPPLE PIERCING,1,,nipple piercing,"nipple bar, nipple rings, nipple jewelry, nipple chain, condom on nipple rings, captive bead ring, bulb nipple rings, nipple tag, nipple extenders, rectangular nipple rings, captive bead nipple rings, areolae stud piercing, areolae stud piercings, nipple clamps, nipple piercing with heart charm, nipple rings with heart charm, nipple bar with heart charm, semi-circular nipple rings, nipple rings with phallic charm, spade-shaped nipple rings, qos-spade charm on nipple rings"
 ACCESSORIES,NON NIPPLE PIERCING CONFLICTS,1,,,"nipple clamp, vibrator on nipple"
 ACCESSORIES,NIPPLE RING CAPTIVE ,1,captive bead nipple rings,,captive bead ring
 ACCESSORIES,CLITORIS CAPTIVE RING,1,,clitoris ring,clitoris captive bead ring
@@ -312,7 +318,7 @@ ACCESSORIES,PHALLIC TIARA,1,,tiara,phallic tiara
 ACCESSORIES,PHALLIC CIRCLET,1,,circlet,phallic circlet
 ACCESSORIES,ACCESSORIES COLOR,1,,accessories,gold accessories
 ACCESSORIES,PHOENIX CROWN,1,,tiara,phoenix crown
-ACCESSORIES,PIERCING,0,,"piercing,jewelry","ear piercing,nipple piercing,navel piercing,tongue piercing,barbell piercing,animal ear piercing,nose piercing,lip piercing,eyebrow piercing,pussy piercing,multiple piercings,tail piercing,hoop piercing,clitoris piercing,industrial piercing,linked piercing,chin piercing,labia piercing,mouth piercing,penis piercing,spiked ear piercing,piercing through clothes,corset piercing,cheek piercing,plug (piercing),covered piercing,areola piercing,frenulum piercing,horn piercing,labret piercing,spike piercing,anti-eyebrow piercing,wing piercing,collarbone piercing,bridge piercing,safety pin piercing,scrotum piercing,single nipple piercing,neck piercing,cross piercing,eyelid piercing,finger piercing,lorum piercing,eye piercing,star piercing,breast piercing,body piercings,forehead piercing,lightning bolt piercing,anus piercing,arm piercing,piercing hole,hip piercing,fin piercing,foreskin piercing,tentacle piercing,stomach piercing,guiche piercing,bell piercing,too many piercings,back piercing, nose ring, nipple rings, clitoris ring, captive bead ring, pussy jewelry, nipple jewelry, ear tag, nipple tag, nipple bells,nipple bar, nipple extenders, thin nipple rings, thick nipple rings, small nipple rings , rectangular nipple rings, navel ring, nipple weights, safety pin nipple piercing, safety pin navel piercing"
+ACCESSORIES,PIERCING,0,,"piercing,jewelry","ear piercing,nipple piercing,navel piercing,tongue piercing,barbell piercing,animal ear piercing,nose piercing,lip piercing,eyebrow piercing,pussy piercing,multiple piercings,tail piercing,hoop piercing,clitoris piercing,industrial piercing,linked piercing,chin piercing,labia piercing,mouth piercing,penis piercing,spiked ear piercing,piercing through clothes,corset piercing,cheek piercing,plug (piercing),covered piercing,areola piercing,frenulum piercing,horn piercing,labret piercing,spike piercing,anti-eyebrow piercing,wing piercing,collarbone piercing,bridge piercing,safety pin piercing,scrotum piercing,single nipple piercing,neck piercing,cross piercing,eyelid piercing,finger piercing,lorum piercing,eye piercing,star piercing,breast piercing,body piercings,forehead piercing,lightning bolt piercing,anus piercing,arm piercing,piercing hole,hip piercing,fin piercing,foreskin piercing,tentacle piercing,stomach piercing,guiche piercing,bell piercing,too many piercings,back piercing, nose ring, nipple rings, clitoris ring, captive bead ring, pussy jewelry, nipple jewelry, ear tag, nipple tag, nipple bells,nipple bar, nipple extenders, thin nipple rings, thick nipple rings, small nipple rings , rectangular nipple rings, navel ring, nipple weights, safety pin nipple piercing, safety pin navel piercing, qos-spade earrings, qos-spade charm on nipple rings, qos-spade charm on nipple bar, qos-spade charm on bracelet, qos-spade charm on anklet, qos-spade charm necklace, qos-spade charm on navel ring, qos-spade charm on navel piercing"
 ACCESSORIES,NIPPLE BELLS,1,,bell,nipple bells
 ACCESSORIES,SINGLE HOOP PIERCING,1,,"single earring, hoop piercing","single hoop piercing, single hoop earring"
 ACCESSORIES,ANIMAL EAR PIERCING,1,,,"animal ear piercing, ear piercing"
@@ -328,10 +334,10 @@ ACCESSORIES,RABBIT HAIR ORNAMENT,1,rabbit hair ornament,,bunny hair ornament
 ACCESSORIES,RABBIT HAIR ORNAMENT REMOVAL,1,,bunny hair ornament,rabbit hair ornament
 ACCESSORIES,RIBBON COLOR,1,,ribbon,"red ribbon,black ribbon,blue ribbon,white ribbon,pink ribbon,yellow ribbon,tress ribbon,purple ribbon,green ribbon,striped ribbon,orange ribbon,brown ribbon,frilled ribbon,aqua ribbon,two-tone ribbon,grey ribbon,polka dot ribbon,plaid ribbon,long ribbon,multicolored ribbon,gradient ribbon,print ribbon,torn ribbon,lace-trimmed ribbon,checkered ribbon,large ribbon,transparent ribbon,lace ribbon,gold ribbon,diagonal-striped ribbon,silver ribbon,pabst blue ribbon,light purple ribbon,see-through ribbon,pinstripe ribbon"
 ACCESSORIES,RIBBON TYPES,1,,ribbon,"neck ribbon, ear ribbon, tail ribbon, hat ribbon, hair ribbon"
-ACCESSORIES,RING TYPE,1,,ring,"heart ring, wedding ring, multiple rings"
+ACCESSORIES,RING TYPE,1,,ring,"heart ring, wedding ring, multiple rings, qos-spade ring"
 ACCESSORIES,MULTIPLE RINGS,1,,"thumb ring, ring",multiple rings
 ACCESSORIES,RINGS,1,,jewelry,"ring, claw ring,horn ring,multiple rings,ornate ring,puppet rings,thumb ring,wedding ring, wedding band, toe ring"
-ACCESSORIES,WEDDING RING CONFLICTS,1,,,"bridal gauntlets, wedding ring"
+ACCESSORIES,WEDDING RING CONFLICTS,1,,,"bridal gauntlets, wedding ring, ring"
 ACCESSORIES,ROUND BEADS,1,,," pearl (gemstone), marble, bubble"
 ACCESSORIES,SAFETY GLASSES,1,,eyewear,safety glasses
 ACCESSORIES,SAFETY PIN,1,,,"safety pin, clothes pin"
@@ -356,7 +362,8 @@ ACCESSORIES,STUMP COVER,1,covered stub,,stump cover
 ACCESSORIES,STUMP COVER REMOVAL,1,,stump cover,covered stub
 ACCESSORIES,ROUND EYEWEARS,1,,round eyewear,round sunglasses
 ACCESSORIES,SUNGLASSES,1,,sunglasses,"aviator sunglasses,sports sunglasses,partially opaque sunglasses,alien sunglasses, round sunglasses"
-ACCESSORIES,SUNGLASSES ON HEAD,1,,"eyewear on head, sunglasses",sunglasses on head
+ACCESSORIES,SUNGLASSES ON HEAD,1,,"eyewear on head, sunglasses","sunglasses on head, heart-shaped sunglasses on head"
+ACCESSORIES,HEART_SHAPED EYEWEAR ON HEAD,1,,heart-shaped eyewear,heart-shaped sunglasses on head
 ACCESSORIES,SUNGLASSES ON HAT,1,,"sunglasses on head, sunglasses on headwear, sunglasses",sunglasses on hat
 ACCESSORIES,SUNGLASSES ON HEADWEAR,1,,sunglasses on head,sunglasses on headwear
 ACCESSORIES,TAG PIERCING,1,,"name tag, price tag, id card","ear tag, nipple tag, nipple tags, id card on nipple piercing, id card on nipple ring, id card on nipple, navel tag"
@@ -387,19 +394,24 @@ ACCESSORIES,WRIST ACCESSORIES,1,,jewelry,"wrist cuffs, wristband, wristwatch, br
 ACCESSORIES,THEMED JEWELRY,1,,jewelry,"gold jewelry, silver jewelry"
 ACCESSORIES,WRISTBAND COLOR,1,,wristband,"red wristband,blue wristband,green wristband,black wristband,white wristband,grey wristband,gray wristband,beige wristband,brown wristband,pink wristband,orange wristband,gold wristband,blonde wristband,yellow wristband,purple wristband,aqua wristband, two-tone wristband, striped wristband, silver wristband, two-tone wristband, multicolored wristband"
 ACCESSORIES,QOS EARRING ACCESSORIES,1,,"qos-spade accessory,  spade earrings, earrings, ear piercing","qos-spade earrings, single qos-spade earring, qos-spade collar, gold qos-spade earrings, single gold qos-spade earrings"
-ACCESSORIES,GOLD SPADE EARRINGS,1,,"earrings, spade earrings, hoop earrings, ear piercing",gold spade earrings
-ACCESSORIES,QOS CHARM,1,,qos-spade accessory,"qos-spade charm on choker,qos-spade earrings, qos-spade charm necklace, qos-spade charm earring, single qos-spade charm on nipple ring, qos-spade charm on navel piercing, qos-spade charm on anklet, single qos-spade earring, qos-spade charm on bracelet, qos-spade charm on nipple rings"
+ACCESSORIES,GOLD SPADE EARRINGS,1,,"earrings, spade earrings, hoop earrings, ear piercing","gold spade earrings, gold qos-spade earrings"
+ACCESSORIES,GOLD SPADE NECKLACE,1,,"necklace, spade necklace","gold spade necklace, gold qos-spade necklace"
+ACCESSORIES,QOS CHARM,1,,qos-spade accessory,"qos-spade charm on choker,qos-spade earrings, qos-spade charm necklace, single qos-spade charm on nipple ring, qos-spade charm on navel piercing, qos-spade charm on anklet, single qos-spade earring, qos-spade charm on bracelet, qos-spade charm on nipple rings"
+ACCESSORIES,CHARM ON CHOKER,,,"choker, collar","qos-spade charm on choker, spade charm on choker"
 VIEW,QOS TILED SPADE BACKGROUND,1,,"spade (shape), tiled background, patterned background,wall of text, english text","tiled spade background, tiled qos-spade background"
 ACCESSORIES,REGULAR SPADE CHARMS,1,,spade accessory,"spade charm on choker,spade earrings, spade charm necklace, spade charm earring, single spade charm on nipple rings, spade charm on navel piercing, spade charm on anklet, spade charm on navel ring,  spade charm on nipple rings"
 MAKEUP,BBC-ONLY TATTOO CONFLICT,1,,,"body-writing, bbc-only tattoo, bbc-only tattoo on breast, bbc-only tattoo on thigh, bbc-only tattoo on ass, bbc-only tattoo on arm, bbc-only pubic tattoo"
 MAKEUP,BBC-ONLY TATTOOS,1,,tattoo,"bbc-only tattoo, bbc-only tattoo on arm, bbc-only tattoo on shoulder, bbc-only tattoo on leg, bbc-only tattoo on thigh, bbc-only tattoo on ass, bbc-only tattoo on stomach, bbc-only tattoo on breast, bbc-only pubic tattoo"
-MAKEUP,BBC-ONLY WRITING ON BODY,1,,body writing,"bbc-only writing on leg, bbc-only writing on arm, bbc-only writing on thigh, bbc-only writing on ass, bbc-only writing on stomach, bbc-only writing on back, bbc-only writing on breast"
-CLOTHES,BBC-ONLY PANTIES,1,,"panties, clothes writing",bbc-only panties
+MAKEUP,BBC-ONLY WRITING ON BODY,1,,body writing,"bbc-only writing on leg, bbc-only writing on arm, bbc-only writing on thigh, bbc-only writing on ass, bbc-only writing on stomach, bbc-only writing on back, bbc-only writing on breast, bbc-only writing on chest"
+MAKEUP,BLACKED-OWNED WRITING ON BODY,1,,body writing,"black-owned writing on chest, black-owned writing on breast, black-owned writing on back, black-owned writing on ass"
+CLOTHES,BBC-ONLY PANTIES,1,,"panties, clothes writing","bbc-only panties, bbc-only bikini bottom"
 MAKEUP,STOP MARK ON BODY,1,,,"stop mark on body, stop mark on breasts, stop mark on ass, stop mark pubic tattoo"
 MAKEUP,TRIBAL TATTOO LOC,1,,tribal tattoo,"tribal tattoo on arm, tribal tattoo on leg, tribal tattoo on torso"
 MAKEUP,FREE USE WRITING ON BODY,1,,body writing,"free-use writing on leg, free-use writing on arm, free-use writing on thigh, free-use writing on ass, free-use writing on stomach, free-use writing on back, free-use writing on breast, free-use on inner thigh"
+MAKEUP,FREE SEX WRITING ON BODY,1,,body writing,"free-sex writing on leg, free-sex writing on arm, free-sex writing on thigh, free-sex writing on ass, free-sex writing on stomach, free-sex writing on back, free-sex writing on breast, free-sex on inner thigh"
 MAKEUP,FUCK ME WRITING ON BODY,1,,body writing,"fuck-me writing on leg, fuck-me writing on arm, fuck-me writing on thigh, fuck-me writing on ass, fuck-me writing on stomach, fuck-me writing on back, fuck-me writing on breast"
 MAKEUP,BMP TATTOOS ,1,,tattoo,"bmp tattoo on breast, bmp tattoo on ass, bmp tattoo on back, bmp tattoo on stomach, bmp tattoo on leg, bmp tattoo on arm"
+CLOTHES,BBC-ONLY SHIRT,1,,"clothes writing, shirt, print shirt",bbc-only shirt
 ACCESSORIES,BBC-ONLY CHOKER,1,,choker,"bbc-only choker, bbc choker"
 ACCESSORIES,RING COLOR,1,,ring,"gold ring, silver ring"
 ACCESSORIES,GLITTER,1,,glitter,"glitter dress, glitter armor, glitter makeup"
@@ -431,7 +443,8 @@ ACTION,GUIDED BREAST GRAB,1,,guiding hand,guided breast grab
 SEX ACTION,GUIDED HANDJOB,1,,guiding hand,guided handjob
 ACTION,VIEWER GRABBING BREASTS,1,,grabbing another's breast,viewer grabbing another's breast
 ACTION,VIEWER GRABBING ASS,1,,grabbing another's ass,viewer grabbing another's ass
-ACTION,BREATH,1,,,"breath, heavy breathing, blowing, breathing fire, =3,  puff of air, burp"
+ACTION,BREATH,1,,,"breath, heavy breathing, blowing, breathing fire, =3,  puff of air, burp, smelly burp"
+ACTION,BURP SMELLY,1,,burp,smelly burp
 ACTION,BREATH (HEAVY),1,,breath,heavy breathing
 ACTION,BRUSHING TEETH,1,,brushing teeth,brushing another's teeth
 ACTION,CARESSING,1,caress,,caressing
@@ -466,8 +479,10 @@ ACTION,FALLING LEAVES,1,,,leaves in wind
 ACTION,FALLING OBJECTS,1,,,"falling petals, falling leaves"
 ACTION,FANNING,1,,fanning,"fanning self , fanning face, fanning crotch, fanning breasts"
 ACTION,FEEDING,1,,feeding,force-feeding 
+ACTION,FINGER TO MOUTH,1,,,"finger to mouth,finger in another's mouth, finger in own mouth, finger in mouth, thumb sucking, finger sucking"
 ACTION,FINGER IN MOUTH,1,,finger in mouth,"finger in another's mouth, finger in own mouth"
 ACTION,FINGER SUCKING,1,,"finger in mouth, finger in own mouth","thumb sucking, finger sucking"
+ACTION,FINGER IN OWN MOUTH,1,,finger to mouth,finger in own mouth
 ACTION,FLICK REPLACE,1,flicking,,flick
 ACTION,FLICK REMOVAL,1,,flick,flicking
 ACTION,FLICKING,1,,"fox shadow puppet, hand, hands","flicking penis, flicking clitoris, flicking nipples, flicking testicles, flicking, flicking viewer"
@@ -502,7 +517,7 @@ ACTION,HOLDING FOOD,1,,food,holding food
 ACTION,HOLDING FOOD TYPE,1,,"holding food, holding","holding candy, holding lollipop, holding cake, holding popsicle, holding ice cream, holding pizza"
 ACTION,HOLDING FRUIT,1,,"food, fruit, holding food",holding fruit
 ACTION,HOLDING GAME CONTROLLER,1,,holding controller,holding game controller
-ACTION,HOLDING GENERAL,1,,"holding, hand, hands","holding weapon,holding hands,holding sword,holding food,holding gun,holding cup,holding phone,holding book,holding umbrella,holding staff,holding clothes,holding flower,holding knife,holding poke ball,holding bag,holding bottle,holding tray,holding fan,holding polearm,holding microphone,holding instrument,holding animal,holding hair,holding bouquet,holding another's wrist,holding stuffed toy,holding gift,holding fruit,holding plate,holding chopsticks,holding bow (weapon),holding spoon,holding fork,holding can,holding card,holding cigarette,holding wand,holding hat,holding candy,holding ball,holding paper,holding removed eyewear,holding pen,holding strap,holding camera,holding shield,holding broom,holding lollipop,holding bowl,holding towel,holding own arm,holding mask,holding box,holding scythe,holding pom poms,holding pokemon,holding axe,holding another's arm,holding underwear,holding dagger,holding drink,holding smoking pipe,holding flag,holding arrow,holding controller,holding doll,holding sheath,holding panties,holding basket,holding condom,holding sign,holding hammer,holding leash,holding cat,holding sack,holding paintbrush,holding syringe,holding handheld game console,holding clipboard,holding pencil,holding lantern,holding stick,holding whip,holding innertube,holding game controller,holding brush,holding leaf,holding shoes,holding helmet,holding baseball bat,viewer holding leash,holding pillow,holding balloon,holding needle,holding scissors,holding water gun,holding fishing rod,holding hose,holding vegetable,holding jacket,holding own tail,holding cane,holding stylus,holding ladle,holding ice cream,holding another's hair,holding violin,holding saucer,holding legs,holding envelope,holding gohei,holding bucket,holding pizza,holding ribbon,holding tablet pc,holding beachball,holding jewelry,holding letter,holding behind back,holding head,holding megaphone,holding popsicle,holding money,holding notebook,holding skull,holding remote control,holding breath,holding chocolate,holding branch,holding sex toy,holding with feet,holding teapot,holding wrench,holding swimsuit,holding another's leg,holding frying pan,holding toy,holding footwear,holding own foot,holding riding crop,holding test tube,holding chain,holding microphone stand,holding mop,holding coin,holding shirt,holding heart,holding drumsticks,holding fireworks,holding leg,holding photo,holding cake,holding pole,holding fish,holding suitcase,holding bra,holding surfboard,holding cross,holding creature,holding shovel,holding another's foot,holding briefcase,holding scroll,holding map,holding necklace,holding with tail,holding toothbrush,holding torch,holding key,holding magnifying glass,holding mirror,holding lipstick tube,holding bell,holding newspaper,holding plectrum,holding egg,holding torpedo,holding spring onion,holding binoculars,holding spatula,holding pocky,holding carton,holding marker,holding dog,holding notepad,holding menu,holding bow (music),holding quill,holding candle,holding another's head,holding scepter,holding feather,holding racket,holding mahjong tile,holding rope,holding shower head,holding plant,holding watering can,holding gem,holding lighter,holding chainsaw,holding another's tail,holding flask,holding scarf,holding trident,holding necktie,holding bird,holding reins,holding whisk,holding comb,holding mallet,holding crossbow,holding paddle,holding blanket,holding jar,holding baby,holding recorder,holding skewer,holding pickaxe,holding whistle,holding own wrist,holding sketchbook,holding glowstick,holding bone,holding handcuffs,holding sponge,holding cape,holding pocket watch,holding petal,holding magazine,holding flashlight,holding pumpkin,holding skirt,holding palette,holding star,holding ring,holding pointer,holding own hair,holding earphones,holding carrot,holding cigar,holding crown,holding butterfly net,holding flower pot,holding headphones,holding goggles,holding duster,holding cloth,holding cookie,holding grenade,holding club,holding drinking straw,holding gloves,holding guitar,holding lightsaber,holding dress,holding string,holding hand grip,holding handkerchief,holding ears,holding wallet,holding cage,holding cooking pot,holding clothes hanger,holding skateboard,holding chalk,holding boots,holding mushroom,holding spork,holding coat,holding screwdriver,holding tongs,holding orb,holding legwear,holding case,holding rabbit,holding hair dryer,holding cannon,holding shell,holding folder,holding golf club,holding bomb,holding collar,holding candy cane,holding anchor,holding hair brush,holding chess piece,holding mace,holding lamp,holding bow (ornament),holding rock,holding cable,holding bento,holding tanzaku,holding ice cream cone,holding rattle,holding bullet,holding stomach,holding shuriken,holding oar,holding hair ornament,holding finger,holding sheet,holding magazine (weapon),holding pendulum,holding nail,holding dice,holding crayon,holding trophy,holding scale,holding drawing,holding stethoscope,holding tripod,holding boxcutter,holding party popper,holding laptop,holding boombox,holding another's thighs,holding nunchaku,holding pitchfork,holding snowball,holding utensil,holding walkie-talkie,holding kettle,holding gourd,holding thermometer,holding wreath,holding cigarette pack,holding clover,holding mistletoe,holding rocket launcher,holding ticket,holding feet,holding dustpan,holding hairband,holding eyeball,holding cue stick,holding turret,holding sandals,holding manga,holding jug,holding paper airplane,holding vase,holding telescope,holding frame,holding belt,holding tennis racket,holding hands is lewd,holding eyepatch,holding sickle,holding pill,holding calligraphy brush,imminent hand holding,holding own leg,holding snowman,holding bandaid,holding pinwheel,holding radio,holding ruler,holding vial,holding digital media player,holding hair tie,holding to chest,holding ear,holding bandages,holding razor,holding crowbar,holding scalpel,holding shawl,holding tera orb,holding cd,holding organ,holding sewing needle,holding charm,holding luggage,holding pan,holding mouse (computer),holding on,holding tenbou,holding flute,holding scanner,holding crystal,holding water,holding gag,holding planet,holding hoodie,holding shorts,holding drawing tablet,holding veil,holding by the ears,holding shaker,holding compact,holding tie,holding nose,holding clothes iron,holding cushion,holding sarong,holding chair,holding snack,holding lifebuoy,holding cube,holding thermos,holding flame,holding digimon,holding stopwatch,holding halo,holding rag,holding doughnut,holding baton,holding pants,holding moon,holding pokedex,holding dart,servants holding aphrodite's breasts (meme),holding headgear,holding wind chime,holding ski pole,holding eye,holding blindfold,holding coffee pot,holding flail,holding power drill,holding sandwich,holding tentacle,holding another's finger,holding matchstick,holding limb,holding ema,holding hoop,holding rod,holding javelin,holding acorn,holding hourglass,holding tool,holding snowboard,holding wig,holding vacuum cleaner,holding lasso,holding bars,holding bamboo shoot,holding cleaver,holding grass,holding pacifier,holding crutch,holding kickboard,holding chisel,holding waist,holding pliers,holding lightning bolt,holding dog tags,holding canteen,holding own ears,holding straw,holding paw,holding headdress,holding ornament,holding pitcher,holding weapon with feet,holding sweater,holding beaker,holding neckerchief,holding cloak,holding button,holding dumbbell,holding slingshot,holding alarm clock,holding soap,holding floatie,holding compass,holding hoe,holding record,holding headband,holding leotard,holding tissue,holding ladder,holding keyboard (computer),holding sash,holding industrial pipe,holding razor blade,holding sheep,holding game cartridge,miku holding a bikini (meme),holding mustache,holding plunger,holding cotton swab,holding jump rope,holding sock,holding kite,holding net,holding shogi piece,holding lid,holding headpiece,holding holly,holding chibi,holding another's tongue,holding tiered tray,holding flyer,holding saucepan,holding statuette,holding bong,holding rocket,holding television,holding rake,holding bubble,holding behind neck,holding tiara,holding clock,holding buruma,holding honeypot,shinji holding a mug (meme),holding brain,holding butterfly,holding ghost,holding puzzle piece,holding paint roller,holding pastry bag,holding yarn,holding trumpet,holding golf ball,holding diploma,holding shinai,holding table,holding bloomers,holding harp,holding barrel,holding stove,holding badge,holding dragon ball,holding stone tablet,holding mate,holding portrait,holding bookmark,holding own head,holding ice cream scoop,holding board,holding belly,holding blueprints,holding christmas tree,holding pipette,dog holding sword (meme),holding banner,holding missile,holding hairpin,holding liquid,holding sides,holding bowgun,holding cum,holding chainsword,holding glass bottle,holding entrails,holding too many things,holding abacus,holding own horn,holding scrunchie,holding painting,holding hood, holding dildo, holding eyewear, holding pipe,  holding swim ring, grabbing, holding ofuda, holding chastity cage, holding another, holding pot, holding prevention buzzer, holding pregnancy test, holding stuffed animal, holding keyring, holding onahole, holding sakazuki, holding multiple mug, holding hands with viewer, holding breeding bar, holding handle, holding tenga onahole, hug"
+ACTION,HOLDING GENERAL,1,,"holding, hand, hands","holding weapon,holding hands,holding sword,holding food,holding gun,holding cup,holding phone,holding book,holding umbrella,holding staff,holding clothes,holding flower,holding knife,holding poke ball,holding bag,holding bottle,holding tray,holding fan,holding polearm,holding microphone,holding instrument,holding animal,holding hair,holding bouquet,holding another's wrist,holding stuffed toy,holding gift,holding fruit,holding plate,holding chopsticks,holding bow (weapon),holding spoon,holding fork,holding can,holding card,holding cigarette,holding wand,holding hat,holding candy,holding ball,holding paper,holding removed eyewear,holding pen,holding strap,holding camera,holding shield,holding broom,holding lollipop,holding bowl,holding towel,holding own arm,holding mask,holding box,holding scythe,holding pom poms,holding pokemon,holding axe,holding another's arm,holding underwear,holding dagger,holding drink,holding smoking pipe,holding flag,holding arrow,holding controller,holding doll,holding sheath,holding panties,holding basket,holding condom,holding sign,holding hammer,holding leash,holding cat,holding sack,holding paintbrush,holding syringe,holding handheld game console,holding clipboard,holding pencil,holding lantern,holding stick,holding whip,holding innertube,holding game controller,holding brush,holding leaf,holding shoes,holding helmet,holding baseball bat,viewer holding leash,holding pillow,holding balloon,holding needle,holding scissors,holding water gun,holding fishing rod,holding hose,holding vegetable,holding jacket,holding own tail,holding cane,holding stylus,holding ladle,holding ice cream,holding another's hair,holding violin,holding saucer,holding legs,holding envelope,holding gohei,holding bucket,holding pizza,holding ribbon,holding tablet pc,holding beachball,holding jewelry,holding letter,holding behind back,holding head,holding megaphone,holding popsicle,holding money,holding notebook,holding skull,holding remote control,holding breath,holding chocolate,holding branch,holding sex toy,holding with feet,holding teapot,holding wrench,holding swimsuit,holding another's leg,holding frying pan,holding toy,holding footwear,holding own foot,holding riding crop,holding test tube,holding chain,holding microphone stand,holding mop,holding coin,holding shirt,holding heart,holding drumsticks,holding fireworks,holding leg,holding photo,holding cake,holding pole,holding fish,holding suitcase,holding bra,holding surfboard,holding cross,holding creature,holding shovel,holding another's foot,holding briefcase,holding scroll,holding map,holding necklace,holding with tail,holding toothbrush,holding torch,holding key,holding magnifying glass,holding mirror,holding lipstick tube,holding bell,holding newspaper,holding plectrum,holding egg,holding torpedo,holding spring onion,holding binoculars,holding spatula,holding pocky,holding carton,holding marker,holding dog,holding notepad,holding menu,holding bow (music),holding quill,holding candle,holding another's head,holding scepter,holding feather,holding racket,holding mahjong tile,holding rope,holding shower head,holding plant,holding watering can,holding gem,holding lighter,holding chainsaw,holding another's tail,holding flask,holding scarf,holding trident,holding necktie,holding bird,holding reins,holding whisk,holding comb,holding mallet,holding crossbow,holding paddle,holding blanket,holding jar,holding baby,holding recorder,holding skewer,holding pickaxe,holding whistle,holding own wrist,holding sketchbook,holding glowstick,holding bone,holding handcuffs,holding sponge,holding cape,holding pocket watch,holding petal,holding magazine,holding flashlight,holding pumpkin,holding skirt,holding palette,holding star,holding ring,holding pointer,holding own hair,holding earphones,holding carrot,holding cigar,holding crown,holding butterfly net,holding flower pot,holding headphones,holding goggles,holding duster,holding cloth,holding cookie,holding grenade,holding club,holding drinking straw,holding gloves,holding guitar,holding lightsaber,holding dress,holding string,holding hand grip,holding handkerchief,holding ears,holding wallet,holding cage,holding cooking pot,holding clothes hanger,holding skateboard,holding chalk,holding boots,holding mushroom,holding spork,holding coat,holding screwdriver,holding tongs,holding orb,holding legwear,holding case,holding rabbit,holding hair dryer,holding cannon,holding shell,holding folder,holding golf club,holding bomb,holding collar,holding candy cane,holding anchor,holding hair brush,holding chess piece,holding mace,holding lamp,holding bow (ornament),holding rock,holding cable,holding bento,holding tanzaku,holding ice cream cone,holding rattle,holding bullet,holding stomach,holding shuriken,holding oar,holding hair ornament,holding finger,holding sheet,holding magazine (weapon),holding pendulum,holding nail,holding dice,holding crayon,holding trophy,holding scale,holding drawing,holding stethoscope,holding tripod,holding boxcutter,holding party popper,holding laptop,holding boombox,holding another's thighs,holding nunchaku,holding pitchfork,holding snowball,holding utensil,holding walkie-talkie,holding kettle,holding gourd,holding thermometer,holding wreath,holding cigarette pack,holding clover,holding mistletoe,holding rocket launcher,holding ticket,holding feet,holding dustpan,holding hairband,holding eyeball,holding cue stick,holding turret,holding sandals,holding manga,holding jug,holding paper airplane,holding vase,holding telescope,holding frame,holding belt,holding tennis racket,holding hands is lewd,holding eyepatch,holding sickle,holding pill,holding calligraphy brush,imminent hand holding,holding own leg,holding snowman,holding bandaid,holding pinwheel,holding radio,holding ruler,holding vial,holding digital media player,holding hair tie,holding to chest,holding ear,holding bandages,holding razor,holding crowbar,holding scalpel,holding shawl,holding tera orb,holding cd,holding organ,holding sewing needle,holding charm,holding luggage,holding pan,holding mouse (computer),holding on,holding tenbou,holding flute,holding scanner,holding crystal,holding water,holding gag,holding planet,holding hoodie,holding shorts,holding drawing tablet,holding veil,holding by the ears,holding shaker,holding compact,holding tie,holding nose,holding clothes iron,holding cushion,holding sarong,holding chair,holding snack,holding lifebuoy,holding cube,holding thermos,holding flame,holding digimon,holding stopwatch,holding halo,holding rag,holding doughnut,holding baton,holding pants,holding moon,holding pokedex,holding dart,servants holding aphrodite's breasts (meme),holding headgear,holding wind chime,holding ski pole,holding eye,holding blindfold,holding coffee pot,holding flail,holding power drill,holding sandwich,holding tentacle,holding another's finger,holding matchstick,holding limb,holding ema,holding hoop,holding rod,holding javelin,holding acorn,holding hourglass,holding tool,holding snowboard,holding wig,holding vacuum cleaner,holding lasso,holding bars,holding bamboo shoot,holding cleaver,holding grass,holding pacifier,holding crutch,holding kickboard,holding chisel,holding waist,holding pliers,holding lightning bolt,holding dog tags,holding canteen,holding own ears,holding straw,holding paw,holding headdress,holding ornament,holding pitcher,holding weapon with feet,holding sweater,holding beaker,holding neckerchief,holding cloak,holding button,holding dumbbell,holding slingshot,holding alarm clock,holding soap,holding floatie,holding compass,holding hoe,holding record,holding headband,holding leotard,holding tissue,holding ladder,holding keyboard (computer),holding sash,holding industrial pipe,holding razor blade,holding sheep,holding game cartridge,miku holding a bikini (meme),holding mustache,holding plunger,holding cotton swab,holding jump rope,holding sock,holding kite,holding net,holding shogi piece,holding lid,holding headpiece,holding holly,holding chibi,holding another's tongue,holding tiered tray,holding flyer,holding saucepan,holding statuette,holding bong,holding rocket,holding television,holding rake,holding bubble,holding behind neck,holding tiara,holding clock,holding buruma,holding honeypot,shinji holding a mug (meme),holding brain,holding butterfly,holding ghost,holding puzzle piece,holding paint roller,holding pastry bag,holding yarn,holding trumpet,holding golf ball,holding diploma,holding shinai,holding table,holding bloomers,holding harp,holding barrel,holding stove,holding badge,holding dragon ball,holding stone tablet,holding mate,holding portrait,holding bookmark,holding own head,holding ice cream scoop,holding board,holding belly,holding blueprints,holding christmas tree,holding pipette,dog holding sword (meme),holding banner,holding missile,holding hairpin,holding liquid,holding sides,holding bowgun,holding cum,holding chainsword,holding glass bottle,holding entrails,holding too many things,holding abacus,holding own horn,holding scrunchie,holding painting,holding hood, holding dildo, holding eyewear, holding pipe,  holding swim ring, grabbing, holding ofuda, holding chastity cage, holding another, holding pot, holding prevention buzzer, holding pregnancy test, holding stuffed animal, holding keyring, holding onahole, holding sakazuki, holding multiple mug, holding hands with viewer, holding breeding bar, holding handle, holding tenga onahole, hug, holding smartphone"
 ACTION,HANDS ON PREGNANT BELLY,1,,"hands, hand","hands on own stomach, holding stomach, holding ball"
 ACTION,HOLDING ONAHOLE,1,,holding onahole,holding tenga onahole
 ACTION,WRIST GRAB,1,holding another's wrist,,wrist grab
@@ -520,6 +535,8 @@ ACTION,HOLDING TRAY,1,,"holding, tray",holding tray
 ACTION,HOLDING SPOON,1,,"holding, spoon",holding spoon
 ACTION,HOLDING STUFFED ANIMAL,1,,"holding, holding stuffed toy, stuffed animal",holding stuffed animal
 ACTION,HOLDING PAPER,1,,"holding, paper",holding paper
+ACTION,HOLDING SIGNS AND PAPERS,1,,,"holding letter, holding contract paper, holding paper, holding sign"
+ACTION,HOLDING SIGN,1,,,"holding sign, sign"
 ACTION,HOLDING PAPER TYPES,1,,holding paper,"holding letter, holding contract paper"
 ACTION,PRESENTING CONTRACT PAPER,1,,paper,"presenting contract paper, contract paper"
 ACTION,HOLDING LIPSTICK STICK,1,,lipstick tube,holding lipstick tube
@@ -645,7 +662,8 @@ ACTION,DOUBLE \m/,1,,\m/,double \m/
 ACTION,OWN HANDS CLASPED,1,,own hands together,own hands clasped
 ACTION,UMBRELLA ACTION,1,,,"umbrella riding,shared umbrella,offering umbrella"
 ACTION,UNDRESSING CLOTHES,1,,,"untying, undressing another, unfastened"
-ACTION,USING PHONE,1,,holding,"holding phone, selfie, talking on phone, taking picture, cellphone picture, recording, filming"
+ACTION,USING PHONE,1,,holding,"holding phone, selfie, talking on phone, taking picture, cellphone picture, recording, filming, holding smartphone"
+ACTION,HOLDING SMARTPHONE,1,,holding phone,holding smartphone
 ACTION,USING TOILET,1,,,toilet use
 ACTION,VIEWER HOLDING BOTTLE,1,,holding bottle,viewer holding bottle
 ACTION,HOLDING BOTTLES,1,,"holding, bottle, wine bottle",holding wine bottle
@@ -837,7 +855,8 @@ BODY,LEGS,1,,legs,"bare legs, long legs, crossed legs, legs together, legs up, l
 BODY,LIMBLESS,1,,,"armless, legless"
 BODY,MALE,1,,,"ugly man, fat man, invisible man, toned male, muscular male, old man"
 BODY,FAT UGLY MAN,1,,"fat man, ugly man",fat ugly man
-BODY,FACELESS DARK SKINNED MALE,1,,"faceless male, dark-skinned male",faceless dark-skinned male
+BODY,FACELESS DARK SKINNED MALE,1,,"faceless male, dark-skinned male, muscular","faceless dark-skinned male, bald faceless dark-skinned male"
+BODY,BALD DARK SKINNED MALE,1,,"bald, bald man, dark-skinned male, muscular","bald dark-skinned male, bald faceless dark-skinned male"
 BODY,MALE CHILD,1,,"male child, female child",child
 BODY,MECHANICAL ARMS,1,,mechanical arms,single mechanical arm
 BODY,MECHANICAL PARTS,0,,mechanical parts,"mechanical arms, mechanical legs, mechanical spine, single mechanical arm, mechanical hand, mechanical hands, subdermal port"
@@ -1749,7 +1768,11 @@ CLOTHES,PANTIES STRING,1,,"panties, underwear","side-tie panties, thongs, thong,
 CLOTHES,PANTIES TYPE,1,,"panties, underwear","boyshort panties, micro panties, highleg panties, micropanties, lowleg panties, striped panties, cat panties, back-print panties, heart panties, pink leopard print panties, leopard print panties, ball bra, front-print panties, cow print panties, bloomers, panties aside, blacked panties"
 CLOTHES,PRINT PANTIES TYPE,1,,print panties,"front-print panties, cow print panties, leopard print panties, heart print panties"
 CLOTHES COLOR,HEART PRINT PANTIES,1,,"heart print, heart panties",heart print panties
-CLOTHES,QOS PRINT PANTIES,1,,"print panties, panties, front-print panties",qos-spade print panties
+CLOTHES,QOS PRINT PANTIES,1,,"print panties, panties, front-print panties, print swimsuit",qos-spade print panties
+CLOTHES,QOS PRINT BIKINI,1,,"print bikini, bikini, print swimsuit","qos-spade print bikini bottom, qos-spade print bikini top, qos-spade print bikini"
+CLOTHES,QOS PRINT BIKINI TOP,1,,"print bra, bikini top",qos-spade print bikini top
+CLOTHES,QOS PRINT BIKINI BOTTOM,1,,"print panties, bikini bottom",qos-spade print bikini bottom
+ACCESSORIES,PHONE CASE PRINT,1,,phone case,"heart print phone case, qos-spade print phone case"
 CLOTHES,PANTS HIGH-WAIST,1,,high-waist pants,high-waist shorts
 CLOTHES,PANTS TYPE,1,,pants,"sweatpants, high-waist pants, high-waist shorts, harem pants, capri pants, track pants, lowleg pants, yoga pants, cargo pants, jodhpurs, torn pants, jeans"
 CLOTHES,PATCH,1,,,patch
@@ -1842,7 +1865,7 @@ CLOTHES,SUKAJAN,1,,"jacket, bomber jacket, letterman jacket",sukajan
 CLOTHES,SUNDRESS,1,,,sundress
 CLOTHES,SURCOAT,1,,,"surcoat, tabard"
 CLOTHES,SUSPENDERS,1,,suspenders,"suspender skirt,suspender shorts,suspenders slip,naked suspenders,suspenders gap,suspenders hanging,green suspenders,criss-cross suspenders,suspenders under shirt,frilled suspenders,o-ring suspenders,red suspenders,suspender panties"
-CLOTHES,SWEATER TYPES,1,,sweater,"open-chest sweater,aran sweater,cropped sweater,fur sweater,fur-trimmed sweater,hooded sweater,lace-trimmed sweater,nursing sweater,short-sleeved sweater,sleeveless sweater,sweater dress,sweater vest,virgin killer sweater, short sleeve sweater, off-shoulder sweater, naked sweater, turtleneck sweater, ribbed sweater, tied sweater"
+CLOTHES,SWEATER TYPES,1,,sweater,"open-chest sweater,aran sweater,cropped sweater,fur sweater,fur-trimmed sweater,hooded sweater,lace-trimmed sweater,nursing sweater,short-sleeved sweater,sleeveless sweater,sweater dress,sweater vest,virgin killer sweater, short sleeve sweater, off-shoulder sweater, naked sweater, turtleneck sweater, ribbed sweater, tied sweater, ribbed turtleneck sweater"
 CLOTHES,SWEATSHIRT CONVERT,1,sweater,,sweatshirt
 CLOTHES,SWEATSHIRT REMOVAL,1,,sweatshirt,sweater
 CLOTHES,OPEN-CHEST SWEATER,1,,cleavage cutout,open-chest sweater
@@ -1867,14 +1890,16 @@ CLOTHES,TRACK SUIT-REPLACE,0,,"liyue tracksuit,raimon track suit,raimon track un
 CLOTHES,TRACK TOPS,1,,crop top,track uniform
 CLOTHES,TRIM DESIGN,1,,,"ribbon trim, fringe trim, feather trim"
 CLOTHES,TUBE DRESS,1,,short dress,tube dress
-CLOTHES,TURTLENECK,1,,turtleneck,"turtleneck sweater,sleeveless turtleneck,turtleneck dress,sleeveless turtleneck leotard,turtleneck leotard,turtleneck jacket,sleeveless turtleneck dress,turtleneck swimsuit,turtleneck bodysuit,turtleneck shirt,sleeveless turtleneck bodysuit,turtleneck capelet,turtleneck jumpsuit"
+CLOTHES,TURTLENECK,1,,turtleneck,"turtleneck sweater,sleeveless turtleneck,turtleneck dress,sleeveless turtleneck leotard,turtleneck leotard,turtleneck jacket,sleeveless turtleneck dress,turtleneck swimsuit,turtleneck bodysuit,turtleneck shirt,sleeveless turtleneck bodysuit,turtleneck capelet,turtleneck jumpsuit, ribbed turtleneck sweater"
+CLOTHES,RIBBED TURTLENECK SWEATER,1,,"ribbed sweater, turtleneck sweater",ribbed turtleneck sweater
 CLOTHES,TWO-COLOR LEGWEAR,1,,,"striped legwear, striped thighhighs, two-tone legwear"
 CLOTHES,UNDERWEAR,1,,underwear,"bra, panties, lingerie, bustier, underbust, garter belt"
 CLOTHES,UNIFORM MEME,1,,uniform,hooters uniform
 CLOTHES,UNIFORM TYPE,1,,uniform,"school uniform, military uniform, police uniform, employee uniform, gym uniform, tennis uniform,kindergarten uniform, roswaal mansion maid uniform, track uniform,shuuchiin academy uniform,team rocket uniform, soccer uniform, homurahara academy uniform, winter uniform, naval uniform, sailor senshi uniform, team magma uniform, baseball uniform, anzio military uniform, band uniform, fast food uniform, chef uniform, garreg mach monastery uniform, team aqua uniform, summer uniform, volleyball uniform, basketball uniform, soccer uniform, delmogeny uniform, stile uniform, pravda military uniform,  st. gloriana's military uniform, keizoku military uniform, kuromorimine military uniform, pilot uniform, sailor uniform, maid uniform"
 CLOTHES,TEAM ROCKET OUTFIT,1,,jessie (pokemon) (cosplay),team rocket uniform
 CLOTHES,VEGA GARRISON OUTFIT,1,,cammy white (cosplay),"vega corp uniform, red vega corp uniform, black vega corp uniform, blue vega corp uniform, pink vega corp uniform, purple vega corp uniform, green vega corp uniform, yellow vega corp uniform"
-CLOTHES,UNIFORM TYPE MILITARY,1,military uniform,,"griffin & kryuger military uniform, paradis military uniform, kuromorimine military uniform, saunders military uniform, amestris military uniform, tsab ground military uniform, ooarai military uniform, bc freedom military uniform, chi-hatan military uniform, selection military uniform, tsab air military uniform, tsab executive military uniform, tsab ground military uniform, tsab naval military uniform, tsab rescue military uniform"
+CLOTHES,UNIFORM TYPE MILITARY,1,military uniform,,"griffin & kryuger military uniform, kuromorimine military uniform, saunders military uniform, amestris military uniform, tsab ground military uniform, ooarai military uniform, bc freedom military uniform, chi-hatan military uniform, selection military uniform, tsab air military uniform, tsab executive military uniform, tsab ground military uniform, tsab naval military uniform, tsab rescue military uniform"
+CLOTHES,ALLOWED MILITARU UNIFORM,1,,military uniform,paradis military uniform
 CLOTHES,UNIFORM TYPE MILITARY-REPLACE,1,,"griffin & kryuger military uniform, paradis military uniform, kuromorimine military uniform, saunders military uniform, amestris military uniform, tsab ground military uniform, ooarai military uniform, bc freedom military uniform, chi-hatan military uniform, selection military uniform, tsab air military uniform, tsab executive military uniform, tsab ground military uniform, tsab naval military uniform, tsab rescue military uniform",military uniform
 CLOTHES,UNIFORM TYPE MISC,1,uniform,,"demon slayer uniform, tracen training uniform, galaxy expedition team survey corps uniform, lycoris uniform, nudist beach uniform, champion uniform, raimon soccer uniform, pegasus knight uniform (fire emblem), order of the black knights uniform, knights of the round uniform, master dojo uniform, expedition uniform, gym challenge uniform, kobeya uniform, black order uniform, fleur de lapin uniform, celestial being uniform, ama usa an uniform, gem uniform (houseki no kuni), rabbit house uniform"
 CLOTHES,UNIFORM TYPE MISC-REPLACE,1,,"demon slayer uniform, tracen training uniform, galaxy expedition team survey corps uniform, lycoris uniform, nudist beach uniform, champion uniform, raimon soccer uniform, pegasus knight uniform (fire emblem), order of the black knights uniform, knights of the round uniform, master dojo uniform, expedition uniform, gym challenge uniform, kobeya uniform, black order uniform, fleur de lapin uniform, celestial being uniform, ama usa an uniform",uniform
@@ -2532,7 +2557,7 @@ COUNT,SUBMISSIVE FEMALE-REPLACE,1,,"submissive female, submissive",femsub
 COUNT,SUBMISSIVE MALE,1,malesub,,"submissive male, male sub"
 COUNT,SUBMISSIVE MALE-REPLACE,1,,"submissive male, submissive, male sub",malesub
 COUNT,TABARD TYPE,1,,tabard,"naked tabard, torn tabard"
-SEX,CORRUPTION TYPE,1,,corruption,alter servant corruption
+SEX,CORRUPTION TYPE,1,,corruption,"alter servant corruption, villainous corruption"
 EMOTIONS,AGE GAO REMOVAL,1,,ahe gao,ahegao
 EMOTIONS,AHE GAO CONVERT,1,ahegao,,ahe gao
 EMOTIONS,AHEGAO TYPE,1,,ahegao,"uneven ahegao, nasty ahegao, ohogao, ihigao"
@@ -2969,10 +2994,11 @@ EXTREME,EXPOSED INTESTINES,1,,intestines,exposed intestines
 EXTREME,EXPOSED ORGANS,1,,,"exposed brain, exposed intestines, exposed ribcage, exposed stomach, exposed heart, exposed ovaries, exposed uterus"
 EXTREME,FECES,1,,"chocolate, enema",feces
 EXTREME,FECES ACTION,1,,"feces, enema, chocolate","eating feces, projectile feces, feces excretion"
+EXTREME,FECES SHITTING,1,,"anal, anal object insertion", feces excretion
 EXTREME,FECES SHITTING CONFLICTS,1,,,"projectile feces, feces excretion, anal object insertion"
 EXTREME,FECES IN,1,,"feces,enema, chocolate","feces in ass, feces in pussy, feces in nipples, feces in navel, feces in mouth, feces in urethra, feces in container, feces in eye, feces in toilet, feces bath, feces in panties"
 EXTREME,FECES ON,1,,"feces,enema, chocolate","feces on ass, feces on breasts, feces on stomach, feces on hair, feces on hands, feces on tongue, feces on face, feces on bed, feces on floor, feces on penis, feces on soles, feces on feet, feces on clothes"
-EXTREME,FECES OTHER,1,,"feces,enema, chocolate","solid feces, liquid feces, yellow feces, black feces, bloody feces, feces bath, feces between breasts"
+EXTREME,FECES OTHER,1,,"feces,enema, chocolate","solid feces, liquid feces, yellow feces, black feces, bloody feces, feces bath, feces between breasts, steaming feces"
 EXTREME,FOOTPRINTS,1,,footprints,footprints on stomach
 EXTREME,GAPING NIPPLE,1,,,"gaping nipple, gaping nipples"
 EXTREME,GORE,1,gore,,guro
@@ -3147,6 +3173,7 @@ HAIR,HAIR AHOGE,1,,ahoge,"heart ahoge, huge ahoge, detached ahoge, dyed ahoge, w
 HAIR,HAIR ANTENNA ,1,,antenna hair,heart antenna hair
 HAIR,HAIR ASYMMETRICAL,1,,asymmetrical hair,"sidecut, arched bangs,asymmetrical bangs,diagonal bangs,hair over one eye,swept bangs,single hair intake,asymmetrical sidelocks,single sidelock, side bun,side braid,single braid,single hair bun,single hair ring,half updo,one side up,split ponytail,uneven twintails, big hair, side braids, side drill, single side bun,  high side ponytail"
 HAIR,HAIR BANGS,1,,bangs,"arched bangs,asymmetrical bangs,bangs pinned back,blunt bangs,crossed bangs,diagonal bangs,dyed bangs,fanged bangs,hair over eyes,hair over one eye,long bangs,parted bangs,curtained hair,curtained hair,short bangs,swept bangs,hair between eyes,hair intakes,single hair intake,widow's peak, choppy bangs, medium bangs,double-parted bangs, cut bangs"
+HAIR,CROSSED BANGS LOCATION,1,,hair between eyes,crossed bangs
 HAIR,HAIR BANGS ASYMMETRICAL,1,,asymmetrical bangs,"diagonal bangs,hair over one eye,swept bangs"
 HAIR,HAIR BASIC,1,,,"bob cut,inverted bob,bowl cut,buzz cut,chonmage,crew cut,flattop,okappa,pixie cut,undercut,flipped hair,wolf cut,cornrows,dreadlocks,hime cut,mullet,afro,huge afro,beehive hairdo,crested hair,pompadour,quiff,shouten pegasus mix mori,curly hair,drill hair,twin drills,tri drills,hair flaps,messy hair,pointy hair,ringlets,spiked hair,straight hair,wavy hair,lone nape hair,ahoge,heart ahoge,huge ahoge,antenna hair,heart antenna hair,comb over,hair pulled back,hair slicked back,mohawk,oseledets,asymmetrical hair,sidecut,blunt ends, wet hair,  short hair with long locks, liquid hair, hair ears, hair cone, hair cones, hair flip, quad drills"
 HAIR,HEART AHOGE,1,,heart hair,heart ahoge
@@ -3174,6 +3201,7 @@ HAIR,PINK INNER HAIR,1,,"pink hair, colored inner hair",pink inner hair
 HAIR,ORANGE INNER HAIR,1,,"orange hair, colored inner hair",orange inner hair
 HAIR,PURPLE INNER HAIR,1,,"purple hair, colored inner hair",purple inner hair
 HAIR,SILVER INNER HAIR,1,,"silver hair, colored inner hair",silver inner hair
+HAIR,BLACK INNER HAIR,1,,"black hair, colored inner hair",black inner hair
 HAIR,HAIR COWLICK,1,,,cowlick
 HAIR,HAIR DRILL LOCK,1,drill sidelocks,,drill locks
 HAIR,HAIR DRILL LOCK-REPLACE,1,,drill locks,drill sidelocks
@@ -3304,6 +3332,7 @@ HANDHELD OBJECT,PHONE TYPE,1,,,"flip phone, iphone, tablet, ipod, cellphone, sma
 HANDHELD OBJECT,ELECTRONIC HARDWARE,1,,,"flash drive, hard drive, circuit board, cd, record, radio antenna, wireless"
 HANDHELD OBJECT,ELECTRONIC PORTS,1,,,"usb, audio jack, usb hub, rca connector"
 HANDHELD OBJECT,ELECTRONICS,1,,,"computer, tablet pc, mousepad (object), mouse (computer), headphones, microphone, laptop, keyboard, keyboard (computer), head mounted display, hand fan, earbuds, computer, clock, playstation 4, nintendo switch, speaker, video game, flat screen tv, playstation 5,playstation, remote control,drawing tablet , ipad, tripod, selfie stick, screen, ring-con, nintendo ds, nintendo 3ds, pc-98 (computer), amplifier, playstation 2, playstation 3, xbox 360, xbox, digital media player, walkman, typewriter, radio, phonograph, detonator, game boy, cassette player, cassette tape, phone, radio, walkie-talkie, stereo, microphone wand"
+ACTION,SELFIE,1,,taking picture,selfie
 HANDHELD OBJECT,AMPLIFIER (INSTRUMENT) REMOVAL,1,amplifier,,amplifier (instrument)
 HANDHELD OBJECT,AMPLIFIER (INSTRUMENT) REPLACE,1,,amplifier (instrument),amplifier
 HANDHELD OBJECT,MOUSE AND KEYBOARD,1,,"mouse (computer), keyboard (computer)",mouse and keyboard (computer)
@@ -3330,6 +3359,7 @@ HANDHELD OBJECT,HAMMER LIKE OBJECTS,1,,,"mallet, hammer, rattle, kine, mochitsuk
 HANDHELD OBJECT,MORTAR MISC,1,,mortar,kine
 HANDHELD OBJECT,HAND FAN,1,,hand fan,"feather fan,hauchiwa,leaf fan,pukuishan,paper fan,folding fan,folded fan,tuanshan,uchiwa,harisen,war fan,gunbai,tessen, closed fan"
 HANDHELD OBJECT,HAND MIRROR,1,,mirror,hand mirror
+ENVIRONMENT,MIRROR CONFLICTS,1,,,"mirror, window"
 HANDHELD OBJECT,HAND NET,1,,net,hand net
 HANDHELD OBJECT,HAND NET TYPE,1,,hand net,butterfly net
 HANDHELD OBJECT,HANDHELD FIREWORKS,1,,,"sparkler, senkou hanabi"
@@ -3498,6 +3528,7 @@ HEAD,CHEEKBONE,1,,,cheekbones
 HEAD,CHEEKS,1,,cheeks,"puffy cheeks, cheek bulge, cheek squash, cheek press, sunken cheeks"
 HEAD,COLORED TIPS,1,,colored tips,"red hair-tips,blue hair-tips,green hair-tips,black hair-tips,white hair-tips,grey hair-tips,gray hair-tips,beige hair-tips,brown hair-tips,pink hair-tips,orange hair-tips,gold hair-tips,blonde hair-tips,yellow hair-tips,purple hair-tips,aqua hair-tips"
 HEAD,COVERED EYES,1,,covered eyes,"helmet over eyes, hair over one eye, hair over eyes, one eye covered, penis over one eye, penis over eyes, covering eyes, covering one eye,hidden eyes,rubbing eyes,shading eyes, hat over one eye, finger to eye, covering another's eyes, hat over eyes, covering own eyes, eyes visible through hair, covered face"
+HEAD,EYES VISBLE THOUGH HAIR,1,,eyebrows visible through hair,eyes visible through hair
 SEX ACTION,PENIS ON FACE TYPES,1,,penis on face,"penis over eyes, cheek press against penis"
 SEX ACTION,CHEEK PRESS,1,,cheek press,cheek press against penis
 HEAD,DENTURES,1,,,"dentures, fake teeth"
@@ -3559,7 +3590,7 @@ HEAD,LICKING UPPERLIPS,1,,licking lips,"licking upper lips, tongue out"
 HEAD,TONGUE CURLED UP,1,,tongue,"tongue curled up, tongue out"
 HEAD,LIP BITING,1,,biting own lip,lip biting
 HEAD,LIP SIZE,1,,lips,"thick lips, parted lips, lip biting, pursed lips, puffy lips, bimbo lips"
-HEAD,LIPS COLOR,1,,"lips, lipstick, makeup","red lips,blue lips,green lips,black lips,white lips,grey lips,gray lips,beige lips,brown lips,pink lips,orange lips,gold lips,blonde lips,yellow lips,purple lips,aqua lips, multicolored lips"
+HEAD,LIPS COLOR,1,,"lips, lipstick, makeup","red lips,blue lips,green lips,black lips,white lips,grey lips,gray lips,brown lips,pink lips,orange lips,gold lips,blonde lips,yellow lips,purple lips,aqua lips, multicolored lips"
 HEAD,LOOKING AT,1,,looking at object,"looking at penis, looking at phone, looking at animal, looking at mirror, looking at breasts,looking at food, looking at hand, looking at self, looking at screen, looking at hands, looking at flowers, looking at bluge, looking at ass, looking at pectorals, looking at pussy, loking at ass, looking at crotch, looking at clock, looking at chest,  looking at fence, looking at doll, looking at panties,looking at creature, looking at map"
 HEAD,MISC MAKEUP,1,,makeup,"mascara, runny makeup"
 HEAD,MISC MOUTH PARTS,0,,,uvula
@@ -3585,13 +3616,15 @@ HEAD,SIDEBURNS,1,,sideburns,long sideburns
 HEAD,STAR EYE CONFLICT,1,,,"star in eye, star-shaped pupils, +_+"
 HEAD,STAR IN EYE,1,,star (symbol),star in eye
 HEAD,SYMBOL IN EYE,1,,symbol in eye,heart in eye
-HEAD,TEETH,1,,teeth,"upper teeth, clenched teeth, buck teeth, lower teeth, round teeth, upper teeth only, missing tooth, broken teeth"
+HEAD,TEETH,1,,teeth,"upper teeth, clenched teeth, buck teeth, lower teeth, round teeth, upper teeth only, missing tooth, broken teeth, dirty teeth, dirty upper teeth"
 HEAD,TOOTH STATUS,1,,,"missing tooth, broken tooth, tooth gap"
 HEAD,SMILE CONFLICTS,1,,,"clenched teeth, smile, rolling eyes"
 HEAD,OPEN MOUTH CONFLICTS,1,,,"clenched teeth, open mouth, closed mouth"
 HEAD,TEETH LOWER,1,,lower teeth,lower teeth only
 HEAD,TEETH UPPER,1,,upper teeth,upper teeth only
-HEAD,TONGUE COLOR,1,,"tongue, colored tongue","purple tongue, blue tongue, green tongue, orange tongue, yellow tongue"
+HEAD,DIRTY TEETH,1,,"upper teeth only, upper teeth",dirty upper teeth
+HEAD,TONGUE COLOR,1,,"tongue, colored tongue","purple tongue, blue tongue, green tongue, orange tongue, yellow tongue, aqua tongue, black tongue,grey tongue, red tongue, dirty coated tongue"
+HEAD,COLORED LIPS TONGUE CONFLICTS,1,,,"purple tongue, blue tongue, green tongue, orange tongue, yellow tongue, aqua tongue, black tongue,grey tongue, red tongue, red lips,blue lips,green lips,black lips,white lips,grey lips,gray lips,beige lips,brown lips,pink lips,orange lips,gold lips,blonde lips,yellow lips,purple lips,aqua lips, multicolored lips, colored lips, colored tongue, tongue, lips"
 HEAD,TONGUE LENGTH,1,,tongue,"long tongue, prehensile tongue, very long tongue"
 HEAD,TONGUE LENGTH VERY LONG,1,,long tongue,very long tongue
 HEAD,TONGUE TIP,1,,tongue,"forked tongue, split tongue"
@@ -3695,12 +3728,12 @@ MAKEUP,IREZUMI,1,,"yakuza tattoo, back tattoo, shoulder tattoo",irezumi
 MAKEUP,IREZUMI CONVERT,1,irezumi,,yakuza tattoo
 MAKEUP,JOESTAR BIRTHMARK,1,,"birthmark, star tattoo, star (shape)",joestar birthmark
 MAKEUP,LIPSTICK,1,,makeup,lipstick
-MAKEUP,LIPSTICK MARK ON,1,,"lipstick mark, tattoo, makeup","lipstick mark on penis, lipstick mark on tip, lipstick mark on testicles, lipstick mark on stomach, lipstick mark on face, lipstick mark on neck, lipstick mark on breast, lipstick mark on chest, lipstick mark on breasts, lipstick mark on arms, lipstick mark on legs, lipstick mark on anus, lipstick mark around anus, lipstick mark on ass, lipstick mark on body, lipstick mark on thighs"
+MAKEUP,LIPSTICK MARK ON,1,,"lipstick mark, tattoo, makeup","lipstick mark on penis, lipstick mark on tip, lipstick mark on testicles, lipstick mark on stomach, lipstick mark on face, lipstick mark on neck, lipstick mark on breast, lipstick mark on chest, lipstick mark on breasts, lipstick mark on arms, lipstick mark on legs, lipstick mark on anus, lipstick mark around anus, lipstick mark on ass, lipstick mark on body, lipstick mark on thighs, lipstick mark on crotch, lipstick mark on inner thigh, lipstick mark on thigh"
 MAKEUP,LIPSTICK RINGS,1,,"tattoo, makeup","lipstick ring, lipstick mark"
-MAKEUP,LIPSTICK RING COLOR,1,,lipstick ring,"red lipstick ring, black lipstick ring, blue lipstick ring, green lipstick ring, purple lipstick ring, pink lipstick ring, yellow lipstick ring, orange lipstick ring, white lipstick ring, silver lipstick ring, gold lipstick ring,aqua lipstick ring"
-MAKEUP,LIPSTICK MARK COLOR,1,,"lipstick mark, tattoo","red lipstick mark, black lipstick mark, blue lipstick mark, green lipstick mark, purple lipstick mark, pink lipstick mark, yellow lipstick mark, orange lipstick mark, white lipstick mark, silver lipstick mark, gold lipstick mark,aqua lipstick mark"
+MAKEUP,LIPSTICK RING COLOR,1,,"lipstick ring, lipstick mark","red lipstick ring, black lipstick ring, blue lipstick ring, green lipstick ring, purple lipstick ring, pink lipstick ring, yellow lipstick ring, orange lipstick ring, white lipstick ring, silver lipstick ring, gold lipstick ring,aqua lipstick ring, grey lipstick ring"
+MAKEUP,LIPSTICK MARK COLOR,1,,"lipstick mark, tattoo","red lipstick mark, black lipstick mark, blue lipstick mark, green lipstick mark, purple lipstick mark, pink lipstick mark, yellow lipstick mark, orange lipstick mark, white lipstick mark, silver lipstick mark, gold lipstick mark,aqua lipstick mark, grey lipstick mark"
 MAKEUP,LIPSTICK SMEAR,1,,lipstick,lipstick smear
-MAKEUP,LISPTICK RING,1,,,"lipstick ring, smeared lipstick"
+MAKEUP,LISPTICK RING,1,,,"lipstick ring, smeared lipstick, lipstick mark, bar censor "
 MAKEUP,SMEARED LIPSTICK,1,,lipstick,smeared lipstick
 MAKEUP,LIVESTOCK MARK,1,livestock mark,,"meat lines, cut lines, meat marks"
 MAKEUP,LIVESTOCK MARK-REPLACE,1,,"meat lines, cut lines, meat marks",livestock mark
@@ -3716,13 +3749,15 @@ MAKEUP,POKEBALL TATTOO,1,,tattoo,"pokeball tattoo on ass, pokeball tattoo on bre
 MAKEUP,FAIRY TAIL TATTOO,1,,tattoo,"fairytail tattoo, fairytail tattoo on arm, fairytail tattoo on hand, fairytail tattoo on belly"
 MAKEUP,KUMOGAKURE TATTOO,1,,tattoo,"kumogakure tattoo, kumogakure tattoo on ass, kumogakure tattoo on breast, kumogakure pubic tattoo"
 MAKEUP,AFRICA SHAPED TATTOO,1,,tattoo,"africa-shaped tattoo on waist, africa-shaped tattoo on thigh, africa-shaped tattoo on ass, africa-shaped tattoo on breasts, africa-shaped tattoo on back, africa-shaped tattoo on shoulder, africa-shaped tattoo on arm"
-MAKEUP,QOS RELATED TATTOOS,1,,tattoo,"fist tattoo, qos-spade tattoo, qos-spade tattoo on breast, qos-spade tattoo on ass, qos-spade tattoo on cheek, qos-spade pubic tattoo, qos-spade tattoo on arm, qos-spade tattoo on back, qos-spade tattoo on ankle, qos-spade tattoo on neck, small qos-spade tattoo on breast, large qos-spade tattoo on breast, qos-spade tattoo on stomach, qos-spade tattoo on shoulder, fist tattoo on arm, fist tattoo on shoulder, fist tattoo on ass, qos-spade tattoo on leg, fist tattoo on thigh, qos-spade tattoo on chest, no-whiteboi tattoo, qos-spade tattoo on hand, fist tattoo on cheek, no-whiteboi tattoo on ass, no-whiteboi tattoo on breast, phallic pubic tattoo, qos-spade tattoo on thigh,  qos-spade tattoo on forehead, qos-spade tattoo on cheek, qos-spade tattoo on breasts, small qos-spade tattoo on cheek, vine tattoo on shoulder, vine tattoo on shoulders, fist pubic tattoo, fist tattoo on hand, large qos-spade tattoo on back, qos-spade flower on breast,qos-spade tattoo on inner thigh, sperm tattoo on inner thigh"
+MAKEUP,QOS RELATED TATTOOS,1,,tattoo,"fist tattoo, qos-spade tattoo, qos-spade tattoo on breast, qos-spade tattoo on ass, qos-spade tattoo on cheek, qos-spade pubic tattoo, qos-spade tattoo on arm, qos-spade tattoo on back, qos-spade tattoo on ankle, qos-spade tattoo on neck, small qos-spade tattoo on breast, large qos-spade tattoo on breast, qos-spade tattoo on stomach, qos-spade tattoo on shoulder, fist tattoo on arm, fist tattoo on shoulder, fist tattoo on ass, qos-spade tattoo on leg, fist tattoo on thigh, qos-spade tattoo on chest, no-whiteboi tattoo, qos-spade tattoo on hand, fist tattoo on cheek, no-whiteboi tattoo on ass, no-whiteboi tattoo on breast, phallic pubic tattoo, qos-spade tattoo on thigh,  qos-spade tattoo on forehead, qos-spade tattoo on cheek, qos-spade tattoo on breasts, small qos-spade tattoo on cheek, vine tattoo on shoulder, vine tattoo on shoulders, fist pubic tattoo, fist tattoo on hand, large qos-spade tattoo on back, qos-spade flower on breast,qos-spade tattoo on inner thigh, sperm tattoo on inner thigh, blacked bar tattoo on stomach, fist tattoo on breast"
+MAKEUP,BLACKED CAPTION TATTOO,1,,,blacked bar tattoo on stomach
+MAKEUP,SPADE HEART CONFLICTS,1,,,"heart,  qos-spade tattoo, qos-spade tattoo on breast, qos-spade tattoo on ass, qos-spade tattoo on cheek, qos-spade pubic tattoo, qos-spade tattoo on arm, qos-spade tattoo on back, qos-spade tattoo on ankle, qos-spade tattoo on neck, small qos-spade tattoo on breast, large qos-spade tattoo on breast, qos-spade tattoo on stomach, qos-spade tattoo on shoulder, fist tattoo on arm, fist tattoo on shoulder, fist tattoo on ass, qos-spade tattoo on leg, fist tattoo on thigh, qos-spade tattoo on chest, no-whiteboi tattoo, qos-spade tattoo on hand, fist tattoo on cheek, no-whiteboi tattoo on ass, no-whiteboi tattoo on breast, phallic pubic tattoo, qos-spade tattoo on thigh,  qos-spade tattoo on forehead, qos-spade tattoo on cheek, qos-spade tattoo on breasts, small qos-spade tattoo on cheek, vine tattoo on shoulder, vine tattoo on shoulders, fist pubic tattoo, fist tattoo on hand, large qos-spade tattoo on back, qos-spade flower on breast,qos-spade tattoo on inner thigh"
 MAKEUP,QOS-SPADE IN ROSE TATTOO,1,,"flower tattoo, tattoo","qos-spade flower on breast, qos-spade flower on shoulder, qos-spade flower on arm, qos-spade flower on leg"
 MAKEUP,QOS-SPADE PUBIC TATTOO,1,,pubic tattoo,"qos-spade pubic tattoo, phallic pubic tattoo, barcode pubic tattoo, horseshoe pubic tattoo, qoh-heart pubic tattoo, pokeball pubic tattoo, paw print pubic tattoo, kumogakure pubic tattoo, spade pubic tattoo, bbc-only pubic tattoo, fist pubic tattoo, heart-shaped pubic abortion tally, broken heart-shaped pubic abortion tally, baby-shaped pubic abortion tally, phallic-shaped pubic tattoo, spade-shaped pubic tattoo, butterfly-shaped pubic tattoo"
-MAKEUP,QOS-SPADE BREAST TATTOO,1,,breast tattoo,"qos-spade tattoo on breast, large qos-spade tattoo on breast, small qos-spade tattoo on breast, no-whiteboi tattoo on breast, qoh-heart tattoo on breast, small qoh-heart tattoo on breast, large qoh-heart tattoo on breast, tenryuubito tattoo on breast, horseshoe tattoo on breast, barcode tattoo on breast, paw print tattoo on breast, pokeball tattoo on breast, kumogakure tattoo on breast, qos-spade tattoo on breasts, africa-shaped tattoo on breast, flower tattoo on breast, spade tattoo on breast, qos-spade flower on breast"
+MAKEUP,QOS-SPADE BREAST TATTOO,1,,breast tattoo,"qos-spade tattoo on breast, large qos-spade tattoo on breast, small qos-spade tattoo on breast, no-whiteboi tattoo on breast, qoh-heart tattoo on breast, small qoh-heart tattoo on breast, large qoh-heart tattoo on breast, tenryuubito tattoo on breast, horseshoe tattoo on breast, barcode tattoo on breast, paw print tattoo on breast, pokeball tattoo on breast, kumogakure tattoo on breast, qos-spade tattoo on breasts, africa-shaped tattoo on breast, flower tattoo on breast, spade tattoo on breast, qos-spade flower on breast, fist tattoo on breast"
 MAKEUP,QOS-SPADE ASS TATTOO,1,,ass tattoo,"qos-spade tattoo on ass, large qos-spade tattoo on ass, small qos-spade tattoo on ass, no-whiteboi tattoo on ass,  qoh-heart tattoo on ass,  tenryuubito tattoo on ass, horseshoe tattoo on ass, barcode tattoo on ass, paw print tattoo on ass, pokeball tattoo on ass, baby-shaped abortion tally on ass, heart-shaped abortion tally on ass, kumogakure tattoo on ass, africa-shaped tattoo on ass,  flower tattoo on ass, spade tattoo on ass, phallic tattoo on ass"
 MAKEUP,QOS-SPADE STOMACH TATTOO,1,,stomach tattoo,"qos-spade tattoo on stomach, large qos-spade tattoo on stomach, small qos-spade tattoo on stomach, no-whiteboi tattoo on stomach,  qoh-heart tattoo on stomach,  tenryuubito tattoo on stomach, horseshoe tattoo on stomach, barcode tattoo on stomach, paw print tattoo on stomach, pokeball tattoo on stomach, baby-shaped abortion tally, heart-shaped abortion tally,  x baby-shaped abortion tally, broken heart abortion tally, single baby-shaped abortion tally, single heart-shaped abortion tally, single x baby-shaped abortion tally, single broken heart abortion tally, fairytail tattoo on belly,  tribal tattoo on torso, vine tattoo on torso, qos-spade tattoo on torso, africa-shaped tattoo on waist, africa-shaped tattoo on torso, africa-shaped tattoo on stomach,  flower tattoo on stomach, spade tattoo on stomach, multiple abortion tally,multiple pokeball-shaped abortion tally,multiple x heart abortion tally,multiple broken heart abortion tally,multiple x baby-shaped abortion tally,multiple heart-shaped abortion tally,multiple baby-shaped abortion tally"
-MAKEUP,TATTOO ON SHOULDER,1,,shoulder tattoo,"qos-spade tattoo on shoulder, fist tattoo on shoulder,  qoh-heart tattoo on shoulder, horseshoe tattoo on shoulder, tenryuubito tattoo on shoulder, barcode tattoo on shoulder, paw print tattoo on shoulder, pokeball tattoo on shoulder, blm tattoo on shoulder, vine tattoo on shoulder, vine tattoo on shoulders, africa-shaped tattoo on shoulder, rose tattoo on shoulder,  flower tattoo on shoulder, spade tattoo on shoulder, qos-spade flower on shoulder"
+MAKEUP,TATTOO ON SHOULDER,1,,shoulder tattoo,"qos-spade tattoo on shoulder, fist tattoo on shoulder,  qoh-heart tattoo on shoulder, horseshoe tattoo on shoulder, tenryuubito tattoo on shoulder, barcode tattoo on shoulder, paw print tattoo on shoulder, pokeball tattoo on shoulder, blm tattoo on shoulder, vine tattoo on shoulder, vine tattoo on shoulders, africa-shaped tattoo on shoulder, rose tattoo on shoulder,  flower tattoo on shoulder, spade tattoo on shoulder, qos-spade flower on shoulder, blacked bar tattoo on stomach"
 MAKEUP,QOS-SPADE TATTOO ON LEG,1,,leg tattoo,"qos-spade tattoo on leg, fist tattoo on thigh, qos-spade tattoo on thigh, qoh-heart tattoo on thigh, qoh-heart tattoo on leg, horseshoe tattoo on leg, barcode tattoo on leg, paw print tattoo on leg, pokeball tattoo on leg. pokeball tattoo on thigh, paw print tattoo on thigh, horseshoe tattoo on thigh, blm tattoo on leg, tribal tattoo on leg, tribal tattoo on thigh, africa-shaped tattoo on thigh, africa-shaped tattoo on leg, blm tattoo on thigh,  flower tattoo on leg, spade tattoo on leg, phallic tattoo on thigh, phallic tattoo on leg, multiple heart-shaped abortion tally on thigh, qos-spade tattoo on inner thigh, sperm tattoo on inner thigh, qos-spade flower on leg"
 MAKEUP,QOS-SPADE TATTOO ON BACk,1,,back tattoo,"tenryuubito tattoo on back, qos-spade tattoo on back, horseshoe tattoo on back, tenryuubito tattoo on back, barcode tattoo on back, paw print tattoo on back, pokeball tattoo on back, blm tattoo on back, africa-shaped tattoo on back, large qos-spade tattoo on back,  flower tattoo on back, spade tattoo on back"
 MAKEUP,QOS-SPADE TATTOO ON ARM,1,,arm tattoo,"qos-spade tattoo on arm, qoh-heart tattoo on leg, tenryuubito tattoo on arm, horseshoe tattoo on arm, barcode tattoo on arm, paw print tattoo on arm, pokeball tattoo on arm,  fairytail tattoo on arm, rose vine tattoo on arm, blm tattoo on arm, vine tattoo on forearm, tribal tattoo on arm, africa-shaped tattoo on arm,  flower tattoo on arm, spade tattoo on arm, qos-spade flower on arm"
@@ -3731,13 +3766,14 @@ MAKEUP,QOS SPADE TATTOO ON CHEST,1,,chest tattoo,"qos-spade tattoo on chest, pha
 MAKEUP,HAND TATTOO TYPES,1,,hand tattoo,fairytail tattoo on hand
 MAKEUP,QOH TATTOOS,1,,"tattoo, heart tattoo","qoh-heart tattoo on breast, qoh-heart vine tattoo, qoh-heart pubic tattoo, heart-vine tattoo, qoh-heart tattoo on ass, qoh-heart tattoo on shoulder,  qoh-heart tattoo on cheek, qoh-heart tattoo on face, small qoh-heart tattoo on breast, large qoh-heart tattoo on breast"
 MAKEUP,ONEPIECE TENRYUUBITO TATTOO,1,,tattoo,"tenryuubito tattoo on back, tenryuubito tattoo on breast, tenryuubito tattoo on ass, tenryuubito tattoo on arm"
-MAKEUP,SKIN MARKS,1,,,"lipstick mark, hickey, bite mark, bruise, injury, scratches, scar, stiches, cuts, claw mark, scorch mark, slap mark, burn mark, strangulation mark, skid mark, pregnancy mark, x mark, o mark, stamp mark, whip marks, spanked, rope marks, burn scar, birthmark, cutie mark, joestar birthmark, paw print marks"
+MAKEUP,SKIN MARKS,1,,,"lipstick mark, hickey, bite mark, bruise, injury, scratches, scar, stiches, cuts, claw mark, scorch mark, slap mark, burn mark, strangulation mark, skid mark, pregnancy mark, x mark, o mark, stamp mark, whip marks, spanked, rope marks, burn scar, birthmark, cutie mark, joestar birthmark, paw print marks, hickey mark on breasts, hickey mark on neck, hickey mark on stomach"
+MAKEUP,HICKEY MARKS LOCATION,1,,hickey,"hickey mark on breasts, hickey mark on neck, hickey mark on stomach"
 MAKEUP,BURN SCARS,1,,scar,burn scar
 MAKEUP,BURN SCAR LOCATION,1,,"burn scar, scar","burn scar on face, burn scar on face, burn scar on body, burn scar on arms, burn scar on legs"
 MAKEUP,MLP TATTOO MARK,1,,"tattoo, makeup",cutie mark
 MAKEUP,CUT MARKS ON BODY,1,,cuts,"cuts on arm, cuts on wrists, cuts on wrist, cuts on legs, cuts on body, cuts on face, cuts on arms"
 MAKEUP,SKIN MISC,1,,,"patchwork skin, wrinkled skin"
-MAKEUP,SLAP MARK LOCATION,1,,slap mark,"slap mark on cheek, slap mark on thigh, slap mark on breast, slap mark on back, slap mark on ass"
+MAKEUP,SLAP MARK LOCATION,1,,slap mark,"slap mark on cheek, slap mark on thigh, slap mark on breast, slap mark on back, slap mark on ass, slap mark on stomach"
 MAKEUP,SPADE TATTOO,1,,"heart tattoo, spade (shape), tattoo,bodypaint","spade tattoo, spade tattoo on arm, spade tattoo on ass, spade tattoo on breast, spade tattoo on cheek, spade tattoo on stomach"
 MAKEUP,SPADE TATTOO (ARM),1,,"ass tattoo, spade (shape), tattoo, heart, bodypaint",ass spade tattoo
 MAKEUP,SPADE TATTOO (BREAST),1,,"breast tattoo, spade (shape), tattoo, heart, bodypaint",breast spade tattoo
@@ -3772,8 +3808,8 @@ MAKEUP,THIGH TATTOOS,1,,tattoo,"thigh tattoo, leg tattoo, ass tattoo"
 MAKEUP,TOENAIL POLISH,1,,toenails,toenail polish
 MAKEUP,TOENAIL POLISH TYPES,1,,nail polish,"toenail polish, pedicure"
 MAKEUP,TRACK MARKS,1,,mole,"drug mark, track mark, track marks"
-MAKEUP,VINE TATTOO ALL,1,,tattoo,"vine tattoo,multiple vine tattoo, rose vine tattoo, vine tattoo on arm, vine tattoo on arms, vine tattoo on neck, vine tattoo on breasts, vine tattoo on breast, vine tattoo on leg, vine tattoo on ankle, vine tattoo on face, qoh-heart vine tattoo, vine tattoo on ass, intricate vine tattoo, thorned vine tattoo, thorned vine tattoo on arm, thorned vine tattoo on neck, single vine tattoo, double vine tattoo"
-MAKEUP,VINE TATTOO,1,,"thigh tattoo, leg tattoo, tattoo","vine tattoo,multiple vine tattoo, rose vine tattoo, qoh-heart vine tattoo, vine tattoo on thigh, vine tattoo on thighs, intricate vine tattoo"
+MAKEUP,VINE TATTOO ALL,1,,tattoo,"vine tattoo,multiple vine tattoo, rose vine tattoo, vine tattoo on arm, vine tattoo on arms, vine tattoo on neck, vine tattoo on breasts, vine tattoo on breast, vine tattoo on leg, vine tattoo on ankle, vine tattoo on face, qoh-heart vine tattoo, vine tattoo on ass, intricate vine tattoo, thorned vine tattoo, thorned vine tattoo on arm, thorned vine tattoo on neck, single vine tattoo, double vine tattoo, single vine tattoo"
+MAKEUP,VINE TATTOO,1,,"thigh tattoo, leg tattoo, tattoo","vine tattoo,multiple vine tattoo, rose vine tattoo, qoh-heart vine tattoo, vine tattoo on thigh, vine tattoo on thighs, intricate vine tattoo, single vine tattoo"
 MAKEUP,VINE TATTOO ON ARM,1,,"arm tattoo, tattoo","vine tattoo on arm, vine tattoo on arms, vine tattoo on wrist, vine tattoo on forearm"
 MAKEUP,VINE TATTOO ON NECK,1,,"neck tattoo, tattoo","vine tattoo on neck, qos-spade tattoo on neck, thorned vine tattoo on neck"
 MAKEUP,VINE TATTOO ON BREASTS,1,,breast tattoo,"vine tattoo on breasts, vine tattoo on breast"
@@ -3781,7 +3817,7 @@ MAKEUP,VINE TATTOO ON LOWER LEGS,1,,"leg tattoo, ankle tattoo","vine tattoo on l
 MAKEUP,VINE TATTOO ON FACE,1,,facial tattoo,vine tattoo on face
 MAKEUP,VINE TATTOO ON ASS,1,,ass tattoo,vine tattoo on ass
 MAKEUP,WHISKERS,1,,whiskers,whisker markings
-MAKEUP,DECO TYPES,1,,facial mark,"heart deco on cheek, multiple heart deco on cheek, star deco on cheek, multiple star deco on cheek, gem deco on cheek, multiple deco on cheek"
+MAKEUP,DECO TYPES,0,,"facial mark, facial tattoo","heart deco on cheek, multiple heart deco on cheek, star deco on cheek, multiple star deco on cheek, gem deco on cheek, multiple deco on cheek"
 MAKEUP,WIG,1,,,wig
 MAKEUP,WOMB TATTOO,1,,tattoo,"womb tattoo, pubic tattoo, navel tattoo, stomach tattoo, womb-shaped pubic tattoo"
 MAKEUP,GLOWING HEART TATTOO,1,,"heart tattoo, pubic tattoo, glowing tattoo",glowing heart-shaped pubic tattoo
@@ -3838,7 +3874,8 @@ OTHER,FLUID COLOR,1,,liquid,"green liquid, blue liquid, aqua liquid, green liqui
 OTHER,FLUID SHAPE,1,,,"puddle, pussy juice puddle, water drop"
 OTHER,FLUID TYPES,1,,,"fluid, ink, paint, potion, liquid, goo, slime (substance), condensation trail, honey,  lube, water, oil, syrup"
 OTHER,FOAM,1,,foam,foaming at the mouth
-OTHER,GAS,1,,,"smell, gas, fart, burp, steam, condensation"
+OTHER,GAS,1,,,"smell, gas, fart, burp, steam, condensation, smelly breath"
+OTHER,SMELLY BREATH,1,,"smell, breath",smelly breath
 OTHER,MECHA ACCENT ARMOR,1,,,"red accent armor,blue accent armor,green accent armor,black accent armor,white accent armor,grey accent armor,brown accent armor,pink accent armor,orange accent armor,gold accent armor,yellow accent armor,purple accent armor,aqua accent armor"
 OTHER,MECHA FRAME COLOR,1,,,"red frame,blue frame,green frame,black frame,white frame,grey frame,brown frame,pink frame,orange frame,gold frame,yellow frame,purple frame,aqua frame"
 OTHER,MENSTRUATION,1,,defloration,menstruation
@@ -3846,7 +3883,7 @@ OTHER,OVER SHOULDER,1,,over shoulder,"hair over shoulder,weapon over shoulder,ca
 OTHER,PAINT SPLATTER,1,,"paint splatter, paint",paint splatter on face
 OTHER,PAINTS,1,,,paint on clothes
 OTHER,PATTERNS,0,,pattern,"pinstripe pattern, unmoving pattern, meandros"
-OTHER,PENIS SIZE DIFFERENCE,1,,size comparison,"penis size difference, penis size comparison"
+OTHER,PENIS SIZE DIFFERENCE,1,,size comparison,"penis size difference, penis size comparison, penis comparison with dildo"
 OTHER,SEVERED,0,,severed limb,"severed head, severed hands, severed hand, severed arms, severed arm, severed legs, severed leg, severed torso, severed breasts, severed breast, severed hips, severed feet, severed foor"
 OTHER,SHAPED THINGS,1,,,elliptical water
 OTHER,SHINY,0,,shiny,"shiny skin,shiny clothes,shiny legwear,shiny swimsuit,shiny footwear,shiny pantyhose,shiny lips,shiny forehead,shiny floor,shiny eyes,shiny skirt,shiny horns,shiny gloves,shiny food, shiny hair, shiny dress"
@@ -4058,6 +4095,7 @@ RACE,MONSTER DESCRIPTION,1,,,"eldritch abomination, creature, monster, mythologi
 RACE,MONSTER GIRL,1,,monster girl,"slime girl, snake girl, spider girl, dragon girl, arthropod girl, bee girl, lamia"
 RACE,ONI GIRL,1,,"demon girl, monster girl",oni
 RACE,ORC,1,,orc,female orc
+RACE,FEMALE ORC GOBLIN,1,,female goblin,female orc
 RACE,POKEMON,0,,"pokemon (creature), pokemon","legendary pokemon, ultra beast, shiny pokemon, mega pokemon, mythical pokemon, clothed pokemon"
 RACE,POKEMON CONFLICT,1,,,"pokemon (creature), pokemon, legendary pokemon, ultra beast, shiny pokemon, mega pokemon, mythical pokemon, clothed pokemon, creature,monster, duel monster, pokemon egg"
 RACE,POKEMON CREATURE,1,pokemon,,pokemon (creature)
@@ -4117,6 +4155,7 @@ SEX,SEXUAL SUBJECT CONFLICTS,1,,,"bestiality, interracial, interspecies, masturb
 SEX,BIMBO LIPS,1,,,bimbo lips
 SEX,BLOATING,1,inflation,,"bloated, bloating"
 SEX,BODILY FLUIDS,1,,,"saliva, saliva trail, pussy juice, pussy juice trail, suggestive fluid, milk, cream, lotion, spit, drool, saliva drip, saliva pool, excessive saliva, saliva bubble, nose bubble, dripping, pussy juice puddle, lactation, lactation through clothes, sweat, steaming body, sweatdrop, flying sweatdrops, vomit, steam, bubble blowing, breast milk, snot, drooling, pee, peeing, anal fluid, precum trail, precum,  very sweaty, snot trail, cum on tongue, cum in mouth, female ejaculation, projectile cum, cum trail"
+OTHER,STEAMING OBJECTS,1,,,"steaming shoes, steaming feces"
 SEX,CUM TRAIL,1,,saliva trail,cum trail
 SEX,SNOT TRAIL,1,,snot,snot trail
 SEX,LIQUID IN NOSE,1,,,"cum in nose, snot, snot trail, cum bubble, nose bubble"
@@ -4160,7 +4199,7 @@ SEX,CMNF,0,"clothed male, nude female",,cmnf
 SEX,CMNF-REPLACE,0,,cmnf,"clothed male, nude female"
 SEX,CMNM,0,"clothed male, nude male",,cmnm
 SEX,CMNM-REPLACE,0,,cmnm,"clothed male, nude male"
-SEX,COLORED PENIS CONFLICT,1,,,"strap-on, condom on penis, foreskin, penis sheath"
+SEX,COLORED PENIS CONFLICT,1,,,"strap-on, condom on penis, foreskin, penis sheath, rainbow strap-on, pink strap-on, red strap-on, black strap-on, purple strap-on"
 SEX,STRAP-ON CONFLICT,1,,,"strap-on, futanari, full-package futanari"
 SEX,STRAP-ON TYPES,1,,strap-on,"horse dildo strap-on, dog dildo strap-on, huge strap-on"
 SEX,STRAP-ON HORSE,1,,"horse penis, horse dildo, huge dildo, dildo, sex toy, animal penis",horse dildo strap-on
@@ -4337,8 +4376,9 @@ SEX,SMEGMA PENIS,1,,"smegma, foreskin",smegma under foreskin
 SEX,SMEGMA ON LOCATION,1,,smegma,"smegma on tongue, smegma in mouth, smegma on penis"
 SEX,PENIS ON BODY,1,,,"penis on ass, penis on pussy, penis on stomach, penises touching"
 SEX,PENIS ON FACE,1,,imminent fellatio,"penis awe, penis on face, penis on head, smelling penis, penis over eyes, licking penis, kissing penis"
-SEX,PENIS SIZE,1,,penis,"small penis, large penis, huge penis, gigantic penis, flaccid penis, huge veiny penis, gigantic veiny penis, large veiny penis, half-erect penis"
+SEX,PENIS SIZE,1,,penis,"small penis, large penis, huge penis, gigantic penis, flaccid penis, huge veiny penis, gigantic veiny penis, large veiny penis, half-erect penis, erect penis"
 SEX,PENIS STATE,1,,,"flaccid, erection, chastity cage, bulge, half-erect, flaccid penis, half-errect penis"
+SEX,ERECT PENIS,1,,"erection, penis",erect penis
 SEX,HALF ERRECT PENIS,1,,"flaccid, erection","half-erect, half-erect penis"
 SEX,FLACCID HUGE PENIS,1,,"flaccid, huge penis",flaccid huge penis
 SEX,FLACCID SMALL PENIS,1,,"flaccid, small penis",flaccid small penis
@@ -4438,8 +4478,10 @@ SEX,R34-Viewer,1,,,"laughing at viewer, talking to viewer, cucking viewer"
 ACCESSORIES,MONOGLOVE REPLACE,1,armbinder,,monoglove
 ACCESSORIES,MONOGLOVES REMOVE,1,,monoglove,armbinder
 SEX,R34-YAOI ALT,1,yaoi,,"male on male, male male, male/male, male with male"
+SEX,PEGGING STRAPON CONFLICTS,1,,,"pegging, futa with male, futa on male, futanari"
 SEX,R34-YAOI REMOVE,1,,"male on male, male male, male/male, male with male",yaoi
 SEX,YAOI CONFLICTS,1,,,"furry female, yaoi"
+SEX,FORCED YAOI,1,,yaoi,forced yaoi
 SEX,TRANS COLOR SCHEME,1,,,"transgender flag, transgender shirt, transgender background"
 SEX,R34-zoophilia,1,bestiality,,zoophilia
 SEX,R34-zoophilia removal,1,,zoophilia,bestiality
@@ -4622,7 +4664,7 @@ SEX ACTION,IMMINENT SEXUAL,1,,,"imminent cunnilingus,imminent breast grab,immine
 SEX ACTION,IMPLIED SEX,1,,implied sex,"implied yaoi, implied yuri"
 SEX ACTION,INJECTION LOCATION,1,,injection,"clitoris injection, head injection, nipple injection, arm injection"
 SEX ACTION,INVITATION,1,,,bed invitation
-SEX ACTION,KISS,1,,kiss,"french kiss,imminent kiss,after kiss,surprise kiss,pocky kiss,blowing kiss,implied kiss,incoming kiss,incoming pocky kiss,indirect kiss,double cheek kiss,tiptoe kiss,upside-down kiss,head kiss,waiting for kiss,rejected kiss,accidental kiss,forced kiss,guided kiss,kiss from behind,kissed by animal,animals kissing,finger kiss,arm kiss,forceful kiss,group kiss, saliva swap, buchu kiss, kissing"
+SEX ACTION,KISS,1,,kiss,"french kiss,imminent kiss,after kiss,surprise kiss,pocky kiss,blowing kiss,implied kiss,incoming kiss,incoming pocky kiss,indirect kiss,double cheek kiss,tiptoe kiss,upside-down kiss,head kiss,waiting for kiss,rejected kiss,accidental kiss,forced kiss,guided kiss,kiss from behind,kissed by animal,animals kissing,finger kiss,arm kiss,forceful kiss,group kiss, saliva swap, buchu kiss, kissing, sloppy kiss"
 SEX ACTION,KISS CONFLICTS,1,,,"kiss, oral, french kiss, licking face, tongue, tongue out, licking"
 SEX ACTION,IMMINENT VAGINAL CONFLICT,1,,,"imminent vaginal, vaginal"
 SEX ACTION,IMMINENT ANAL CONFLICT,1,,,"imminent anal, anal"
@@ -4813,7 +4855,7 @@ SHOES,SNEAKER COLOR,1,,sneakers,"red sneakers,blue sneakers,green sneakers,black
 SHOES,LEGWEAR GREY,1,,,"grey legwear, grey footwear"
 SHOES,LEGWEAR RED,1,,,"red legwear, red footwear"
 SHOES,LEGWEAR WHITE,1,,,"white legwear, white footwear"
-SHOES,MISC SHOES,1,,shoes,"sneakers, mary janes, loafers, uwabaki, flats, winged footwear, rudder footwear, cross-laced shoes"
+SHOES,MISC SHOES,1,,shoes,"sneakers, mary janes, loafers, uwabaki, flats, winged footwear, rudder footwear, cross-laced shoes, steaming shoes"
 SHOES,UWABAKI COLOR,1,,white footwear,uwabaki
 SHOES,BROWN LOAFERS,1,,"loafers, brown footwear",brown loafers
 SHOES,BLACK LOAFERS,1,,"black footwear, brown footwear",loafers
@@ -5067,8 +5109,10 @@ VIEW,JUXTAPOSITION,1,,,"juxtaposition, juxtaposition with smartphone, juxtaposit
 VIEW,JUSXTAPOSITION WITH PHONE,0,,"taking photo, recording, taking picture, smartphone, cellphone","juxtaposition with smartphone, juxtaposition with cellphone,juxtaposition with cellphone photo"
 VIEW,COVER DOUJIN,1,cover page,,doujin cover
 VIEW,COVER DOUJIN-REPLACE,1,,doujin cover,cover page
-VIEW,COVER MAGAZINE,1,cover page,,"magazine cover, cover image"
-VIEW,COVER MAGAZINE-REPLACE,1,,magazine cover,cover page
+VIEW,COVER MAGAZINE,1,cover page,,"magazine cover, cover image, fake magazine cover"
+VIEW,COVER MAGAZINE-REPLACE,1,,"magazine cover, fake cover, fake magazine cover, cover",cover page
+VIEW,FAKE COVER,1,,cover,fake cover
+VIEW,FAKE MAGAZINE COVER,1,,"magazine cover, fake cover",fake magazine cover
 VIEW,COVER PAGE,1,,cover,"cover page, back cover, doujin cover, magazine cover, novel cover"
 VIEW,COWBOY SHOT,1,,feet out of frame,cowboy shot
 VIEW,CRACK OF LIGHT,1,,,crack of light
@@ -5105,9 +5149,10 @@ VIEW,PROJECTED INSET BORDERED,1,,projected inset,"projected inset panel, bordere
 VIEW,LINE EFFECT CONFLICT,1,,,"notice lines, emphasis lines,speed lines"
 VIEW,LOWER ANGLE,1,,,"upshorts, pantyshot"
 VIEW,MEDIA FORMAT,1,,,"3d, calendar (medium),card (medium),comic,1koma,2koma,3koma,4koma,multiple 4koma,5koma,borderless panels, manga, left-to-right manga,right-to-left comic,silent comic,cover,album cover,character single,cover page,doujin cover,dvd cover,fake cover,video game cover,magazine cover,manga cover,fake screenshot,fake phone screenshot,game cg,gyotaku (medium), gyotaku (medium),lineart, outline,tall image,wide image,mosaic art,photomosaic,oekaki,phonecard,photo,papercraft,paper child,paper cutout,pixel art,postcard,poster,scan,anime screencap,shitajiki,tegaki,transparent background,triptych (art),widescreen, wallpaper,tileable, real, realistic, photorealistic, abstract, sketch, style parody, surreal, traditional media, unfinished, retro artstyle, 1980s (style), 1990s (style), 1970s (style), photorealistic, photo (medium), official style, instant loss, flat color, fine fabric emphasis, fewer digits,background text, 2020, 2021, 2022, 2019, pornography, watercolor (medium), unconventional media, colored pencil (medium), graphite (medium), painting (medium), marker (medium), watercolor (medium), pastel colors, anime coloring, colorful, screentones, pastel (medium), meta, limited palette, film grain, cosplay photo,costume chart, araki hirohiko (style), toon (style), template, split screen, sample, polaroid, how to, fine art parody, fake magazine cover, pc-98 (style), drawr, tarot (medium),  western comics (style), child's drawing, segmented comic, cel shading, text-only page, visual novel, credits, credits page, concept art, blank page, back cover, afterword, mousepad (medium), breast mousepad, real world location, square 4koma, shikishi, sequential, oil painting (medium), numbered, numbered panels, no lineart, no image, mixed media, acrylic paint (medium), novel cover, hatching (texture), ligne claire, colorized, nib pen (medium), ink (medium), ballpoint pen (medium), watercolor pencil (medium), calligraphy brush (medium), pen (medium), color ink (medium), zbrush (medium), crayon (medium), canvas (medium), airbrush (medium), paper cutout (medium), print (medium), unreal (medium), clay (medium), vrchat (medium), after effects (medium), cinema 4d (medium), whiteboard (medium), rough art, western style, bold lines, medium lines, korean style, chinese style"
-VIEW,,,,"photo background, 3d",photo (medium)
+VIEW,PHOTO MEDIUMS,1,,"photo background, 3d, traditional media, cosplay photo, realistic",photo (medium)
 VIEW,SKETCH,1,,rough art,sketch
-VIEW,MOTION BLUR,1,,,"motion blur, afterimage, motion lines"
+VIEW,MOTION BLUR,1,,,"motion blur, afterimage, motion lines, fellatio afterimage"
+VIEW,FELLATIO AFTERIMAGE,1,,afterimage,fellatio afterimage
 VIEW,INSTANT LOSS 2KOMA,1,,"instant loss, 2koma, comic",instant loss 2koma
 VIEW,HORIZONTAL AND VERTICAL SEQUENCE,1,,comic,"horizontal sequence comic, vertical sequence comic"
 VIEW,MOTION LINES,0,motion lines,,speed lines
@@ -5128,11 +5173,12 @@ VIEW,OUTLINE,1,,outline,"white outline,blue outline,black outline,pink outline,y
 VIEW,PC-98 STYLE,1,pc-98 (style),,pc98
 VIEW,PC-98 STYLE-REPLACE,1,,pc98,pc-98 (style)
 VIEW,PHOTO BACKGROUND,1,,real world location,photo background
-VIEW,PHOTOREALISTIC,1,,realistic,photorealistic
+VIEW,PHOTOREALISTIC,1,,realistic,"photorealistic, photo (medium)"
 VIEW,POLKA DOT BACKGROUND,1,,polka dot,"polka dot background,polka dot border"
 VIEW,POSTCARD MEDIUM,1,postcard (medium),,"zanshomimai, shochuumimai"
 VIEW,POSTCARD MEDIUM-REPLACE,1,,"zanshomimai, shochuumimai",postcard (medium)
 VIEW,POV,1,,pov,"pov hands,pov crotch,female pov,pov doorway,pov across table,pov across bed,futanari pov,sleepover,taker pov,pov dating,pov peephole,pov bullying,pov adoring,lap pov,pov breasts,bookshelf pov,pov stabbing,pov legs,multiple pov,animal pov,pov inside mouth,otoko no ko pov,shoe locker pov,eye pov,pov facial, pov masturbation, pov one hand, taker pov, pov chastity, male pov, futa pov, pov register, pov in chastity cage, pov small penis"
+VIEW,POV SMALL PENIS,1,,"penis, small penis",pov small penis
 VIEW,POV HANDS,1,,pov,"pov hands, pov one hand"
 VIEW,POV ONE HAND PRIORITY,1,,pov hands,pov one hand
 VIEW,RADIANCE,1,,,radiance
@@ -5571,7 +5617,7 @@ CLOTHES COLOR,PURPLE VEGA CORP UNIFORM,1,,purple headwear,purple vega corp unifo
 CLOTHES COLOR,GREEN VEGA CORP UNIFORM,1,,green headwear,green vega corp uniform
 CLOTHES COLOR,YELLOW VEGA CORP UNIFORM,1,,yellow headwear,yellow vega corp uniform
 CLOTHES,BORDER UNIFORM,1,,,"border operator uniform (world trigger), border agent uniform (world trigger)"
-VIEW,JP ARTISTS,1,,,"otochichi style, enari style, yassy style, azasuke style, baaki style, my style, anco style, ndc style, nyuu style, zounose style, boobookids style, pollinosis style, hatobaakane style, abfufai style, tefuru style, giga style, iwao style"
+VIEW,JP ARTISTS,1,,,"otochichi style, enari style, yassy style, azasuke style, baaki style, my style, anco style, ndc style, nyuu style, zounose style, boobookids style, pollinosis style, hatobaakane style, abfurai style, tefuru style, giga style, iwao style, nanashi style, ahemaru style, amazon-amazon style, ankoman style, asanagi style, beruru style, bkyuu style, butcha-u style, kanvas style, chichimaro style, doskoinpo style, gokuto style, gozaru style, hatoba style, hemlen style, hews style, fannohitori style, hisha style, mattsuu style, inoue-nanaki style, topgun style, old topgun style, jj-jj style, junajunajuice style, kafka style, kaientai style, kunaboto style, mogudan style, murakami style"
 VIEW,WESTERN ARTISTS,1,,,"fellatrix style, 5t style, tekuho style, western style, cyberboi style, eroenzo style, tdi style, porcoro style, mamimi style, picturd  style, gorani style, korean style, chinese style"
 VIEW,KR CN ARTIST,1,,,"laliberte style, korean style, chinese style, caisan style, hanee style, kogyoku style"
 SEX ACTION,PRECUM THROUGH CLOTHES,1,,"precum, cum through clothes",precum through clothes
@@ -5586,7 +5632,7 @@ CLOTHES COLOR,LEOPARD PRINT SWIMSUIT,1,,"yellow bikini, bikini, print bikini,leo
 CLOTHES COLOR,LEOPARD PRINT GLOVES,1,,"yellow gloves, gloves, elbow gloves, print gloves",leopard print elbow gloves
 CLOTHES COLOR,LEOPARD PRINT THIGHHIGHS,1,,"yellow thighhighs, thighhighs, print thighhighs, print legwear",leopard print thighhighs
 CLOTHES COLOR,LEOPARD PRINT SLEEVES,1,,"detached sleeves, leopard print, print sleeves",detached leopard print sleeves
-CLOTHES COLOR,LEOPARD PRINT CLOTHES,1,,"leopard print, animal print","leopard print shirt,leopard print bra,leopard print shawl,leopard print jacket,leopard print pantyhose,leopard print cape,leopard print panties,leopard print bikini,leopard print elbow gloves,leopard print thighhighs, leopard print swimsuit, leopard print coat, detached leopard print sleeves, leopard print hair ribbon, leopard print skirt, leopard print dress, leopard print shirt, leopard print crop top, leopard print bodystocking, leopard print bandeau, leopard print leotard,  leopard print bridal gauntlets, leopard print detached sleeves"
+CLOTHES COLOR,LEOPARD PRINT CLOTHES,1,,"leopard print, animal print","leopard print shirt,leopard print bra,leopard print shawl,leopard print jacket,leopard print pantyhose,leopard print cape,leopard print panties,leopard print bikini,leopard print elbow gloves,leopard print thighhighs, leopard print swimsuit, leopard print coat, detached leopard print sleeves, leopard print hair ribbon, leopard print skirt, leopard print dress, leopard print shirt, leopard print crop top, leopard print bodystocking, leopard print bandeau, leopard print leotard,  leopard print bridal gauntlets, leopard print detached sleeves, leopard print choker"
 CLOTHES COLOR,LEOPARD PRINT COAT,1,,"yellow coat, coat, print coat, yellow jacket, jacket, print jacket ",leopard print coat
 CLOTHES COLOR,LEOPARD PRINT HAIR RIBBON,1,,"hair ribbon, print ribbon, yellow ribbon",leopard print hair ribbon
 CLOTHES COLOR,LEOPARD PRINT SKIRT,1,,"skirt, print skirt,  yellow skirt",leopard print skirt
@@ -5721,6 +5767,7 @@ CLOTHES COLOR,GOLD BRIDAL GAUNTLETS,1,,"gold gloves, bridal gauntlets, elbow glo
 CLOTHES COLOR,YELLOW BRIDAL GAUNTLETS,1,,"yellow gloves, bridal gauntlets, elbow gloves",yellow bridal gauntlets
 CLOTHES COLOR,PURPLE BRIDAL GAUNTLETS,1,,"purple gloves, bridal gauntlets, elbow gloves",purple bridal gauntlets
 CLOTHES COLOR,AQUA BRIDAL GAUNTLETS,1,,"aqua gloves, bridal gauntlets, elbow gloves",aqua bridal gauntlets
+CLOTHES COLOR,COLORED BRIDAL GAUNTLETS,1,,"bridal gauntlets, fingerless gloves, elbow gloves","red bridal gauntlets,blue bridal gauntlets,green bridal gauntlets,black bridal gauntlets,white bridal gauntlets,grey bridal gauntlets,brown bridal gauntlets,pink bridal gauntlets,orange bridal gauntlets,gold bridal gauntlets,yellow bridal gauntlets,purple bridal gauntlets,aqua bridal gauntlets"
 ACCESSORIES,RED HAIR SCRUNCHIE,1,,"red scrunchie, hair scrunchie",red hair scrunchie
 ACCESSORIES,BLUE HAIR SCRUNCHIE,1,,"blue scrunchie, hair scrunchie",blue hair scrunchie
 ACCESSORIES,GREEN HAIR SCRUNCHIE,1,,"green scrunchie, hair scrunchie",green hair scrunchie
@@ -5734,3 +5781,17 @@ ACCESSORIES,GOLD HAIR SCRUNCHIE,1,,"gold scrunchie, hair scrunchie",gold hair sc
 ACCESSORIES,YELLOW HAIR SCRUNCHIE,1,,"yellow scrunchie, hair scrunchie",yellow hair scrunchie
 ACCESSORIES,PURPLE HAIR SCRUNCHIE,1,,"purple scrunchie, hair scrunchie",purple hair scrunchie
 ACCESSORIES,AQUA HAIR SCRUNCHIE,1,,"aqua scrunchie, hair scrunchie",aqua hair scrunchie
+CLOTHES SWIMSUIT,RED MICRO BIKINI,1,,"red bikini, micro bikini",red micro bikini
+CLOTHES SWIMSUIT,BLUE MICRO BIKINI,1,,"blue bikini, micro bikini",blue micro bikini
+CLOTHES SWIMSUIT,GREEN MICRO BIKINI,1,,"green bikini, micro bikini",green micro bikini
+CLOTHES SWIMSUIT,BLACK MICRO BIKINI,1,,"black bikini, micro bikini",black micro bikini
+CLOTHES SWIMSUIT,WHITE MICRO BIKINI,1,,"white bikini, micro bikini",white micro bikini
+CLOTHES SWIMSUIT,GREY MICRO BIKINI,1,,"grey bikini, micro bikini",grey micro bikini
+CLOTHES SWIMSUIT,BROWN MICRO BIKINI,1,,"brown bikini, micro bikini",brown micro bikini
+CLOTHES SWIMSUIT,PINK MICRO BIKINI,1,,"pink bikini, micro bikini",pink micro bikini
+CLOTHES SWIMSUIT,ORANGE MICRO BIKINI,1,,"orange bikini, micro bikini",orange micro bikini
+CLOTHES SWIMSUIT,GOLD MICRO BIKINI,1,,"gold bikini, micro bikini",gold micro bikini
+CLOTHES SWIMSUIT,YELLOW MICRO BIKINI,1,,"yellow bikini, micro bikini",yellow micro bikini
+CLOTHES SWIMSUIT,PURPLE MICRO BIKINI,1,,"purple bikini, micro bikini",purple micro bikini
+CLOTHES SWIMSUIT,AQUA MICRO BIKINI,1,,"aqua bikini, micro bikini",aqua micro bikini
+CLOTHES SWIMSUIT,COLORED MICRO BIKINI,1,,bikini,"red micro bikini,blue micro bikini,green micro bikini,black micro bikini,white micro bikini,grey micro bikini,brown micro bikini,pink micro bikini,orange micro bikini,gold micro bikini,yellow micro bikini,purple micro bikini,aqua micro bikini"

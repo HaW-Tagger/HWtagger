@@ -614,6 +614,92 @@ def find_near_duplicates(images_paths: list[str],*, threshold: float=0.9, hash_s
     near_duplicates.sort(key=lambda x: x[2], reverse=True)
     return near_duplicates
 
+def sort_similar_images(near_duplicates: list[tuple[str, str, float]]):
+    """takes the output of find_near_duplicates, bucket them from pairs to groups
+    then sort the members of the group by similarity and closest neighbors.
+    this function does this in two parts: 
+    first is finding the linked imgs (groups):
+        this is a "connected components" problem in an undirected graph
+        solved with Disjoint Set Union (DSU) [modified the stored value for the second part]
+    second is sorting the members to have a meaningful order:
+        there's an argument to check the file metadata (date created, date modified) 
+        to determine the order, but we want the algorithm to be fast and rely on the info passed
+        we will make a queue based on similarity, then add on the closest neighor 
+        with the next highest probability 
+    
+    Args:
+        near_duplicates (list[tuple[str, str, float]])
+    Returns:
+        list[tuple[list[str], float]]: list of groups, each group has the sorted members and highest probability
+    """
+
+    seen_groups = {} # dict of int -> [set of img paths, list of pairwise info]
+    last_seen_group = 0 # number of groups seen so far
+    for i, (path_a, path_b, prob) in enumerate(near_duplicates):
+        # check if we have seen any of the images in the group before
+        seen_loc = []
+        for j, (group_set, _) in seen_groups.items():
+            if path_a in group_set or path_b in group_set:
+                seen_loc.append(j)
+                
+        if not seen_loc: #base case, new group is created
+            seen_groups[last_seen_group] = [set([path_a, path_b]), [(path_a, path_b, prob)]]
+            last_seen_group += 1        
+        else: # we have seen one of the images before and is in one or more groups
+            # we keep the first group as the main one, and merge the other groups into it
+            for j in seen_loc[1:]:# then pop and merge/extend from the other group(s)
+                merging_val = seen_groups.pop(j)
+                seen_groups[seen_loc[0]][0].update(merging_val[0])
+                seen_groups[seen_loc[0]][1].extend(merging_val[1])
+            
+            # add the new pair to the primary group
+            seen_groups[seen_loc[0]][0].update(set([path_a, path_b]))
+            seen_groups[seen_loc[0]][1].append((path_a, path_b, prob))
+    
+    # we will reassign indexes of the groups, to remove gaps made by the pop
+    seen_groups = {i: v for i, v in enumerate(seen_groups.values())}        
+    
+    # for each group, we make a queue and make a directed graph
+    group_info_list = []
+    for _, (group_member_set, group_pairwise_info) in seen_groups.items():
+        if len(group_pairwise_info) == 1: # base case, only 1 pair, no need to sort
+            group_info_list.append((list(group_member_set), group_pairwise_info[0][2]))
+        else: # more than 2 members
+            group_queue = sorted(group_pairwise_info, key=lambda x: x[2], reverse=True)
+            
+            member_order = []
+            max_prob = 0.0
+            while group_queue: # keep going until all pairs are popped
+                if not member_order: #first pair is automatically added
+                    # the order doesn't matter, we will fix it later
+                    member_order = [group_queue[0][0], group_queue[0][1]]
+                    max_prob = group_queue[0][2]
+                    group_queue.pop(0)
+                else: # we add the next highest probability pair that has a member in the group
+                    for i, (path_a, path_b, prob) in enumerate(group_queue):
+                        if path_a in member_order:
+                            if len(member_order) == 2 and member_order[1] != path_a:
+                                # we fix the order of the first added pair based on the newly added pair
+                                member_order = [member_order[1], member_order[0]]
+                            if path_b not in member_order: # with more than 3 members, there's cyclic cases so check if it was already added
+                                member_order.append(path_b)  
+                        elif path_b in member_order:
+                            if len(member_order) == 2 and member_order[1] != path_b:
+                                member_order = [member_order[1], member_order[0]]
+                            if path_a not in member_order: # with more than 3 members, there's cyclic cases so check if it was already added
+                                member_order.append(path_a)
+                        else: # go on until we find a pair that has a member in the group
+                            continue
+                        max_prob = max(max_prob, prob)
+                        group_queue.pop(i)
+                        break 
+            group_info_list.append((member_order, max_prob))
+            
+            
+       
+    return group_info_list
+    
+    
 def get_dict_caformer_tag_frequency():
     # get caformer (rule34) from json
     ca_model_folder = os.path.join(parameters.MAIN_FOLDER, parameters.PARAMETERS["caformer_folder"])

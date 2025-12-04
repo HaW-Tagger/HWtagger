@@ -129,7 +129,7 @@ class ImageDatabase:
         self.image_ratio = None
         self.image_width = None
         self.image_height = None
-        self.similarity_group: int = 0
+        self.similarity_group: tuple[int, int] = (0, 0)
         self.similarity_probability: float = 0.0
         self.image_name = None
         self.auto_tags_merged_confidence: dict[str: float] = {}

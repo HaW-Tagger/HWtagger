@@ -42,7 +42,7 @@ class VirtualDatabase:
     def __init__(self):
         self.images: list[ImageDatabase] = []
         self.duplicate_paths = []
-        self.similar_images: list[tuple[set[int], float]] = []
+        self.similar_images: list[tuple[list[int], float]] = []
         self.trigger_tags:dict[str:list] = {
             "main_tags": [],
             "secondary_tags": []
@@ -727,47 +727,21 @@ class VirtualDatabase:
 
     def find_similar_images(self):
         if self.similar_images:
+            parameters.log.info("Image Similarity already computed, restart app to recompute")
             return False
-
-        # a list of set with the index of the two images
+        
+        # initialize a list of set with the index of the two images
         self.similar_images: list[tuple[set[int], float]] = []
-        # a list of pairs, [[imgA_path, imgB_path, similarity_percentage]]
-        similar_images: list[tuple[str, str, float]] = files.find_near_duplicates([image.path for image in self.images], threshold=parameters.PARAMETERS["similarity_threshold"])
-        parameters.log.info(f"{len(similar_images)} pairs of similar images were found")
-        for i in range(len(similar_images)):
-            image_0: int = self.index_of_image_by_image_path(similar_images[i][0])
-            image_1: int = self.index_of_image_by_image_path(similar_images[i][1])
-            k = 0
-            added = False
-            while not added and k < len(self.similar_images):
-                if image_0 in self.similar_images[k] and image_1 in self.similar_images[k]:
-                    added = True
-                elif image_0 not in self.similar_images[k] and image_1 not in self.similar_images[k]:
-                    k+=1
-                else:
-                    self.similar_images[k] = (self.similar_images[k][0].union({image_0, image_1}), (self.similar_images[k][1]*(len(self.similar_images[k][0])/(len(self.similar_images[k][0])+1)))+(similar_images[i][2]*(1/(len(self.similar_images[k][0])+1))))
-                    added = True
-            if not added:
-                self.similar_images.append(({image_0, image_1}, similar_images[i][2]))
-
-        # remove groups that are other groups but smaller
-        k = 0
-        # k is the index of the currently evaluated img
-        while k < len(self.similar_images):
-            p = 0
-            while p < len(self.similar_images):
-                if p == k:
-                    p += 1
-                    continue
-                if all([index in self.similar_images[p] for index in self.similar_images[k]]):
-                    self.similar_images.pop(k)
-                    break
-                else:
-                    p+=1
-            if p >= len(self.similar_images):
-                k+=1
-
-        # sort by len of similarity group (bigger groups are first)
+        # a list of pairwise similar imgs, list[tuple[str, str, float]]
+        # stored values: [[imgA_path, imgB_path, similarity_percentage]] 
+        similar_imgs = files.find_near_duplicates([image.path for image in self.images], 
+                                                threshold=parameters.PARAMETERS["similarity_threshold"])
+        parameters.log.info(f"{len(similar_imgs)} pairs of similar images were found")
+        
+        self.similar_images = files.sort_similar_images(similar_imgs)
+        parameters.log.info(f"{len(self.similar_images)} groups of similar images were found")
+        # sort by the highest matching probability, 
+        # then len of similarity group (bigger groups are first)
         self.similar_images.sort(key=lambda x: (x[1], len(x[0])))
         
         
@@ -777,16 +751,22 @@ class VirtualDatabase:
 
     def add_similarity_group_to_image(self):
         if not self.similar_images:
+            parameters.log.info("No similar images found")
             return False
         for image in self.images:
             image.related_md5s = []
-            image.similarity_group = 0
+            image.similarity_group = (0, 0)
             image.similarity_probability = 0.0
-        for k, value in enumerate(self.similar_images):
-            for i in value[0]:
-                self.images[i].add_related_md5s([self.images[x].md5 for x in value[0] if x != i])
-                self.images[i].similarity_group = k+1
-                self.images[i].similarity_probability = value[1]
+            
+        # value is tuple[list[str], float]
+        path_index_dict = self.get_img_path_index_dict()
+        
+        for group_num, (similar_paths, max_prob) in enumerate(self.similar_images):
+            similar_indexes = [path_index_dict[p] for p in similar_paths]
+            for order_index, db_idx in enumerate(similar_indexes):
+                self.images[db_idx].add_related_md5s([self.images[x].md5 for x in similar_indexes if x != db_idx])
+                self.images[db_idx].similarity_group = (group_num+1, order_index) 
+                self.images[db_idx].similarity_probability = max_prob
 
     def remove_groups(self):
         """
@@ -795,7 +775,7 @@ class VirtualDatabase:
         self.groups = {}
         
         for image in self.images:
-            image.group_names = {}
+            image.group_names = set()
 
     def remove_group(self, group_name):
         """
@@ -1981,7 +1961,8 @@ class Database(VirtualDatabase):
         try:
             common_path = os.path.commonpath([x.path for x in self.images])
             temp_images_index = []
-            for k in images_index:
+            parameters.log.info(f"Processing {len(images_index)} images and MD5s")
+            for k in tqdm(images_index):
                 reconstructed_absolute_path = os.path.join(self.folder,os.path.relpath(self.images[k].path, start=common_path))
                 if os.path.exists(reconstructed_absolute_path): # self.folder + reconstructed relative path
                     if self.images[k].path != reconstructed_absolute_path:
@@ -2093,7 +2074,7 @@ class Database(VirtualDatabase):
             # default is the project dir
             folder_path = os.path.join(self.folder, basename)
             if img_obj.group_names: # img in group, use first sorted folder as path
-                folder_path = os.path.join(self.folder, sorted(img_obj.group_names)[0], basename)
+                folder_path = os.path.join(self.folder, sorted(list(img_obj.group_names))[0], basename)
             images_tuples.append((image_index, current_path, folder_path))
             
         for paths in images_tuples:
